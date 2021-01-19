@@ -1,4 +1,4 @@
-# RTreeJS
+/*
 
 RTreeJS, a JavaScript Tree library that helps to query, insert and delete Rectangles.
 
@@ -21,8 +21,33 @@ along with RTreeJS.  If not, see <https://www.gnu.org/licenses/>.
 
 Written by Subendra Kumar Sharma.
 
+*/
 
-### This is free software (Free as in freedom not the price). If you like to use this library on a non free software, you can get a proprietary license. To get a proprietary license contact _reach.subendra.kr@gmx.com_.
+const { merge } = require("webpack-merge");
+const common = require("./webpack.common.js");
 
-
-## The is a beta release. This version is unstable.
+module.exports = merge(common, {
+	mode: "production",
+	devtool: "none",
+	output: {
+		path: __dirname + "/dist/umd/",
+		filename:
+			process.env.MINIMIZE === "true"
+				? "r.tree.js.production.min.js"
+				: "r.tree.js.development.js",
+	},
+	externals: {
+		Queue: {
+			commonjs: "Queue",
+			commonjs2: "Queue",
+			amd: "Queue",
+			root: "Queue",
+		},
+		Stack: {
+			commonjs: "Stack",
+			commonjs2: "Stack",
+			amd: "Stack",
+			root: "Stack",
+		},
+	},
+});

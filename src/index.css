@@ -1,4 +1,4 @@
-# RTreeJS
+/** @license RTreeJS
 
 RTreeJS, a JavaScript Tree library that helps to query, insert and delete Rectangles.
 
@@ -21,8 +21,41 @@ along with RTreeJS.  If not, see <https://www.gnu.org/licenses/>.
 
 Written by Subendra Kumar Sharma.
 
+*/
 
-### This is free software (Free as in freedom not the price). If you like to use this library on a non free software, you can get a proprietary license. To get a proprietary license contact _reach.subendra.kr@gmx.com_.
+.r-tree-print {
+	position: relative;
+}
 
+.r-tree-print-level {
+	position: relative;
+	height: 70px;
+}
 
-## The is a beta release. This version is unstable.
+.r-tree-print-node {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 60px;
+	position: absolute;
+	border: dotted 1px orange;
+
+	margin: 5px;
+	height: 60px;
+}
+
+.r-tree-print-node-id {
+	background-color: dimgray;
+}
+
+.r-tree-print-node-parentId {
+	background-color: olivedrab;
+}
+
+.r-tree-print-node-interval {
+	background-color: cornflowerblue;
+}
+
+.r-tree-print-node-minmax {
+	background-color: burlywood;
+}

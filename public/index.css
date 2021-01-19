@@ -1,0 +1,10 @@
+* {
+	font-size: 13px;
+	font-family: sans-serif;
+	margin: 0;
+}
+
+.content-body {
+	display: inline-flex;
+	flex-direction: column;
+}
