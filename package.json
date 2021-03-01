@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/webpack-dev-server --config webpack.dev.js",
-    "build": "./node_modules/.bin/webpack --config webpack.prod.js && mv ./dist/umd/index.css ./dist/"
+    "build": "./node_modules/.bin/webpack --config webpack.prod.js && mv ./dist/umd/index.css ./dist/",
+    "lint:check": "prettier -c **/*.{js,css,scss,json}; eslint \"**/*.js\"",
+    "lint:fix": "prettier --write **/*.{js,css,scss,json} && eslint --fix \"**/*.js\"",
+    "prettier:fix": "prettier --write **/*.{js,css,scss,json}",
+    "eslint:fix": "eslint --fix \"**/*.js\""
   },
   "repository": {
     "type": "git",
