@@ -39,7 +39,6 @@ export const getNodelevel = (root, node) => {
 	} else if (root === null) {
 		level = 0;
 	}
-
 	return level;
 };
 
