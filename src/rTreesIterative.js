@@ -26,17 +26,21 @@ Written by Subendra Kumar Sharma.
 import { ArrayStack as Stack } from "Stack";
 import { ArrayQueue as Queue } from "Queue";
 
-import {
-	inOrder,
-	getNewMinMax,
-	fixMinMaxFromCurrentToTop,
-} from "./utils/utils";
+import { getDimenOnInsert, getMinRect } from "./utils/utils";
 import { printBinaryTree } from "./utils/printUtils";
 
 // var RTreeIterative = (function() {
 /**
 		node = {
+			rect: {
+				x1: <number>,
+				y1: <number>,
+				x2: <number>,
+				y2: <number>,
+			}
+			leftRect: null,
 			left: null,
+			rightRect: null,
 			right: null
 		}
 	*/
@@ -63,9 +67,12 @@ function RTreeIterative(options) {
 
 RTreeIterative.prototype.constructor = RTreeIterative;
 
-RTreeIterative.prototype.constructNode = function (interval) {
+RTreeIterative.prototype.constructNode = function (rect) {
 	return {
+		rect: rect,
+		leftRect: null,
 		left: null,
+		rightRect: null,
 		right: null,
 	};
 };
@@ -81,11 +88,61 @@ RTreeIterative.prototype.getRoot = function () {
 	return this.root;
 };
 
-RTreeIterative.prototype.insert = function (interval) {
-	return this._insert(this.root, interval);
+RTreeIterative.prototype.insert = function (rect) {
+	return this._insert(this.root, rect);
 };
 
-RTreeIterative.prototype._insert = function (root, interval) {};
+RTreeIterative.prototype._insert = function (root, rect) {
+	let iter = root;
+	let prevIter = null;
+
+	if (iter == null) {
+		// root is null, first node insert to left
+		root = this.constructNode(null);
+		root.leftRect = rect;
+		root.left = this.constructNode(rect);
+
+		return;
+	} else if (iter.right == null) {
+		// root has only one child
+		root.rightRect = rect;
+		root.right = this.constructNode(rect);
+
+		return;
+	}
+
+	while (iter != null) {
+		prevIter = iter;
+		const lInsert = getDimenOnInsert(iter.leftRect, rect);
+		const rInsert = getDimenOnInsert(iter.rightRect, rect);
+		if (lInsert.increase <= rInsert.increase) {
+			// go left
+			iter.leftRect = lInsert.newRect;
+			iter = iter.left;
+		} else {
+			// go right
+			iter.rightRect = rInsert.newRect;
+			iter = iter.right;
+		}
+	}
+
+	let leftRect = prevIter.rect;
+	let rightRect = rect;
+	if (getMinRect(prevIter.rect, rect) < 0) {
+		// prevIter.rect is smaller in area
+		leftRect = prevIter.rect;
+		rightRect = rect;
+	} else {
+		// rect is smaller in area
+		leftRect = rect;
+		rightRect = prevIter.rect;
+	}
+	prevIter.leftRect = leftRect;
+	prevIter.left = this.constructNode(leftRect);
+	prevIter.rightRect = rightRect;
+	prevIter.right = this.constructNode(rightRect);
+	prevIter.rect = null;
+};
 
 RTreeIterative.prototype.find = function (interval, d, findType, comp) {
 	return this._find(this.root, interval, d, findType, comp);
@@ -114,54 +171,11 @@ RTreeIterative.prototype._findAll = function (
 	one
 ) {};
 
-RTreeIterative.prototype.findUsingComparator = function (comp, lcomp, rcomp) {
-	return this._findUsingComparator(this.root, comp, lcomp, rcomp);
-};
-
-RTreeIterative.prototype._findUsingComparator = function (
-	root,
-	comp,
-	lcomp,
-	rcomp
-) {
-	if (root === null) return [];
-
-	this.result.empty();
-	this.stack.empty();
-	let top;
-
-	this.stack.push(root);
-
-	while (!this.stack.isEmpty()) {
-		top = this.stack.pop();
-
-		if (comp(top)) {
-			this.result.push(top);
-		}
-
-		if (top.right !== null && rcomp(top)) {
-			this.stack.push(top.right);
-		}
-
-		if (top.left !== null && lcomp(top)) {
-			this.stack.push(top.left);
-		}
-	}
-
-	return this.result.getData();
-};
-
 RTreeIterative.prototype.remove = function (interval, d, comp) {
 	return this._remove(this.root, interval, d, comp);
 };
 
 RTreeIterative.prototype._remove = function (root, interval, d, comp) {};
-
-RTreeIterative.prototype.removeAll = function (interval, d, comp) {
-	return this._removeAll(this.root, interval, d, comp);
-};
-
-RTreeIterative.prototype._removeAll = function (root, interval, d, comp) {};
 
 // RTreeIterative.prototype.getDataInArray = function() {
 // pre order
