@@ -1,6 +1,6 @@
 # RTreeJS, a JavaScript Tree library that helps to query, insert and delete Rectangles.
 
-# Copyright © 2019-2020 Subendra Kumar Sharma. All Rights reserved. (jobs.sharma.subendra.kr@gmail.com)
+# Copyright © 2020-2021 Subendra Kumar Sharma. All rights reserved. (jobs.sharma.subendra.kr@gmail.com)
 
 # This file is part of RTreeJS.
 
