@@ -22,35 +22,13 @@ along with RTreeJS.  If not, see <https://www.gnu.org/licenses/>.
 Written by Subendra Kumar Sharma.
 
 */
-.interval-tree-print {
-	position: relative;
-}
-.interval-tree-print-level {
-	position: relative;
-	height: 70px;
-}
-.interval-tree-print-node {
-	display: -ms-flexbox;
-	display: flex;
-	-ms-flex-direction: column;
-	flex-direction: column;
-	-ms-flex-align: center;
-	align-items: center;
-	width: 60px;
-	position: absolute;
-	border: dotted 1px orange;
-	margin: 5px;
-	height: 60px;
-}
-.interval-tree-print-node-id {
-	background-color: dimgray;
-}
-.interval-tree-print-node-parentId {
-	background-color: olivedrab;
-}
-.interval-tree-print-node-interval {
-	background-color: cornflowerblue;
-}
-.interval-tree-print-node-minmax {
-	background-color: burlywood;
-}
+
+import RTreesIterative from "./rTreesIterative";
+import { getDimenOnInsert, getMinRect } from "./utils/utils";
+import "./index.css";
+
+const a: number = 1;
+const b: number = a;
+console.log(a);
+
+// export { RTreesIterative };

@@ -26,26 +26,21 @@ Written by Subendra Kumar Sharma.
 import { ArrayStack as Stack } from "Stack";
 import { ArrayQueue as Queue } from "Queue";
 
-import { getDimenOnInsert, getMinRect } from "./utils/utils";
+// import { getDimenOnInsert, getMinRect } from "./utils/utils";
 import { printBinaryTree } from "./utils/printUtils";
 
 // var RTreeIterative = (function() {
 /**
 		node = {
-			rect: {
-				x1: <number>,
-				y1: <number>,
-				x2: <number>,
-				y2: <number>,
-			}
-			leftRect: null,
-			left: null,
-			rightRect: null,
-			right: null
+			size: <number>,
+			pointers: <Array[node]>
+			keys: <Array[number]>
 		}
 	*/
 function RTreeIterative(options) {
 	this.options = options;
+
+	this.M = options.M || 4;
 
 	this.root = null;
 	this.length = 0;
@@ -65,15 +60,11 @@ function RTreeIterative(options) {
 	delete this.options?.data;
 }
 
-RTreeIterative.prototype.constructor = RTreeIterative;
-
 RTreeIterative.prototype.constructNode = function (rect) {
 	return {
-		rect: rect,
-		leftRect: null,
-		left: null,
-		rightRect: null,
-		right: null,
+		size: 0,
+		pointers: new Array(this.M),
+		keys: new Array(this.M - 1),
 	};
 };
 
@@ -92,57 +83,7 @@ RTreeIterative.prototype.insert = function (rect) {
 	return this._insert(this.root, rect);
 };
 
-RTreeIterative.prototype._insert = function (root, rect) {
-	let iter = root;
-	let prevIter = null;
-
-	if (iter == null) {
-		// root is null, first node insert to left
-		root = this.constructNode(null);
-		root.leftRect = rect;
-		root.left = this.constructNode(rect);
-
-		return;
-	} else if (iter.right == null) {
-		// root has only one child
-		root.rightRect = rect;
-		root.right = this.constructNode(rect);
-
-		return;
-	}
-
-	while (iter != null) {
-		prevIter = iter;
-		const lInsert = getDimenOnInsert(iter.leftRect, rect);
-		const rInsert = getDimenOnInsert(iter.rightRect, rect);
-		if (lInsert.increase <= rInsert.increase) {
-			// go left
-			iter.leftRect = lInsert.newRect;
-			iter = iter.left;
-		} else {
-			// go right
-			iter.rightRect = rInsert.newRect;
-			iter = iter.right;
-		}
-	}
-
-	let leftRect = prevIter.rect;
-	let rightRect = rect;
-	if (getMinRect(prevIter.rect, rect) < 0) {
-		// prevIter.rect is smaller in area
-		leftRect = prevIter.rect;
-		rightRect = rect;
-	} else {
-		// rect is smaller in area
-		leftRect = rect;
-		rightRect = prevIter.rect;
-	}
-	prevIter.leftRect = leftRect;
-	prevIter.left = this.constructNode(leftRect);
-	prevIter.rightRect = rightRect;
-	prevIter.right = this.constructNode(rightRect);
-	prevIter.rect = null;
-};
+RTreeIterative.prototype._insert = function (root, rect) {};
 
 RTreeIterative.prototype.find = function (interval, d, findType, comp) {
 	return this._find(this.root, interval, d, findType, comp);
