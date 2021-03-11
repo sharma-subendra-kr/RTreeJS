@@ -29,18 +29,47 @@ import { ArrayQueue as Queue } from "Queue";
 // import { getDimenOnInsert, getMinRect } from "./utils/utils";
 import { printBinaryTree } from "./utils/printUtils";
 
-// var RTreeIterative = (function() {
+/*
+	Properties of B-Tree:
+	* Balanced m way tree
+	* Maintains sorted data
+	* All leaf nodes must be at the same level
+	* B-tree order m has the following properties
+	* Every node has max M children
+	* Min children: leaf: 0, root: 2, Internal nodes: Math.ceil(M/2)
+	* Every node has max M-1 keys
+	* Min keys: root node: 1, all other nodes: Math.ceil(M/2)-1
+
+	Properties of R-Tree:
+	*	The root node contains at least two children unless it is a leaf node i.e. tree has only 1 rectangle
+	*	Max keys in a non-leaf node: M
+	*	Max children in a non-leaf node: m = Math.ceil(M/2) - 1
+	*	Min Keys in a non-leaf node: m = Math.ceil(M/2) - 1
+	*	Min children in a non-leaf node: m = Math.ceil(M/2) - 1
+	*	Max Keys in a leaf node: M
+	*	Min Keys in a leaf node: m = Math.ceil(M/2) - 1
+	*	All leaves appear at the same level
+ */
+
 /**
 		node = {
 			size: <number>,
 			pointers: <Array[node]>
 			keys: <Array[number]>
+			next: <node>
 		}
 	*/
 function RTreeIterative(options) {
 	this.options = options;
 
 	this.M = options.M || 4;
+	this.minChildren = Math.ceil(this.M / 2);
+	this.maxKeys = this.M - 1;
+	this.minKeys = this.minChildren - 1;
+
+	if (this.M < 2) {
+		throw `Value of M cannot be less than 2`;
+	}
 
 	this.root = null;
 	this.length = 0;
@@ -60,11 +89,16 @@ function RTreeIterative(options) {
 	delete this.options?.data;
 }
 
+RTreeIterative.prototype.getRoot = function () {
+	return this.root;
+};
+
 RTreeIterative.prototype.constructNode = function (rect) {
 	return {
 		size: 0,
 		pointers: new Array(this.M),
 		keys: new Array(this.M - 1),
+		next: null,
 	};
 };
 
@@ -73,10 +107,6 @@ RTreeIterative.prototype.constructTree = function (data) {
 	for (let i = 0; i < length; i++) {
 		this.insert(data[i]);
 	}
-};
-
-RTreeIterative.prototype.getRoot = function () {
-	return this.root;
 };
 
 RTreeIterative.prototype.insert = function (rect) {
