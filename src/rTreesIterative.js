@@ -63,9 +63,7 @@ function RTreeIterative(options) {
 	this.options = options;
 
 	this.M = options.M || 4;
-	this.minChildren = Math.ceil(this.M / 2);
-	this.maxKeys = this.M - 1;
-	this.minKeys = this.minChildren - 1;
+	this.m = Math.ceil(this.M / 2) - 1;
 
 	if (this.M < 2) {
 		throw `Value of M cannot be less than 2`;
@@ -97,7 +95,7 @@ RTreeIterative.prototype.constructNode = function (rect) {
 	return {
 		size: 0,
 		pointers: new Array(this.M),
-		keys: new Array(this.M - 1),
+		keys: new Array(this.M),
 		next: null,
 	};
 };
