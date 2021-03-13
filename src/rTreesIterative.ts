@@ -201,6 +201,7 @@ class RTreeIterative {
 					st.push({ node: top.pointers[POS], pos: POS });
 					continue;
 				}
+
 				// reached leaf node, now insert
 				if (top.size < this.M) {
 					// no node splitting required
@@ -208,6 +209,7 @@ class RTreeIterative {
 					top.size++;
 					break;
 				}
+				// node splitting required
 				const spRectData: NodeSplitResult = splitNode(top.keys, rd, this.M);
 				splittedNodes = {
 					left: this.constructNode(
@@ -224,14 +226,14 @@ class RTreeIterative {
 				inserted = true;
 				st.pop();
 			} else {
-				if (top.size < this.M) {
-					const crect = getCombinedRectFromRects(
-						splittedNodes?.left?.keys || [],
-						splittedNodes?.left?.size || 0
-					);
-					top.keys[topItem.pos] = { rect: crect };
-					top.pointers[topItem.pos] = splittedNodes?.left || null;
+				const crect = getCombinedRectFromRects(
+					splittedNodes?.left?.keys || [],
+					splittedNodes?.left?.size || 0
+				);
+				top.keys[topItem.pos] = { rect: crect };
+				top.pointers[topItem.pos] = splittedNodes?.left || null;
 
+				if (top.size < this.M) {
 					top.keys[top.size] = {
 						rect: getCombinedRectFromRects(
 							splittedNodes?.right?.keys || [],
@@ -240,10 +242,55 @@ class RTreeIterative {
 					};
 					top.pointers[top.size] = splittedNodes?.right || null;
 					top.size++;
+					splittedNodes = null;
 
 					break;
 				} else {
+					const crect: Rect = getCombinedRectFromRects(
+						splittedNodes?.right?.keys || [],
+						splittedNodes?.right?.size || 0
+					);
+					const spRectData: NodeSplitResult = splitNode(
+						top.keys,
+						{ rect: crect },
+						this.M
+					);
+					splittedNodes = {
+						left: this.constructNode(
+							undefined,
+							spRectData.left,
+							spRectData.leftSize
+						),
+						right: this.constructNode(
+							undefined,
+							spRectData.right,
+							spRectData.rightSize
+						),
+					};
+					inserted = true;
+					st.pop();
 				}
+			}
+		}
+
+		if (splittedNodes) {
+			// split the root
+
+			const crectLeft = getCombinedRectFromRects(
+				splittedNodes?.left?.keys || [],
+				splittedNodes?.left?.size || 0
+			);
+			const crectRight = getCombinedRectFromRects(
+				splittedNodes?.right?.keys || [],
+				splittedNodes?.right?.size || 0
+			);
+			const node: Node = this.constructNode();
+			if (node) {
+				node.size = 2;
+				node.keys = [{ rect: crectLeft }, { rect: crectRight }];
+				node.pointers = [splittedNodes?.left, splittedNodes?.right];
+
+				this.root = node;
 			}
 		}
 	}

@@ -34,7 +34,7 @@ export interface Rect {
 
 export interface RectData {
 	rect: Rect;
-	data: Nullable<any>;
+	data?: Nullable<any>;
 }
 
 export interface NODE {
