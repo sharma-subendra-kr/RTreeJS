@@ -48,5 +48,19 @@ export type Node = NODE | null;
 
 export interface NodeSplitResult {
 	left: RectData[];
+	leftSize: number;
 	right: RectData[];
+	rightSize: number;
+}
+
+export interface _SplittedNodes_ {
+	left: Node;
+	right: Node;
+}
+
+export type SplittedNodes = _SplittedNodes_ | null;
+
+export interface InsertStackItem {
+	node: Node;
+	pos: number;
 }

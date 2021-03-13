@@ -26,9 +26,17 @@ Written by Subendra Kumar Sharma.
 import { ArrayStack as Stack } from "Stack";
 import { ArrayQueue as Queue } from "Queue";
 
-import { Rect, RectData, Node, NodeSplitResult } from "./interfaces/interfaces";
+import {
+	Rect,
+	RectData,
+	Node,
+	NodeSplitResult,
+	InsertStackItem,
+	SplittedNodes,
+} from "./interfaces/interfaces";
 import { NULL } from "./types/types";
 import { getPos, splitNode } from "./utils/utils";
+import { getCombinedRectFromRects } from "./rectUtils/rectUtils";
 // import {getCombinedRect, }
 // import { printBinaryTree } from "./utils/printUtils";
 
@@ -132,7 +140,7 @@ class RTreeIterative {
 		return this.root;
 	}
 
-	constructNode(rd?: RectData): Node {
+	constructNode(rd?: RectData, rdArr?: RectData[], size?: number): Node {
 		const node: Node = {
 			size: 0,
 			pointers: new Array(this.M),
@@ -141,6 +149,10 @@ class RTreeIterative {
 		};
 		if (rd) {
 			node.keys[0] = rd;
+			node.size = 1;
+		} else if (rdArr) {
+			node.keys = rdArr;
+			node.size = size || 0;
 		}
 
 		return node;
@@ -165,25 +177,28 @@ class RTreeIterative {
 	}
 
 	_insert(rd: RectData): any {
-		const inserted = false;
-		let splittedNodes: NodeSplitResult;
+		let inserted: boolean = false;
+		let splittedNodes: SplittedNodes = null;
 
 		const st = new Stack();
 		if (this.root === null) {
 			// insert root
-			const node = this.constructNode();
+			this.root = this.constructNode(rd);
+			return this.root;
 		}
 
-		st.push(this.root);
+		st.push({ node: this.root, pos: -1 });
 
 		while (!st.isEmpty()) {
-			const top = st.peak();
+			const topItem = st.peak();
+			const top = topItem.node;
 
 			if (!inserted) {
 				if (top.pointers[0]) {
 					// traverse through the internal node whose area increases the least
-					const POS = getPos(top.keys, rd.rect);
-					st.push(top.pointers[POS]);
+					const POS = getPos(top.keys, rd.rect, top.size);
+					top.pos = POS;
+					st.push({ node: top.pointers[POS], pos: POS });
 					continue;
 				}
 				// reached leaf node, now insert
@@ -193,10 +208,40 @@ class RTreeIterative {
 					top.size++;
 					break;
 				}
-				const spNodes: NodeSplitResult = splitNode(top.keys, rd, this.m);
+				const spRectData: NodeSplitResult = splitNode(top.keys, rd, this.M);
+				splittedNodes = {
+					left: this.constructNode(
+						undefined,
+						spRectData.left,
+						spRectData.leftSize
+					),
+					right: this.constructNode(
+						undefined,
+						spRectData.right,
+						spRectData.rightSize
+					),
+				};
+				inserted = true;
 				st.pop();
 			} else {
 				if (top.size < this.M) {
+					const crect = getCombinedRectFromRects(
+						splittedNodes?.left?.keys || [],
+						splittedNodes?.left?.size || 0
+					);
+					top.keys[topItem.pos] = { rect: crect };
+					top.pointers[topItem.pos] = splittedNodes?.left || null;
+
+					top.keys[top.size] = {
+						rect: getCombinedRectFromRects(
+							splittedNodes?.right?.keys || [],
+							splittedNodes?.right?.size || 0
+						),
+					};
+					top.pointers[top.size] = splittedNodes?.right || null;
+					top.size++;
+
+					break;
 				} else {
 				}
 			}

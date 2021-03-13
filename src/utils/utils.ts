@@ -26,11 +26,12 @@ Written by Subendra Kumar Sharma.
 import { Rect, RectData, NodeSplitResult } from "../interfaces/interfaces";
 import { getAreaDiff, getCombinedRect, getArea } from "../rectUtils/rectUtils";
 
-export const getPos = (rdArr: RectData[], rect: Rect): number => {
+export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 	let INCREASE: number = Number.MAX_SAFE_INTEGER;
 	let index: number = 0;
 
-	for (const [i, rd] of rdArr.entries()) {
+	for (let i = 0; i < size; i++) {
+		const rd = rdArr[i];
 		const diff = getAreaDiff(getCombinedRect(rd.rect, rect), rd.rect);
 		if (diff < INCREASE) {
 			INCREASE = diff;
@@ -44,7 +45,7 @@ export const getPos = (rdArr: RectData[], rect: Rect): number => {
 export const splitNode = (
 	rdArr: RectData[],
 	rectData: RectData,
-	m: number
+	M: number
 ): NodeSplitResult => {
 	let lIndex = 0;
 	let rIndex = 0;
@@ -64,8 +65,8 @@ export const splitNode = (
 
 	const lr: Rect = rdArr[lIndex].rect;
 	const rr: Rect = rdArr[rIndex].rect;
-	const lRdArr: RectData[] = new Array(m);
-	const rRdArr: RectData[] = new Array(m);
+	const lRdArr: RectData[] = new Array(M);
+	const rRdArr: RectData[] = new Array(M);
 
 	let la: number;
 	let ra: number;
@@ -96,7 +97,9 @@ export const splitNode = (
 
 	return {
 		left: lRdArr,
+		leftSize: lc,
 		right: rRdArr,
+		rightSize: rc,
 	};
 };
 
