@@ -23,4 +23,5 @@ Written by Subendra Kumar Sharma.
 
 */
 
-// export const getArea = () => {};
+export type Nullable<T> = T | null;
+export type NULL = null;

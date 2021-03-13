@@ -1,4 +1,4 @@
-/** @license RTreeJS
+/*
 
 RTreeJS, a JavaScript Tree library that helps to query, insert and delete Rectangles.
 
@@ -23,12 +23,30 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import RTreesIterative from "./rTreesIterative";
-import "./index.css";
+import { Nullable, NULL } from "../types/types";
 
-const a: number = 1;
-const b: number = a;
-console.log(a);
+export interface Rect {
+	x1: number;
+	x2: number;
+	y1: number;
+	y2: number;
+}
 
-export { RTreesIterative };
-export default RTreesIterative;
+export interface RectData {
+	rect: Rect;
+	data: Nullable<any>;
+}
+
+export interface NODE {
+	size: number;
+	pointers: Node[];
+	keys: RectData[];
+	next: Node;
+}
+
+export type Node = NODE | null;
+
+export interface NodeSplitResult {
+	left: RectData[];
+	right: RectData[];
+}

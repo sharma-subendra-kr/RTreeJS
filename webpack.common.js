@@ -41,6 +41,9 @@ const webpackBannerPlugin = new Webpack.BannerPlugin({
 	raw: true,
 });
 
+const CleanTerminalPlugin = require("clean-terminal-webpack-plugin");
+const cleanTerminalPlugin = new CleanTerminalPlugin();
+
 module.exports = {
 	entry: __dirname + "/src/index.ts",
 	optimization: {
@@ -88,7 +91,12 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [miniCssExtractPlugin, webpackNotifierPlugin, webpackBannerPlugin],
+	plugins: [
+		miniCssExtractPlugin,
+		webpackNotifierPlugin,
+		webpackBannerPlugin,
+		cleanTerminalPlugin,
+	],
 	resolve: {
 		extensions: [".tsx", ".ts", ".js", "jsx"],
 		alias: {
