@@ -23,7 +23,12 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import { Rect, RectData, NodeSplitResult } from "../interfaces/interfaces";
+import {
+	Rect,
+	RectData,
+	NodeSplitResult,
+	Node,
+} from "../interfaces/interfaces";
 import { getAreaDiff, getCombinedRect, getArea } from "../rectUtils/rectUtils";
 
 export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
@@ -44,6 +49,7 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 
 export const splitNode = (
 	rdArr: RectData[],
+	nodeArr: Node[],
 	rectData: RectData,
 	M: number
 ): NodeSplitResult => {
@@ -67,6 +73,8 @@ export const splitNode = (
 	const rr: Rect = rdArr[rIndex].rect;
 	const lRdArr: RectData[] = new Array(M);
 	const rRdArr: RectData[] = new Array(M);
+	const lNodeArr: Node[] = new Array(M);
+	const rNodeArr: Node[] = new Array(M);
 
 	let la: number;
 	let ra: number;
@@ -80,9 +88,13 @@ export const splitNode = (
 		ra = getArea(getCombinedRect(rd.rect, rr));
 
 		if (la < ra) {
-			lRdArr[lc++] = rd;
+			lRdArr[lc] = rd;
+			lNodeArr[lc] = nodeArr[i];
+			lc++;
 		} else {
-			rRdArr[rc++] = rd;
+			rRdArr[rc] = rd;
+			rNodeArr[rc] = nodeArr[i];
+			rc++;
 		}
 	}
 
@@ -96,9 +108,11 @@ export const splitNode = (
 	}
 
 	return {
-		left: lRdArr,
+		leftRd: lRdArr,
+		lptrs: lNodeArr,
 		leftSize: lc,
-		right: rRdArr,
+		rightRd: rRdArr,
+		rptrs: rNodeArr,
 		rightSize: rc,
 	};
 };
