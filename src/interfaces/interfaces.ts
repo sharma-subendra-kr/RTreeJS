@@ -44,7 +44,7 @@ export interface NODE {
 	next: Node;
 }
 
-export type Node = NODE | null;
+export type Node = NODE | undefined;
 
 export interface NodeSplitResult {
 	leftRd: RectData[];
@@ -60,7 +60,7 @@ export interface _SplittedNodes_ {
 	right: Node;
 }
 
-export type SplittedNodes = _SplittedNodes_ | null;
+export type SplittedNodes = _SplittedNodes_ | undefined;
 
 export interface InsertStackItem {
 	node: Node;

@@ -48,11 +48,12 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 };
 
 export const splitNode = (
-	rdArr: RectData[],
-	nodeArr: Node[],
+	top: Node = { size: 0, keys: [], pointers: [], next: undefined },
 	rectData: RectData,
 	M: number
 ): NodeSplitResult => {
+	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
+
 	let lIndex = 0;
 	let rIndex = 0;
 	let min = Number.MAX_SAFE_INTEGER;
@@ -69,51 +70,135 @@ export const splitNode = (
 		}
 	}
 
-	const lr: Rect = rdArr[lIndex].rect;
-	const rr: Rect = rdArr[rIndex].rect;
-	const lRdArr: RectData[] = new Array(M);
-	const rRdArr: RectData[] = new Array(M);
-	const lNodeArr: Node[] = new Array(M);
-	const rNodeArr: Node[] = new Array(M);
+	let temp = rdArr[0];
+	let tempPtr = nodeArr[0];
+	rdArr[0] = rdArr[lIndex];
+	nodeArr[0] = nodeArr[lIndex];
+	rdArr[lIndex] = temp;
+	nodeArr[lIndex] = tempPtr;
 
-	let la: number;
-	let ra: number;
-	let lc: number = 0;
-	let rc: number = 0;
-	for (const [i, rd] of rdArr.entries()) {
-		if (i === lIndex || i === rIndex) {
-			continue;
-		}
-		la = getArea(getCombinedRect(rd.rect, lr));
-		ra = getArea(getCombinedRect(rd.rect, rr));
+	temp = rdArr[M - 1];
+	tempPtr = nodeArr[M - 1];
+	rdArr[M - 1] = rdArr[rIndex];
+	nodeArr[M - 1] = nodeArr[rIndex];
+	rdArr[rIndex] = temp;
+	nodeArr[rIndex] = tempPtr;
 
-		if (la < ra) {
-			lRdArr[lc] = rd;
-			lNodeArr[lc] = nodeArr[i];
-			lc++;
+	let lr: Rect = rdArr[0].rect; // left Rect
+	let rr: Rect = rdArr[M - 1].rect; // right Rect
+
+	let li = 1;
+	let ri = M - 2;
+	let swapLeft: boolean;
+	let swapRight: boolean;
+	let ilr: Rect; // ith left Rect
+	let irr: Rect; // ith right Rect
+	let leftArea: number = getArea(lr);
+	let rightArea: number = getArea(rr);
+	let lTempLeftRect: Rect;
+	let lTempRightRect: Rect;
+	let rTempLeftRect: Rect;
+	let rTempRightRect: Rect;
+	let lTempLeftArea: number;
+	let lTempRightArea: number;
+	let rTempLeftArea: number;
+	let rTempRightArea: number;
+
+	while (li < ri) {
+		ilr = rdArr[li].rect;
+		irr = rdArr[ri].rect;
+
+		lTempLeftRect = getCombinedRect(ilr, lr);
+		lTempLeftArea = getArea(lTempLeftRect);
+		lTempRightRect = getCombinedRect(ilr, rr);
+		lTempRightArea = getArea(lTempRightRect);
+		swapLeft = lTempLeftArea - leftArea > lTempRightArea - rightArea;
+
+		rTempLeftRect = getCombinedRect(irr, lr);
+		rTempLeftArea = getArea(rTempLeftRect);
+		rTempRightRect = getCombinedRect(irr, rr);
+		rTempRightArea = getArea(rTempRightRect);
+		swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
+
+		if (swapLeft && swapRight) {
+			const temp: RectData = rdArr[li];
+			const tempPtr: Node = nodeArr[li];
+			rdArr[li] = rdArr[ri];
+			nodeArr[li] = nodeArr[ri];
+			rdArr[ri] = temp;
+			nodeArr[ri] = tempPtr;
+			lr = rTempLeftRect;
+			leftArea = rTempLeftArea;
+			rr = lTempRightRect;
+			rightArea = lTempRightArea;
+			li++;
+			ri--;
+		} else if (!swapLeft && !swapRight) {
+			lr = lTempLeftRect;
+			leftArea = lTempLeftArea;
+			rr = rTempRightRect;
+			rightArea = rTempRightArea;
+			li++;
+			ri--;
+		} else if (!swapLeft) {
+			lr = lTempLeftRect;
+			leftArea = lTempLeftArea;
+			li++;
 		} else {
-			rRdArr[rc] = rd;
-			rNodeArr[rc] = nodeArr[i];
-			rc++;
+			rr = rTempRightRect;
+			rightArea = rTempRightArea;
+			ri--;
 		}
 	}
 
-	la = getArea(getCombinedRect(rectData.rect, lr));
-	ra = getArea(getCombinedRect(rectData.rect, rr));
+	let pivot: number = li; // pivot is starting index for the new node
+	top.size = pivot;
+	if (li === ri) {
+		lTempLeftRect = getCombinedRect(rdArr[li].rect, lr);
+		lTempLeftArea = getArea(lTempLeftRect);
+		lTempRightRect = getCombinedRect(rdArr[li].rect, rr);
+		lTempRightArea = getArea(lTempRightRect);
+		if (lTempLeftArea < lTempRightArea) {
+			lr = lTempLeftRect;
+			leftArea = lTempLeftArea;
+			pivot++;
+			top.size++;
+		} else {
+			rr = lTempRightRect;
+			rightArea = lTempRightArea;
+		}
+	}
+
+	top.size = pivot + 1;
+
+	const rRdArr: RectData[] = new Array(M); // right RectData Array
+	const rNodeArr: Node[] = new Array(M); // right Node Array
+	let iter = pivot;
+	let count = 0;
+	while (iter < M) {
+		rRdArr[count] = rdArr[iter];
+		rNodeArr[count] = rNodeArr[iter];
+		count++;
+		iter++;
+	}
+
+	const la: number = getArea(getCombinedRect(rectData.rect, lr)) - leftArea;
+	const ra: number = getArea(getCombinedRect(rectData.rect, rr)) - rightArea;
 
 	if (la < ra) {
-		lRdArr[lc++] = rectData;
+		rdArr[top.size] = rectData;
+		top.size++;
 	} else {
-		rRdArr[rc++] = rectData;
+		rRdArr[count++] = rectData;
 	}
 
 	return {
-		leftRd: lRdArr,
-		lptrs: lNodeArr,
-		leftSize: lc,
+		leftRd: rdArr,
+		lptrs: nodeArr,
+		leftSize: top.size,
 		rightRd: rRdArr,
 		rptrs: rNodeArr,
-		rightSize: rc,
+		rightSize: count,
 	};
 };
 
