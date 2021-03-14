@@ -29,7 +29,12 @@ import {
 	NodeSplitResult,
 	Node,
 } from "../interfaces/interfaces";
-import { getAreaDiff, getCombinedRect, getArea } from "../rectUtils/rectUtils";
+import {
+	getAreaDiff,
+	getCombinedRect,
+	getArea,
+	areRectsIdentical,
+} from "../rectUtils/rectUtils";
 
 export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 	let INCREASE: number = Number.MAX_SAFE_INTEGER;
@@ -45,6 +50,16 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 	}
 
 	return index;
+};
+
+export const isDuplicate = (rdArr: RectData[], rd: RectData): boolean => {
+	const len = rdArr.length;
+	for (let i = 0; i < len; i++) {
+		if (areRectsIdentical(rdArr[i].rect, rd.rect)) {
+			return true;
+		}
+	}
+	return false;
 };
 
 export const splitNode = (

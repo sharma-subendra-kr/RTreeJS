@@ -34,7 +34,7 @@ import {
 	InsertStackItem,
 	SplittedNodes,
 } from "./interfaces/interfaces";
-import { getPos, splitNode } from "./utils/utils";
+import { getPos, splitNode, isDuplicate } from "./utils/utils";
 import { getCombinedRectFromRects } from "./rectUtils/rectUtils";
 // import {getCombinedRect, }
 // import { printBinaryTree } from "./utils/printUtils";
@@ -113,7 +113,7 @@ class RTreeIterative {
 		this.M = options.M || 4;
 		this.m = Math.ceil(this.M / 2) - 1;
 
-		if (this.M < 2) {
+		if (this.M < 3) {
 			throw `Value of M cannot be less than 2`;
 		}
 
@@ -209,6 +209,11 @@ class RTreeIterative {
 				}
 
 				// reached leaf node, now insert
+
+				if (isDuplicate(top.keys, rd)) {
+					return;
+				}
+
 				if (top.size < this.M) {
 					// no node splitting required
 					top.keys[top.size] = rd;
@@ -218,12 +223,7 @@ class RTreeIterative {
 				// node splitting required
 				const spRectData: NodeSplitResult = splitNode(top, rd, this.M);
 				splittedNodes = {
-					left: this.constructNode(
-						undefined,
-						spRectData.leftRd,
-						spRectData.lptrs,
-						spRectData.leftSize
-					),
+					left: top,
 					right: this.constructNode(
 						undefined,
 						spRectData.rightRd,
@@ -260,12 +260,7 @@ class RTreeIterative {
 						this.M
 					);
 					splittedNodes = {
-						left: this.constructNode(
-							undefined,
-							spRectData.leftRd,
-							spRectData.lptrs,
-							spRectData.leftSize
-						),
+						left: top,
 						right: this.constructNode(
 							undefined,
 							spRectData.rightRd,

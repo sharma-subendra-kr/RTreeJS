@@ -64,3 +64,15 @@ export const getCombinedRectFromRects = (
 
 	return { x1, x2, y1, y2 };
 };
+
+export const areRectsIdentical = (rectA: Rect, rectB: Rect) => {
+	if (
+		rectA.x1 === rectB.x1 &&
+		rectA.x2 === rectB.x2 &&
+		rectA.y1 === rectB.y1 &&
+		rectA.y2 === rectB.y2
+	) {
+		return true;
+	}
+	return false;
+};
