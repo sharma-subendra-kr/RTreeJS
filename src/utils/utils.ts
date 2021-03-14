@@ -60,12 +60,12 @@ export const splitNode = (
 	let max = 0;
 
 	for (const [i, rd] of rdArr.entries()) {
-		if (rd.rect.x1 < min) {
-			min = rd.rect.x1;
+		if (rd.rect.x2 < min) {
+			min = rd.rect.x2;
 			lIndex = i;
 		}
-		if (rd.rect.x2 > max) {
-			max = rd.rect.x2;
+		if (rd.rect.x1 > max) {
+			max = rd.rect.x1;
 			rIndex = i;
 		}
 	}
