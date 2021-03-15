@@ -39,8 +39,10 @@ import {
 	splitNode,
 	isDuplicate,
 	getPosToRemove,
-	removeRectFromLeaf,
+	removeRect,
 	tryBorrow,
+	performBorrow,
+	merge,
 } from "./utils/utils";
 import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
 // import {getCombinedRect, }
@@ -337,7 +339,7 @@ class RTreeIterative {
 				st.pop();
 				const idx: number = getPosToRemove(top.keys, rect);
 				if (idx >= 0) {
-					removeRectFromLeaf(top, idx);
+					removeRect(top, idx);
 					deleted = true;
 					// if (top.size < this.m) {
 					// 	// have to borrow or merge
@@ -354,7 +356,12 @@ class RTreeIterative {
 					top.pointers[topItem.ptr].keys,
 					top.pointers[topItem.ptr].size
 				);
-				tryBorrow(top, topItem.ptr, this.m);
+				const borrow: any = tryBorrow(top, topItem.ptr, this.m);
+				if (borrow) {
+					performBorrow(top, topItem.ptr, borrow);
+				} else {
+					// merge();
+				}
 			} else {
 				// condense upper rects
 				const crect = getCombinedRectFromRects(

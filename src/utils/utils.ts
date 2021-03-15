@@ -34,6 +34,7 @@ import {
 	getCombinedRect,
 	getArea,
 	areRectsIdentical,
+	getCombinedRectFromRects,
 } from "../rectUtils/rectUtils";
 
 export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
@@ -227,12 +228,13 @@ export const getPosToRemove = (rdArr: RectData[], rect: Rect): number => {
 	return -1;
 };
 
-export const removeRectFromLeaf = (
+export const removeRect = (
 	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
 	idx: number
 ): void => {
 	for (let i = idx; i < node.size - 1; i++) {
 		node.keys[i] = node.keys[i + 1];
+		node.pointers[i] = node.pointers[i + 1];
 	}
 	node.size--;
 };
@@ -261,9 +263,6 @@ export const tryBorrow = (
 		const ptrArea = getArea(node.keys[ptr].rect);
 		let tempArea: number;
 		for (let i = 0; i < (node.pointers[maxAreaIndex]?.size || -1); i++) {
-			if (i === ptr) {
-				continue;
-			}
 			tempArea = getArea(
 				getCombinedRect(
 					node.pointers[maxAreaIndex]?.keys[i].rect || {
@@ -286,6 +285,59 @@ export const tryBorrow = (
 		return { ptr: maxAreaIndex, ptrPtr: idx };
 	}
 };
+
+export const performBorrow = (
+	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	ptr: number,
+	borrow: any
+): void => {
+	let bptr: number;
+	let bptrPtr: number;
+	let bRect: Rect;
+
+	const lenderNode: Node = node.pointers[borrow.ptr] || {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+	};
+	const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
+	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr] || {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+	};
+
+	for (let i = borrow.ptrPtr; i < lenderNode.size; i++) {
+		lenderNode.keys[i] = lenderNode.keys[i + 1];
+		lenderNode.pointers[i] = lenderNode.pointers[i + 1];
+	}
+	lenderNode.size--;
+
+	node.keys[borrow.ptr].rect = getCombinedRectFromRects(
+		lenderNode.keys,
+		lenderNode.size
+	);
+
+	const borrowerSize = node.pointers[ptr]?.size || 0;
+	const borrowerNode = node.pointers[ptr] || {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+	};
+	borrowerNode.keys[borrowerSize] = { rect: lendRect };
+	borrowerNode.pointers[borrowerSize] = lendNode;
+	borrowerNode.size++;
+
+	node.keys[ptr].rect = getCombinedRectFromRects(
+		borrowerNode.keys,
+		borrowerNode.size
+	);
+};
+
+export const merge = () => {};
 
 // /**
 //  * [get new dimension of node]
