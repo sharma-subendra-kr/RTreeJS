@@ -76,3 +76,15 @@ export const areRectsIdentical = (rectA: Rect, rectB: Rect) => {
 	}
 	return false;
 };
+
+export const isRectInside = (containerRect: Rect, rect: Rect) => {
+	if (
+		containerRect.x1 <= rect.x1 &&
+		containerRect.x2 >= rect.x2 &&
+		containerRect.y1 <= rect.y1 &&
+		containerRect.y2 >= rect.y2
+	) {
+		return true;
+	}
+	return false;
+};

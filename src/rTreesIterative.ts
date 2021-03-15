@@ -34,8 +34,15 @@ import {
 	InsertStackItem,
 	SplittedNodes,
 } from "./interfaces/interfaces";
-import { getPos, splitNode, isDuplicate } from "./utils/utils";
-import { getCombinedRectFromRects } from "./rectUtils/rectUtils";
+import {
+	getPos,
+	splitNode,
+	isDuplicate,
+	getPosToRemove,
+	removeRectFromLeaf,
+	tryBorrow,
+} from "./utils/utils";
+import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
 // import {getCombinedRect, }
 // import { printBinaryTree } from "./utils/printUtils";
 
@@ -292,6 +299,70 @@ class RTreeIterative {
 				node.pointers = [splittedNodes?.left, splittedNodes?.right];
 
 				this.root = node;
+			}
+		}
+	}
+
+	remove(rect: Rect): Node {
+		return this._remove(rect);
+	}
+
+	_remove(rect: Rect): Node {
+		let deleted: boolean = false;
+		let upTraverseMode: string = "";
+		const st = new Stack();
+
+		if (!this.root) {
+			return;
+		}
+
+		st.push({ node: this.root, pos: -1, ptr: 0 });
+
+		while (!st.isEmpty()) {
+			const topItem = st.peek();
+			const { node: top } = topItem;
+
+			if (!deleted) {
+				if (top.pointers[0]) {
+					// traverse through internal nodes
+					for (let i = topItem.ptr++; i < top.size; i++) {
+						if (isRectInside(top.keys[i].rect, rect)) {
+							st.push({ node: top.pointers[i], pos: i, ptr: 0 });
+							break;
+						}
+					}
+				}
+
+				// reached leaf node
+				st.pop();
+				const idx: number = getPosToRemove(top.keys, rect);
+				if (idx >= 0) {
+					removeRectFromLeaf(top, idx);
+					deleted = true;
+					// if (top.size < this.m) {
+					// 	// have to borrow or merge
+					// 	upTraverseMode = "borrow or merge";
+					// } else {
+					// 	// condense all upper rects
+					// 	upTraverseMode = "condense";
+					// }
+				}
+				// else keep looking
+			} else if (top.pointers[topItem.ptr].size < this.m) {
+				// borrow or merge
+				top.keys[topItem.ptr] = getCombinedRectFromRects(
+					top.pointers[topItem.ptr].keys,
+					top.pointers[topItem.ptr].size
+				);
+				tryBorrow(top, topItem.ptr, this.m);
+			} else {
+				// condense upper rects
+				const crect = getCombinedRectFromRects(
+					top.pointers[topItem.ptr].keys,
+					top.pointers[topItem.ptr].size
+				);
+				top.keys[topItem.ptr] = crect;
+				st.pop();
 			}
 		}
 	}

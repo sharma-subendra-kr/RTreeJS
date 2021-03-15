@@ -217,6 +217,76 @@ export const splitNode = (
 	};
 };
 
+export const getPosToRemove = (rdArr: RectData[], rect: Rect): number => {
+	const len = rdArr.length;
+	for (let i = 0; i < len; i++) {
+		if (areRectsIdentical(rdArr[i].rect, rect)) {
+			return i;
+		}
+	}
+	return -1;
+};
+
+export const removeRectFromLeaf = (
+	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	idx: number
+): void => {
+	for (let i = idx; i < node.size - 1; i++) {
+		node.keys[i] = node.keys[i + 1];
+	}
+	node.size--;
+};
+
+export const tryBorrow = (
+	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	ptr: number,
+	m: number
+): any => {
+	let MAX_AREA: number = 0;
+	let maxAreaIndex: number = -1;
+	let area: number;
+	for (let i = 0; i < node.size; i++) {
+		if (i !== ptr && (node.pointers[i]?.size || -1) > m) {
+			area = getArea(node.keys[i].rect);
+			if (area > MAX_AREA) {
+				MAX_AREA = area;
+				maxAreaIndex = i;
+			}
+		}
+	}
+
+	let idx = -1;
+	if (maxAreaIndex >= 0) {
+		let MIN_AREA = Number.MAX_SAFE_INTEGER;
+		const ptrArea = getArea(node.keys[ptr].rect);
+		let tempArea: number;
+		for (let i = 0; i < (node.pointers[maxAreaIndex]?.size || -1); i++) {
+			if (i === ptr) {
+				continue;
+			}
+			tempArea = getArea(
+				getCombinedRect(
+					node.pointers[maxAreaIndex]?.keys[i].rect || {
+						x1: Number.MAX_SAFE_INTEGER,
+						x2: Number.MAX_SAFE_INTEGER,
+						y1: Number.MAX_SAFE_INTEGER,
+						y2: Number.MAX_SAFE_INTEGER,
+					},
+					node.keys[ptr].rect
+				)
+			);
+			if (tempArea - ptrArea < MIN_AREA) {
+				idx = i;
+				MIN_AREA = tempArea;
+			}
+		}
+	}
+
+	if (idx >= 0) {
+		return { ptr: maxAreaIndex, ptrPtr: idx };
+	}
+};
+
 // /**
 //  * [get new dimension of node]
 //  * @param  {[object]} contRect [containing rectangle]
