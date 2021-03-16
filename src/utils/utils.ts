@@ -337,7 +337,52 @@ export const performBorrow = (
 	);
 };
 
-export const merge = () => {};
+export const merge = (
+	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	ptr: number,
+	m: number
+): void => {
+	let mergeIndex = -1;
+	let MIN_AREA = Number.MAX_SAFE_INTEGER;
+	let RECT: Rect = { x1: -1, x2: -1, y1: -1, y2: -1 };
+
+	for (let i = 0; node.size; i++) {
+		if (i === ptr || node.size > m) {
+			continue;
+		}
+		const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
+		const area = getArea(RECT);
+		if (area < MIN_AREA) {
+			MIN_AREA = area;
+			RECT = r;
+			mergeIndex = i;
+		}
+	}
+
+	const updateIndex = mergeIndex < ptr ? mergeIndex : ptr;
+	node.keys[updateIndex].rect = RECT;
+
+	const source: Node = node.pointers[ptr] || {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+	};
+	const dest: Node = node.pointers[updateIndex] || {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+	};
+
+	let iter = 0;
+	while (iter < source.size) {
+		dest.keys[dest.size] = source.keys[iter];
+		dest.pointers[dest.size] = source.pointers[iter];
+		iter++;
+		dest.size++;
+	}
+};
 
 // /**
 //  * [get new dimension of node]

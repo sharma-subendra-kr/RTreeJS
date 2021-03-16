@@ -360,7 +360,7 @@ class RTreeIterative {
 				if (borrow) {
 					performBorrow(top, topItem.ptr, borrow);
 				} else {
-					// merge();
+					merge(top, topItem.ptr, this.m);
 				}
 			} else {
 				// condense upper rects
