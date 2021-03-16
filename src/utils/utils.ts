@@ -359,8 +359,7 @@ export const merge = (
 		}
 	}
 
-	const updateIndex = mergeIndex < ptr ? mergeIndex : ptr;
-	node.keys[updateIndex].rect = RECT;
+	node.keys[mergeIndex].rect = RECT;
 
 	const source: Node = node.pointers[ptr] || {
 		size: 0,
@@ -368,7 +367,7 @@ export const merge = (
 		pointers: [],
 		next: undefined,
 	};
-	const dest: Node = node.pointers[updateIndex] || {
+	const dest: Node = node.pointers[mergeIndex] || {
 		size: 0,
 		keys: [],
 		pointers: [],
@@ -381,6 +380,12 @@ export const merge = (
 		dest.pointers[dest.size] = source.pointers[iter];
 		iter++;
 		dest.size++;
+	}
+
+	const pivot = ptr;
+	for (let i = pivot; i < node.size - 1; i++) {
+		node.keys[i] = node.keys[i + 1];
+		node.pointers[i] = node.pointers[i + 1];
 	}
 };
 
