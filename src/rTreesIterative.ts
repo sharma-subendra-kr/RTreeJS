@@ -311,7 +311,6 @@ class RTreeIterative {
 
 	_remove(rect: Rect): Node {
 		let deleted: boolean = false;
-		let upTraverseMode: string = "";
 		const st = new Stack();
 
 		if (!this.root) {
@@ -341,13 +340,6 @@ class RTreeIterative {
 				if (idx >= 0) {
 					removeRect(top, idx);
 					deleted = true;
-					// if (top.size < this.m) {
-					// 	// have to borrow or merge
-					// 	upTraverseMode = "borrow or merge";
-					// } else {
-					// 	// condense all upper rects
-					// 	upTraverseMode = "condense";
-					// }
 				}
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
@@ -362,6 +354,7 @@ class RTreeIterative {
 				} else {
 					merge(top, topItem.ptr, this.m);
 				}
+				st.pop();
 			} else {
 				// condense upper rects
 				const crect = getCombinedRectFromRects(
