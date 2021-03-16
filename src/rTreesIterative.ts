@@ -209,10 +209,10 @@ class RTreeIterative {
 			const top = topItem.node;
 
 			if (!inserted) {
-				if (top.pointers[0]) {
+				if (top?.pointers[0]) {
 					// traverse through the internal node whose area increases the least
 					const POS = getPos(top.keys, rd.rect, top.size);
-					top.pos = POS;
+					topItem.pos = POS;
 					st.push({ node: top.pointers[POS], pos: POS });
 					continue;
 				}
@@ -227,7 +227,6 @@ class RTreeIterative {
 					// no node splitting required
 					top.keys[top.size] = rd;
 					top.size++;
-					break;
 				}
 				// node splitting required
 				const spRectData: NodeSplitResult = splitNode(top, rd, this.M);
@@ -242,7 +241,7 @@ class RTreeIterative {
 				};
 				inserted = true;
 				st.pop();
-			} else {
+			} else if (splittedNodes) {
 				const crectL = getCombinedRectFromRects(
 					splittedNodes?.left?.keys || [],
 					splittedNodes?.left?.size || 0
@@ -260,8 +259,6 @@ class RTreeIterative {
 					top.pointers[top.size] = splittedNodes?.right;
 					top.size++;
 					splittedNodes = undefined;
-
-					break;
 				} else {
 					const spRectData: NodeSplitResult = splitNode(
 						top,
@@ -280,6 +277,12 @@ class RTreeIterative {
 					inserted = true;
 					st.pop();
 				}
+			} else {
+				// condense
+				top.keys[topItem.pos] = getCombinedRectFromRects(
+					top.pointers[topItem.pos].keys,
+					top.size
+				);
 			}
 		}
 
