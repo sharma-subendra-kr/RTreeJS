@@ -275,14 +275,15 @@ class RTreeIterative {
 						),
 					};
 					inserted = true;
-					st.pop();
 				}
+				st.pop();
 			} else {
 				// condense
 				top.keys[topItem.pos] = getCombinedRectFromRects(
 					top.pointers[topItem.pos].keys,
 					top.size
 				);
+				st.pop();
 			}
 		}
 
