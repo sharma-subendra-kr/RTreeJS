@@ -232,7 +232,12 @@ class RTreeIterative {
 					continue;
 				}
 				// node splitting required
-				const spRectData: NodeSplitResult = splitNode(top, rd, this.M);
+				const spRectData: NodeSplitResult = splitNode(
+					top,
+					rd,
+					undefined,
+					this.M
+				);
 				splittedNodes = {
 					left: top,
 					right: this.constructNode(
@@ -266,6 +271,7 @@ class RTreeIterative {
 					const spRectData: NodeSplitResult = splitNode(
 						top,
 						{ rect: crectR },
+						splittedNodes.right,
 						this.M
 					);
 					splittedNodes = {

@@ -69,6 +69,7 @@ export const isDuplicate = (
 export const splitNode = (
 	top: Node = { size: 0, keys: [], pointers: [], next: undefined },
 	rectData: RectData,
+	rectDataPtr: Node,
 	M: number
 ): NodeSplitResult => {
 	debugger;
@@ -207,9 +208,12 @@ export const splitNode = (
 
 	if (la < ra) {
 		rdArr[top.size] = rectData;
+		nodeArr[top.size] = rectDataPtr;
 		top.size++;
 	} else {
-		rRdArr[count++] = rectData;
+		rRdArr[count] = rectData;
+		rNodeArr[count] = rectDataPtr;
+		count++;
 	}
 
 	return {
