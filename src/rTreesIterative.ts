@@ -192,6 +192,7 @@ class RTreeIterative {
 	}
 
 	_insert(rd: RectData): any {
+		debugger;
 		let inserted: boolean = false;
 		let splittedNodes: SplittedNodes;
 
@@ -219,7 +220,7 @@ class RTreeIterative {
 
 				// reached leaf node, now insert
 
-				if (isDuplicate(top.keys, rd)) {
+				if (isDuplicate(top.keys, top.size, rd)) {
 					return;
 				}
 
@@ -227,6 +228,8 @@ class RTreeIterative {
 					// no node splitting required
 					top.keys[top.size] = rd;
 					top.size++;
+					st.pop();
+					continue;
 				}
 				// node splitting required
 				const spRectData: NodeSplitResult = splitNode(top, rd, this.M);
@@ -340,7 +343,7 @@ class RTreeIterative {
 
 				// reached leaf node
 				st.pop();
-				const idx: number = getPosToRemove(top.keys, rect);
+				const idx: number = getPosToRemove(top.keys, top.size, rect);
 				if (idx >= 0) {
 					removeRect(top, idx);
 					deleted = true;

@@ -47,9 +47,6 @@ export interface NODE {
 export type Node = NODE | undefined;
 
 export interface NodeSplitResult {
-	leftRd: RectData[];
-	lptrs: Node[];
-	leftSize: number;
 	rightRd: RectData[];
 	rptrs: Node[];
 	rightSize: number;

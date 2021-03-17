@@ -8,9 +8,9 @@ window.onload = function () {
 	];
 
 	window.rt = new RTreeJS.RTreesIterative({
-		data: rawData,
-		initialStackSize: 15,
-		initialQueueSize: 15,
+		// data: rawData,
+		// initialStackSize: 15,
+		// initialQueueSize: 15,
 	});
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	// $contentBody.innerHTML = rt.printHtmlTree();
@@ -20,12 +20,17 @@ window.onload = function () {
 	};
 
 	window.remove = function (obj, d) {
-		it.remove(obj, d);
-		printHtmlTree();
+		window.rt.remove(obj, d);
 	};
 
-	window.removeAll = function (obj, d) {
-		it.removeAll(obj, d);
-		printHtmlTree();
+	window.insert = function (obj, d) {
+		window.rt.insert(obj, d);
+		console.log(window.rt);
 	};
 };
+
+// insert({rect: {x1: 2, x2:5, y1:1, y2:3}})
+// insert({rect: {x1: 5, x2:8, y1:1, y2:3}})
+// insert({rect: {x1: 8, x2:11, y1:1, y2:3}})
+// insert({rect: {x1: 11, x2:15, y1:1, y2:3}})
+// insert({rect: {x1: 15, x2:18, y1:1, y2:3}})

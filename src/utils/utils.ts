@@ -53,9 +53,12 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 	return index;
 };
 
-export const isDuplicate = (rdArr: RectData[], rd: RectData): boolean => {
-	const len = rdArr.length;
-	for (let i = 0; i < len; i++) {
+export const isDuplicate = (
+	rdArr: RectData[],
+	size: number,
+	rd: RectData
+): boolean => {
+	for (let i = 0; i < size; i++) {
 		if (areRectsIdentical(rdArr[i].rect, rd.rect)) {
 			return true;
 		}
@@ -68,6 +71,7 @@ export const splitNode = (
 	rectData: RectData,
 	M: number
 ): NodeSplitResult => {
+	debugger;
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
 
 	let lIndex = 0;
@@ -185,7 +189,7 @@ export const splitNode = (
 		}
 	}
 
-	top.size = pivot + 1;
+	// top.size = pivot + 1;
 
 	const rRdArr: RectData[] = new Array(M); // right RectData Array
 	const rNodeArr: Node[] = new Array(M); // right Node Array
@@ -209,18 +213,18 @@ export const splitNode = (
 	}
 
 	return {
-		leftRd: rdArr,
-		lptrs: nodeArr,
-		leftSize: top.size,
 		rightRd: rRdArr,
 		rptrs: rNodeArr,
 		rightSize: count,
 	};
 };
 
-export const getPosToRemove = (rdArr: RectData[], rect: Rect): number => {
-	const len = rdArr.length;
-	for (let i = 0; i < len; i++) {
+export const getPosToRemove = (
+	rdArr: RectData[],
+	size: number,
+	rect: Rect
+): number => {
+	for (let i = 0; i < size; i++) {
 		if (areRectsIdentical(rdArr[i].rect, rect)) {
 			return i;
 		}
