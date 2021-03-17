@@ -198,7 +198,7 @@ export const splitNode = (
 	let count = 0;
 	while (iter < M) {
 		rRdArr[count] = rdArr[iter];
-		rNodeArr[count] = rNodeArr[iter];
+		rNodeArr[count] = nodeArr[iter];
 		count++;
 		iter++;
 	}

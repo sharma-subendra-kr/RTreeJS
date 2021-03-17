@@ -228,6 +228,7 @@ class RTreeIterative {
 					// no node splitting required
 					top.keys[top.size] = rd;
 					top.size++;
+					inserted = true;
 					st.pop();
 					continue;
 				}
@@ -288,10 +289,12 @@ class RTreeIterative {
 				st.pop();
 			} else {
 				// condense
-				top.keys[topItem.pos] = getCombinedRectFromRects(
-					top.pointers[topItem.pos].keys,
-					top.size
-				);
+				top.keys[topItem.pos] = {
+					rect: getCombinedRectFromRects(
+						top.pointers[topItem.pos].keys,
+						top.size
+					),
+				};
 				st.pop();
 			}
 		}
