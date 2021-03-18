@@ -72,7 +72,7 @@ export const splitNode = (
 	rectDataPtr: Node,
 	M: number
 ): NodeSplitResult => {
-	debugger;
+	// debugger;
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
 
 	let lIndex = 0;

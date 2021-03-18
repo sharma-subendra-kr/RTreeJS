@@ -31,7 +31,6 @@ import {
 	RectData,
 	Node,
 	NodeSplitResult,
-	InsertStackItem,
 	SplittedNodes,
 } from "./interfaces/interfaces";
 import {
@@ -192,7 +191,7 @@ class RTreeIterative {
 	}
 
 	_insert(rd: RectData): any {
-		debugger;
+		// debugger;
 		let inserted: boolean = false;
 		let splittedNodes: SplittedNodes;
 
@@ -326,6 +325,7 @@ class RTreeIterative {
 	}
 
 	_remove(rect: Rect): Node {
+		debugger;
 		let deleted: boolean = false;
 		const st = new Stack();
 
@@ -342,21 +342,26 @@ class RTreeIterative {
 			if (!deleted) {
 				if (top.pointers[0]) {
 					// traverse through internal nodes
+					let traverseFlag = false;
 					for (let i = topItem.ptr++; i < top.size; i++) {
 						if (isRectInside(top.keys[i].rect, rect)) {
 							st.push({ node: top.pointers[i], pos: i, ptr: 0 });
+							traverseFlag = true;
 							break;
 						}
+					}
+					if (traverseFlag) {
+						continue;
 					}
 				}
 
 				// reached leaf node
-				st.pop();
 				const idx: number = getPosToRemove(top.keys, top.size, rect);
 				if (idx >= 0) {
 					removeRect(top, idx);
 					deleted = true;
 				}
+				st.pop();
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
 				// borrow or merge
@@ -377,7 +382,7 @@ class RTreeIterative {
 					top.pointers[topItem.ptr].keys,
 					top.pointers[topItem.ptr].size
 				);
-				top.keys[topItem.ptr] = crect;
+				top.keys[topItem.ptr] = { rect: crect };
 				st.pop();
 			}
 		}

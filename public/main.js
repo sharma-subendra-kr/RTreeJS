@@ -25,6 +25,7 @@ window.onload = function () {
 
 	window.remove = function (obj, d) {
 		window.rt.remove(obj, d);
+		console.log(window.rt);
 	};
 
 	window.insert = function (obj, d) {

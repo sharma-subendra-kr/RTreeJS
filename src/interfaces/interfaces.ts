@@ -59,7 +59,7 @@ export interface _SplittedNodes_ {
 
 export type SplittedNodes = _SplittedNodes_ | undefined;
 
-export interface InsertStackItem {
-	node: Node;
-	pos: number;
-}
+// export interface InsertStackItem {
+// 	node: Node;
+// 	pos: number;
+// }
