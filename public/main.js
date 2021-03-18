@@ -8,7 +8,7 @@ window.onload = function () {
 	];
 
 	window.rt = new RTreeJS.RTreesIterative({
-		M: 3,
+		M: 5,
 		// data: rawData,
 		// initialStackSize: 15,
 		// initialQueueSize: 15,

@@ -292,7 +292,7 @@ class RTreeIterative {
 				top.keys[topItem.pos] = {
 					rect: getCombinedRectFromRects(
 						top.pointers[topItem.pos].keys,
-						top.size
+						top.pointers[topItem.pos].size
 					),
 				};
 				st.pop();
