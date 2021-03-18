@@ -206,7 +206,7 @@ class RTreeIterative {
 		st.push({ node: this.root, pos: -1 });
 
 		while (!st.isEmpty()) {
-			const topItem = st.peak();
+			const topItem = st.peek();
 			const top = topItem.node;
 
 			if (!inserted) {
