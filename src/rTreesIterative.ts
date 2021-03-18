@@ -333,7 +333,7 @@ class RTreeIterative {
 			return;
 		}
 
-		st.push({ node: this.root, pos: -1, ptr: 0 });
+		st.push({ node: this.root, ptr: -1 });
 
 		while (!st.isEmpty()) {
 			const topItem = st.peek();
@@ -342,26 +342,26 @@ class RTreeIterative {
 			if (!deleted) {
 				if (top.pointers[0]) {
 					// traverse through internal nodes
-					let traverseFlag = false;
-					for (let i = topItem.ptr++; i < top.size; i++) {
+					const start = topItem.ptr + 1;
+					for (let i = start; i < top.size; i++) {
 						if (isRectInside(top.keys[i].rect, rect)) {
-							st.push({ node: top.pointers[i], pos: i, ptr: 0 });
-							traverseFlag = true;
+							topItem.ptr = i;
+							st.push({ node: top.pointers[i], ptr: -1 });
 							break;
 						}
 					}
-					if (traverseFlag) {
-						continue;
+					if (topItem.ptr === start) {
+						st.pop();
 					}
+				} else {
+					// reached leaf node
+					const idx: number = getPosToRemove(top.keys, top.size, rect);
+					if (idx >= 0) {
+						removeRect(top, idx);
+						deleted = true;
+					}
+					st.pop();
 				}
-
-				// reached leaf node
-				const idx: number = getPosToRemove(top.keys, top.size, rect);
-				if (idx >= 0) {
-					removeRect(top, idx);
-					deleted = true;
-				}
-				st.pop();
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
 				// borrow or merge
