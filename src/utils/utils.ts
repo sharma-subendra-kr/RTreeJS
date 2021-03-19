@@ -349,8 +349,8 @@ export const merge = (
 	let MIN_AREA = Number.MAX_SAFE_INTEGER;
 	let RECT: Rect = { x1: -1, x2: -1, y1: -1, y2: -1 };
 
-	for (let i = 0; node.size; i++) {
-		if (i === ptr || node.size > m) {
+	for (let i = 0; i < node.size; i++) {
+		if (i === ptr) {
 			continue;
 		}
 		const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
@@ -390,6 +390,7 @@ export const merge = (
 		node.keys[i] = node.keys[i + 1];
 		node.pointers[i] = node.pointers[i + 1];
 	}
+	node.size--;
 };
 
 // /**
