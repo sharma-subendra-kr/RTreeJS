@@ -310,14 +310,9 @@ export const performBorrow = (
 		next: undefined,
 	};
 	const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
-	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr] || {
-		size: 0,
-		keys: [],
-		pointers: [],
-		next: undefined,
-	};
+	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr];
 
-	for (let i = borrow.ptrPtr; i < lenderNode.size; i++) {
+	for (let i = borrow.ptrPtr; i < lenderNode.size - 1; i++) {
 		lenderNode.keys[i] = lenderNode.keys[i + 1];
 		lenderNode.pointers[i] = lenderNode.pointers[i + 1];
 	}
