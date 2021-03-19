@@ -365,10 +365,12 @@ class RTreeIterative {
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
 				// borrow or merge
-				top.keys[topItem.ptr] = getCombinedRectFromRects(
-					top.pointers[topItem.ptr].keys,
-					top.pointers[topItem.ptr].size
-				);
+				top.keys[topItem.ptr] = {
+					rect: getCombinedRectFromRects(
+						top.pointers[topItem.ptr].keys,
+						top.pointers[topItem.ptr].size
+					),
+				};
 				const borrow: any = tryBorrow(top, topItem.ptr, this.m);
 				if (borrow) {
 					performBorrow(top, topItem.ptr, borrow);

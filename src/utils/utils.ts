@@ -267,7 +267,7 @@ export const tryBorrow = (
 
 	let idx = -1;
 	if (maxAreaIndex >= 0) {
-		let MIN_AREA = Number.MAX_SAFE_INTEGER;
+		let MIN_AREA = Number.MAX_SAFE_INTEGER * Number.MAX_SAFE_INTEGER;
 		const ptrArea = getArea(node.keys[ptr].rect);
 		let tempArea: number;
 		for (let i = 0; i < (node.pointers[maxAreaIndex]?.size || -1); i++) {
@@ -282,7 +282,7 @@ export const tryBorrow = (
 					node.keys[ptr].rect
 				)
 			);
-			if (tempArea - ptrArea < MIN_AREA) {
+			if (Math.abs(tempArea - ptrArea) < MIN_AREA) {
 				idx = i;
 				MIN_AREA = tempArea;
 			}
