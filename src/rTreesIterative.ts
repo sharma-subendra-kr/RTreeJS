@@ -350,7 +350,7 @@ class RTreeIterative {
 							break;
 						}
 					}
-					if (topItem.ptr === start) {
+					if (topItem.ptr === start - 1) {
 						st.pop();
 					}
 				} else {
