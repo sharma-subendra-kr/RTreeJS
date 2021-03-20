@@ -125,6 +125,12 @@ class RTreeIterative {
 			throw `Value of M cannot be less than 2`;
 		}
 
+		if (options?.m && this.M > 3) {
+			this.m = options.m;
+		} else if (options?.m) {
+			throw "Can't hard set value of m for M equals 3";
+		}
+
 		this.root = undefined;
 		this.length = 0;
 

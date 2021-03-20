@@ -354,7 +354,7 @@ export const merge = (
 			continue;
 		}
 		const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
-		const area = getArea(RECT);
+		const area = getArea(r);
 		if (area < MIN_AREA) {
 			MIN_AREA = area;
 			RECT = r;

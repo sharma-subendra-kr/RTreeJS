@@ -8,10 +8,16 @@ window.onload = function () {
 		{ rect: { x1: 11, x2: 15, y1: 1, y2: 3 } },
 		{ rect: { x1: 15, x2: 18, y1: 1, y2: 3 } },
 		{ rect: { x1: 18, x2: 21, y1: 1, y2: 3 } },
+		{ rect: { x1: 21, x2: 24, y1: 1, y2: 3 } },
+		{ rect: { x1: 24, x2: 27, y1: 1, y2: 3 } },
+		{ rect: { x1: 27, x2: 30, y1: 1, y2: 3 } },
+		{ rect: { x1: 30, x2: 33, y1: 1, y2: 3 } },
+		{ rect: { x1: 33, x2: 36, y1: 1, y2: 3 } },
 	];
 
 	window.rt = new RTreeJS.RTreesIterative({
-		M: 3,
+		// M: 3,
+		m: 2,
 		data: rawData,
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
