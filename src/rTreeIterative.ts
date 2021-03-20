@@ -78,8 +78,6 @@ import {
 			size: <number>,
 			pointers: <Array[ node ]>
 			keys: <Array[rd]>
-			next: <node>
-			prev: <node>
 		}
 	
 		rd = {
@@ -157,8 +155,6 @@ class RTreeIterative {
 			size: 0,
 			pointers: new Array(this.M),
 			keys: new Array(this.M),
-			next: undefined,
-			prev: undefined,
 		};
 		if (rd) {
 			node.keys[0] = rd;
@@ -247,12 +243,6 @@ class RTreeIterative {
 						spRectData.rightSize
 					),
 				};
-
-				const temp: Node = splittedNodes?.left?.next;
-				splittedNodes.left!.next = splittedNodes.right;
-				splittedNodes.right!.prev = splittedNodes.left;
-				splittedNodes.right!.next = temp;
-				temp!.prev = splittedNodes.right;
 
 				inserted = true;
 				st.pop();

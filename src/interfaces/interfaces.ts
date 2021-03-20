@@ -41,8 +41,6 @@ export interface NODE {
 	size: number;
 	pointers: Node[];
 	keys: RectData[];
-	next: Node;
-	prev: Node;
 }
 
 export type Node = NODE | undefined;

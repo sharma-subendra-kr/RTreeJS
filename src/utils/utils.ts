@@ -66,48 +66,17 @@ export const isDuplicate = (
 	return false;
 };
 
-export const fixLinkedList = (
-	HEAD: Node,
-	TAIL: Node,
-	pointers: Node[],
-	size: number
-): void => {
-	if (!HEAD && !TAIL) {
-		return;
-	}
-
-	let curr: Node = HEAD;
-
-	for (let i = 0; i < size; i++) {
-		if (!curr) {
-			// left most leaf node
-			curr = pointers[0];
-			continue;
-		}
-		curr!.next = pointers[i];
-		pointers[i]!.prev = curr;
-		curr = curr!.next;
-	}
-
-	curr!.next = TAIL;
-	TAIL!.prev = curr;
-};
-
 export const splitNode = (
 	top: Node = {
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	},
 	rectData: RectData,
 	rectDataPtr: Node,
 	M: number
 ): NodeSplitResult => {
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
-	const HEAD = top.pointers[0]?.prev;
-	const TAIL = top.pointers[top.size - 1]?.next;
 
 	let lIndex = 0;
 	let rIndex = 0;
@@ -206,8 +175,6 @@ export const splitNode = (
 		}
 	}
 
-	// fix linked list now
-
 	let pivot: number = li; // pivot is starting index for the new node
 	top.size = pivot;
 	if (li === ri) {
@@ -275,8 +242,6 @@ export const removeRect = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	},
 	idx: number
 ): void => {
@@ -292,8 +257,6 @@ export const tryBorrow = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	},
 	ptr: number,
 	m: number
@@ -345,8 +308,6 @@ export const performBorrow = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	},
 	ptr: number,
 	borrow: any
@@ -359,8 +320,6 @@ export const performBorrow = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	};
 	const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
 	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr];
@@ -381,8 +340,6 @@ export const performBorrow = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	};
 	borrowerNode.keys[borrowerSize] = { rect: lendRect };
 	borrowerNode.pointers[borrowerSize] = lendNode;
@@ -399,8 +356,6 @@ export const merge = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	},
 	ptr: number,
 	m: number
@@ -428,15 +383,11 @@ export const merge = (
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	};
 	const dest: Node = node.pointers[mergeIndex] || {
 		size: 0,
 		keys: [],
 		pointers: [],
-		next: undefined,
-		prev: undefined,
 	};
 
 	let iter = 0;
