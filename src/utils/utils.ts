@@ -66,6 +66,33 @@ export const isDuplicate = (
 	return false;
 };
 
+export const fixLinkedList = (
+	HEAD: Node,
+	TAIL: Node,
+	pointers: Node[],
+	size: number
+): void => {
+	if (!HEAD && !TAIL) {
+		return;
+	}
+
+	let curr: Node = HEAD;
+
+	for (let i = 0; i < size; i++) {
+		if (!curr) {
+			// left most leaf node
+			curr = pointers[0];
+			continue;
+		}
+		curr!.next = pointers[i];
+		pointers[i]!.prev = curr;
+		curr = curr!.next;
+	}
+
+	curr!.next = TAIL;
+	TAIL!.prev = curr;
+};
+
 export const splitNode = (
 	top: Node = {
 		size: 0,
@@ -79,6 +106,8 @@ export const splitNode = (
 	M: number
 ): NodeSplitResult => {
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
+	const HEAD = top.pointers[0]?.prev;
+	const TAIL = top.pointers[top.size - 1]?.next;
 
 	let lIndex = 0;
 	let rIndex = 0;
@@ -176,6 +205,8 @@ export const splitNode = (
 			ri--;
 		}
 	}
+
+	// fix linked list now
 
 	let pivot: number = li; // pivot is starting index for the new node
 	top.size = pivot;
