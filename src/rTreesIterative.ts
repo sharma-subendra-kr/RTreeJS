@@ -44,7 +44,6 @@ import {
 	merge,
 } from "./utils/utils";
 import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
-// import {getCombinedRect, }
 // import { printBinaryTree } from "./utils/printUtils";
 
 /*
@@ -83,13 +82,6 @@ import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
 		}
 
 		rect = {
-			tl: { x: <number>, y: <number> },
-			tr: { x: <number>, y: <number> },
-			br: { x: <number>, y: <number> },
-			bl: { x: <number>, y: <number> }
-		}
-
-		rect = {
 			x1: <number>,
 			x2: <number>,
 			y1: <number>,
@@ -101,10 +93,6 @@ import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
 	
  */
 class RTreeIterative {
-	// options: {
-	// 	M: number;
-	// 	data: Record<string, unknown>;
-	// };
 	options: Record<string, any>;
 	M: number;
 	m: number;
@@ -197,7 +185,6 @@ class RTreeIterative {
 	}
 
 	_insert(rd: RectData): any {
-		// debugger;
 		let inserted: boolean = false;
 		let splittedNodes: SplittedNodes;
 
@@ -331,7 +318,6 @@ class RTreeIterative {
 	}
 
 	_remove(rect: Rect): Node {
-		debugger;
 		let deleted: boolean = false;
 		const st = new Stack();
 
@@ -396,163 +382,5 @@ class RTreeIterative {
 		}
 	}
 }
-
-// function RTreeIterative(options) {
-// 	this.options = options;
-
-// 	this.M = options.M || 4;
-// 	this.m = Math.ceil(this.M / 2) - 1;
-
-// 	if (this.M < 2) {
-// 		throw `Value of M cannot be less than 2`;
-// 	}
-
-// 	this.root = null;
-// 	this.length = 0;
-
-// 	this.initialStackSize =
-// 		options?.data?.length * 2 || options?.initialStackSize || 500;
-// 	this.initialQueueSize =
-// 		options?.data?.length * 2 || options?.initialQueueSize || 500;
-
-// 	this.queue = new Queue({ initialSize: this.initialQueueSize });
-// 	this.stack = new Stack({ initialSize: this.initialStackSize });
-
-// 	if (Array.isArray(options?.data)) {
-// 		this.constructTree(options.data);
-// 	}
-
-// 	delete this.options?.data;
-// }
-
-// RTreeIterative.prototype.getRoot = function () {
-// 	return this.root;
-// };
-
-// RTreeIterative.prototype.constructNode = function (rect, data) {
-// 	return {
-// 		size: 0,
-// 		pointers: new Array(this.M),
-// 		keys: new Array(this.M),
-// 		next: null,
-// 		data: data,
-// 	};
-// };
-
-// RTreeIterative.prototype.constructTree = function (data) {
-// 	const length = data.length;
-// 	for (let i = 0; i < length; i++) {
-// 		this.insert(data[i]);
-// 	}
-// };
-
-/*
- *	@typedef {Object} rd Object
- *	@property {Object} rect Object defining a rectangle
- *	@property {Object} data Any object passed as data description for the rectangle
- *
- * @param {rd} rd  with rectangle and data
- */
-// RTreeIterative.prototype.insert = function (rd) {
-// 	return this._insert(rd);
-// };
-
-// RTreeIterative.prototype._insert = function (rd) {
-// 	const st = new Stack();
-// 	if (this.root === null) {
-// 		// insert root
-// 	}
-
-// 	st.push(this.root);
-
-// 	while (!st.isEmpty()) {
-// 		const top = st.peak();
-// 		if (!top.keys[0]) {
-// 			// reached leaf node, now insert
-// 		} else {
-// 			// traverse through the internal node whose area increases the least
-// 			const POS = getPos(top.keys, rd.rect);
-// 		}
-// 	}
-// };
-
-// RTreeIterative.prototype.find = function (interval, d, findType, comp) {
-// 	return this._find(this.root, interval, d, findType, comp);
-// };
-
-// RTreeIterative.prototype._find = function (root, interval, d, findType, comp) {
-// 	return null;
-// };
-
-// RTreeIterative.prototype.findAll = function (
-// 	interval,
-// 	d,
-// 	findType,
-// 	comp,
-// 	one = false
-// ) {
-// 	return this._findAll(this.root, interval, d, findType, comp, one);
-// };
-
-// RTreeIterative.prototype._findAll = function (
-// 	root,
-// 	interval,
-// 	d,
-// 	findType,
-// 	comp,
-// 	one
-// ) {};
-
-// RTreeIterative.prototype.remove = function (interval, d, comp) {
-// 	return this._remove(this.root, interval, d, comp);
-// };
-
-// RTreeIterative.prototype._remove = function (root, interval, d, comp) {};
-
-// RTreeIterative.prototype.getSortedData = function () {
-
-// };
-
-// RTreeIterative.prototype.setData = function (data) {
-// 	this.emptyTree();
-// 	this.constructTree(data);
-// };
-
-// RTreeIterative.prototype.reset = function () {
-// 	this.root = null;
-// 	this.length = 0;
-// };
-
-// RTreeIterative.prototype.emptyTree = function () {
-// 	this.root = null;
-// 	this.length = 0;
-
-// 	const len = Math.max(
-// 		this.queue.queue.length,
-// 		this.stack.stack.length,
-// 		this.path.stack.length,
-// 		this.result.stack.length,
-// 		this.removeList.stack.length
-// 	);
-// 	for (let i = 0; i < len; i++) {
-// 		if (this.queue.queue[i]) {
-// 			this.queue.queue[i].interval = null;
-// 			this.queue.queue[i].d = null;
-// 			this.queue.queue[i].left = null;
-// 			this.queue.queue[i].right = null;
-// 		}
-
-// 		if (this.stack.stack[i]) {
-// 			this.stack.stack[i].interval = null;
-// 			this.stack.stack[i].d = null;
-// 			this.stack.stack[i].left = null;
-// 			this.stack.stack[i].right = null;
-// 		}
-// 	}
-// };
-
-// RTreeIterative.prototype.printHtmlTree = function (func) {
-// 	return printBinaryTree(this.root, this.length, func);
-// };
 
 export default RTreeIterative;

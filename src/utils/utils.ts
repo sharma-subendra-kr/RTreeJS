@@ -72,7 +72,6 @@ export const splitNode = (
 	rectDataPtr: Node,
 	M: number
 ): NodeSplitResult => {
-	// debugger;
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
 
 	let lIndex = 0;
@@ -189,8 +188,6 @@ export const splitNode = (
 			rightArea = lTempRightArea;
 		}
 	}
-
-	// top.size = pivot + 1;
 
 	const rRdArr: RectData[] = new Array(M); // right RectData Array
 	const rNodeArr: Node[] = new Array(M); // right Node Array
@@ -392,35 +389,3 @@ export const merge = (
 	}
 	node.size--;
 };
-
-// /**
-//  * [get new dimension of node]
-//  * @param  {[object]} contRect [containing rectangle]
-//  * @param  {[object]} rect     [rectangle to be inserted into the tree]
-//  * @return {[object]}          [rectangle]
-//  */
-// export const getDimenOnInsert = (contRect, rect) => {
-// 	if (!contRect) {
-// 		return { increase: -1 };
-// 	}
-// 	const newRect = {
-// 		x1: contRect.x1 < rect.x1 ? contRect.x1 : rect.x1,
-// 		y1: contRect.y1 < rect.y1 ? contRect.y1 : rect.y1,
-// 		x2: contRect.x2 > rect.x2 ? contRect.x2 : rect.x2,
-// 		y2: contRect.y2 > rect.y2 ? contRect.y2 : rect.y2,
-// 	};
-// 	const increase =
-// 		contRect.x1 -
-// 		newRect.x1 +
-// 		contRect.y1 -
-// 		newRect.y1 +
-// 		newRect.x2 -
-// 		contRect.x2 +
-// 		newRect.y2 -
-// 		contRect.y2;
-
-// 	return {
-// 		newRect,
-// 		increase,
-// 	};
-// };

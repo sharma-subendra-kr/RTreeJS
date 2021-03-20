@@ -26,9 +26,5 @@ Written by Subendra Kumar Sharma.
 import RTreesIterative from "./rTreesIterative";
 import "./index.css";
 
-const a: number = 1;
-const b: number = a;
-console.log(a);
-
 export { RTreesIterative };
 export default RTreesIterative;
