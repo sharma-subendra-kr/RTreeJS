@@ -23,8 +23,8 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import RTreesIterative from "./rTreesIterative";
+import RTreeIterative from "./rTreeIterative";
 import "./index.css";
 
-export { RTreesIterative };
-export default RTreesIterative;
+export { RTreeIterative };
+export default RTreeIterative;
