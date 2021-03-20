@@ -245,6 +245,11 @@ class RTreeIterative {
 						spRectData.rightSize
 					),
 				};
+
+				const temp: Node = splittedNodes?.left?.next;
+				splittedNodes.left!.next = splittedNodes.right;
+				splittedNodes.right!.next = temp;
+
 				inserted = true;
 				st.pop();
 			} else if (splittedNodes) {
