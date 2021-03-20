@@ -43,7 +43,12 @@ import {
 	performBorrow,
 	merge,
 } from "./utils/utils";
-import { getCombinedRectFromRects, isRectInside } from "./rectUtils/rectUtils";
+import {
+	getCombinedRectFromRects,
+	isRectInside,
+	doRectsOverlap,
+	areRectsIdentical,
+} from "./rectUtils/rectUtils";
 // import { printBinaryTree } from "./utils/printUtils";
 
 /*
@@ -380,6 +385,95 @@ class RTreeIterative {
 				st.pop();
 			}
 		}
+	}
+
+	/**
+	 * find rects that are exact or overlap
+	 * - passing only one parameter searches for only one overlapping rectangle
+	 * - passing rect and exact as parameter searches for an exact rectangle
+	 * - passing all as true searches for all the overlapping rectangle
+	 *
+	 * @param  {Rect}       rect reference rect to search in the tree for exact or overlap match
+	 * @param  {boolean =    true}        exact search for identical rectangle, when exact is true all is always false
+	 * @param  {boolean =    true}        all   search for all overlapping rectangle, when all is true exact is always false, when all is false we search for only one overlapping rectangle
+	 * @param  {()      =>   any}         comp  comperator function taken into account when exact is false
+	 * @return {any}             array of matching rectangles
+	 */
+	find(
+		rect: Rect,
+		exact: boolean = true,
+		all: boolean = true,
+		comp: () => any
+	): any {
+		return this._find(rect, exact, all, comp);
+	}
+
+	_find(
+		rect: Rect,
+		exact: boolean = true,
+		all: boolean = true,
+		comp: (rd: RectData) => any
+	): any {
+		const st = new Stack();
+		const result = new Stack();
+
+		if (!this.root) {
+			return;
+		}
+
+		st.push({ node: this.root, ptr: -1 });
+
+		while (!st.isEmpty()) {
+			const topItem = st.peek();
+			const { node: top } = topItem;
+
+			if (top.pointers[0]) {
+				// traverse through internal nodes
+				const start = topItem.ptr + 1;
+				for (let i = start; i < top.size; i++) {
+					if (doRectsOverlap(top.keys[i].rect, rect)) {
+						topItem.ptr = i;
+						st.push({ node: top.pointers[i], ptr: -1 });
+						break;
+					}
+				}
+				if (topItem.ptr === start - 1) {
+					st.pop();
+				}
+			} else {
+				// reached leaf node
+				for (let i = 0; i < top.size; i++) {
+					if (exact && !all) {
+						// find exact rectangle
+						if (areRectsIdentical(top.keys[i].rect, rect)) {
+							return top.keys[i];
+						}
+					} else if (!all) {
+						// find overlapping rectangle
+						if (
+							doRectsOverlap(top.keys[i].rect, rect) && comp
+								? comp(top.keys[i])
+								: true
+						) {
+							return top.keys[i];
+						}
+					} else {
+						// all
+						if (
+							doRectsOverlap(top.keys[i].rect, rect) && comp
+								? comp(top.keys[i])
+								: true
+						) {
+							result.push(top.keys[i]);
+						}
+					}
+				}
+				st.pop();
+			}
+			// else keep looking
+		}
+
+		return result.getData();
 	}
 }
 
