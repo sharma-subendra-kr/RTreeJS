@@ -401,17 +401,17 @@ class RTreeIterative {
 	 */
 	find(
 		rect: Rect,
-		exact: boolean = true,
-		all: boolean = true,
-		comp: () => any
+		exact: boolean = false,
+		all: boolean = false,
+		comp: (rd: RectData) => any
 	): any {
 		return this._find(rect, exact, all, comp);
 	}
 
 	_find(
 		rect: Rect,
-		exact: boolean = true,
-		all: boolean = true,
+		exact: boolean = false,
+		all: boolean = false,
 		comp: (rd: RectData) => any
 	): any {
 		const st = new Stack();
@@ -451,18 +451,16 @@ class RTreeIterative {
 					} else if (!all) {
 						// find overlapping rectangle
 						if (
-							doRectsOverlap(top.keys[i].rect, rect) && comp
-								? comp(top.keys[i])
-								: true
+							doRectsOverlap(top.keys[i].rect, rect) &&
+							(comp ? comp(top.keys[i]) : true)
 						) {
 							return top.keys[i];
 						}
 					} else {
 						// all
 						if (
-							doRectsOverlap(top.keys[i].rect, rect) && comp
-								? comp(top.keys[i])
-								: true
+							doRectsOverlap(top.keys[i].rect, rect) &&
+							(comp ? comp(top.keys[i]) : true)
 						) {
 							result.push(top.keys[i]);
 						}

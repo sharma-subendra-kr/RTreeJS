@@ -38,6 +38,12 @@ window.onload = function () {
 		window.rt.insert(obj, d);
 		console.log(window.rt);
 	};
+
+	window.find = function (obj, exact, all, comp) {
+		const res = window.rt.find(obj, exact, all, comp);
+		console.log(res);
+		console.log(window.rt);
+	};
 };
 
 // insert({rect: {x1: 2, x2:5, y1:1, y2:3}})
