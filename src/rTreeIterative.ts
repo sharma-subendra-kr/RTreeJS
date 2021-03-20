@@ -79,6 +79,7 @@ import {
 			pointers: <Array[ node ]>
 			keys: <Array[rd]>
 			next: <node>
+			prev: <node>
 		}
 	
 		rd = {
@@ -157,6 +158,7 @@ class RTreeIterative {
 			pointers: new Array(this.M),
 			keys: new Array(this.M),
 			next: undefined,
+			prev: undefined,
 		};
 		if (rd) {
 			node.keys[0] = rd;

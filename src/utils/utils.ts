@@ -67,7 +67,13 @@ export const isDuplicate = (
 };
 
 export const splitNode = (
-	top: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	top: Node = {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+		prev: undefined,
+	},
 	rectData: RectData,
 	rectDataPtr: Node,
 	M: number
@@ -234,7 +240,13 @@ export const getPosToRemove = (
 };
 
 export const removeRect = (
-	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	node: Node = {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+		prev: undefined,
+	},
 	idx: number
 ): void => {
 	for (let i = idx; i < node.size - 1; i++) {
@@ -245,7 +257,13 @@ export const removeRect = (
 };
 
 export const tryBorrow = (
-	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	node: Node = {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+		prev: undefined,
+	},
 	ptr: number,
 	m: number
 ): any => {
@@ -292,7 +310,13 @@ export const tryBorrow = (
 };
 
 export const performBorrow = (
-	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	node: Node = {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+		prev: undefined,
+	},
 	ptr: number,
 	borrow: any
 ): void => {
@@ -305,6 +329,7 @@ export const performBorrow = (
 		keys: [],
 		pointers: [],
 		next: undefined,
+		prev: undefined,
 	};
 	const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
 	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr];
@@ -326,6 +351,7 @@ export const performBorrow = (
 		keys: [],
 		pointers: [],
 		next: undefined,
+		prev: undefined,
 	};
 	borrowerNode.keys[borrowerSize] = { rect: lendRect };
 	borrowerNode.pointers[borrowerSize] = lendNode;
@@ -338,7 +364,13 @@ export const performBorrow = (
 };
 
 export const merge = (
-	node: Node = { size: 0, keys: [], pointers: [], next: undefined },
+	node: Node = {
+		size: 0,
+		keys: [],
+		pointers: [],
+		next: undefined,
+		prev: undefined,
+	},
 	ptr: number,
 	m: number
 ): void => {
@@ -366,12 +398,14 @@ export const merge = (
 		keys: [],
 		pointers: [],
 		next: undefined,
+		prev: undefined,
 	};
 	const dest: Node = node.pointers[mergeIndex] || {
 		size: 0,
 		keys: [],
 		pointers: [],
 		next: undefined,
+		prev: undefined,
 	};
 
 	let iter = 0;
