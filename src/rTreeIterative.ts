@@ -250,7 +250,9 @@ class RTreeIterative {
 
 				const temp: Node = splittedNodes?.left?.next;
 				splittedNodes.left!.next = splittedNodes.right;
+				splittedNodes.right!.prev = splittedNodes.left;
 				splittedNodes.right!.next = temp;
+				temp!.prev = splittedNodes.right;
 
 				inserted = true;
 				st.pop();
