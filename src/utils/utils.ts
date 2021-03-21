@@ -145,7 +145,7 @@ export const splitNode = (
 	let rTempLeftArea: number;
 	let rTempRightArea: number;
 
-	while (li < ri) {
+	while (li <= ri) {
 		ilr = rdArr[li].rect;
 		irr = rdArr[ri].rect;
 
@@ -203,25 +203,33 @@ export const splitNode = (
 			}
 			ri--;
 		}
+		li++;
+		ri--;
 	}
 
-	let pivot: number = li; // pivot is starting index for the new node
-	top.size = pivot;
-	if (li === ri) {
-		lTempLeftRect = getCombinedRect(rdArr[li].rect, lr);
-		lTempLeftArea = getArea(lTempLeftRect);
-		lTempRightRect = getCombinedRect(rdArr[li].rect, rr);
-		lTempRightArea = getArea(lTempRightRect);
-		if (lTempLeftArea < lTempRightArea) {
-			lr = lTempLeftRect;
-			leftArea = lTempLeftArea;
-			pivot++;
-			top.size++;
-		} else {
-			rr = lTempRightRect;
-			rightArea = lTempRightArea;
-		}
+	// let pivot: number = li; // pivot is starting index for the new node
+	// top.size = pivot;
+	// if (li === ri && li === m) {
+	// 	lTempLeftRect = getCombinedRect(rdArr[li].rect, lr);
+	// 	lTempLeftArea = getArea(lTempLeftRect);
+	// 	lTempRightRect = getCombinedRect(rdArr[li].rect, rr);
+	// 	lTempRightArea = getArea(lTempRightRect);
+	// 	if (lTempLeftArea < lTempRightArea) {
+	// 		lr = lTempLeftRect;
+	// 		leftArea = lTempLeftArea;
+	// 		pivot++;
+	// 		top.size++;
+	// 	} else {
+	// 		rr = lTempRightRect;
+	// 		rightArea = lTempRightArea;
+	// 	}
+	// }
+
+	let pivot: number = m;
+	if (M % 2 === 1 && li === m + 1) {
+		pivot = li;
 	}
+	top.size = pivot;
 
 	const rRdArr: RectData[] = new Array(M); // right RectData Array
 	const rNodeArr: Node[] = new Array(M); // right Node Array
