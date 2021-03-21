@@ -394,6 +394,19 @@ class RTreeIterative {
 					performBorrow(top, topItem.ptr, borrow);
 				} else {
 					merge(top, topItem.ptr, this.m);
+
+					if (top === this.root && top.size < 2) {
+						let iter = 0;
+						for (let i = 0; i < top.size; i++) {
+							for (let j = 0; j < top.pointers[i].size; j++) {
+								top.keys[iter++] = top.pointers[i].keys[j];
+							}
+						}
+						for (let i = 0; i < this.M; i++) {
+							top.pointers[i] = undefined;
+						}
+						top.size = iter;
+					}
 				}
 				st.pop();
 			} else {
