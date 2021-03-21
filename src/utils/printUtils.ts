@@ -162,9 +162,11 @@ export const printTree = (root: any, length: any, height: any) => {
 	}"><g width="${WIDTH}" height="${WIDTH}" transform="translate(0, 0)">${legend}</g>
 	<rect transform="translate(2, 48)" width="${WIDTH}" height="${WIDTH}" stroke="black" stroke-width="2" fill-opacity="0"/>
 	<g transform="translate(0, 50)">${html}</g></svg>
+	<div style="margin: 16px;">
 	<p>height 0 is not an actual node, its just a rect surrounding all the rects in root node.</p>
 	<p>Non-leaf node have colours other then red.</p>
 	<p>Leaf node is always Red.</p>
-	<div style="display:flex; flex-direction: column; margin:16px;">${text}</div>
+	</div>
+	<div style="display: flex; flex-direction: column; margin: 16px;">${text}</div>
 	`;
 };
