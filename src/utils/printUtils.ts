@@ -106,16 +106,17 @@ export const printTree = (root: any, length: any, height: any) => {
 		return "No Data";
 	}
 
+	const coloursMapLen = coloursMap.length;
 	const colours: any = {};
 	const len = data.length;
 	for (let i = 0; i < len - 1; i++) {
-		if (i < coloursMap.length) {
-			colours[i] = coloursMap[i];
+		if (data[i].HEIGHT < coloursMapLen) {
+			colours[data[i].HEIGHT] = coloursMap[i];
 		} else {
-			colours[i] = "black";
+			colours[data[i].HEIGHT] = "black";
 		}
 	}
-	colours[len - 1] = "red";
+	colours[height] = "red";
 
 	const WIDTH = 600;
 
@@ -137,5 +138,15 @@ export const printTree = (root: any, length: any, height: any) => {
 		return acc + current;
 	}, "");
 
-	return `<svg width="${WIDTH + 20}" height="${WIDTH + 20}">${html}</svg>`;
+	const legend = Object.keys(colours).map((key, index) => {
+		return `<g transform="translate(${
+			index * 70 + 10
+		}, 10)"><circle r="5" fill="${
+			colours[key]
+		}"/><text>height: ${index}</text></g>`;
+	});
+
+	return `<svg width="${WIDTH + 20 + 50}" height="${
+		WIDTH + 20
+	}"><g transform="translate(0, 0)">${legend}</g><g transform="translate(0, 50)">${html}</g></svg>`;
 };
