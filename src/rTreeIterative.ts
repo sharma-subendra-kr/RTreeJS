@@ -102,6 +102,7 @@ class RTreeIterative {
 	m: number;
 	root: Node;
 	length: number;
+	height: number;
 	initialStackSize: number;
 	initialQueueSize: number;
 	queue: any;
@@ -125,6 +126,7 @@ class RTreeIterative {
 
 		this.root = undefined;
 		this.length = 0;
+		this.height = 0;
 
 		this.initialStackSize =
 			options?.data?.length * 2 || options?.initialStackSize || 500;
@@ -196,6 +198,7 @@ class RTreeIterative {
 			// insert root
 			this.root = this.constructNode(rd);
 			this.length++;
+			this.height++;
 			return this.root;
 		}
 
@@ -317,6 +320,7 @@ class RTreeIterative {
 
 				this.root = node;
 			}
+			this.height++;
 		}
 	}
 
