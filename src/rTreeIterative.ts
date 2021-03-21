@@ -64,12 +64,15 @@ import {
 
 	Properties of R-Tree:
 	*	The root node contains at least two children unless it is a leaf node i.e. tree has only 1 rectangle
+	*	
 	*	Max keys in a non-leaf node: M
-	*	Max children in a non-leaf node: m = Math.ceil(M/2) - 1
+	*	Max children in a non-leaf node: M
 	*	Min Keys in a non-leaf node: m = Math.ceil(M/2) - 1
 	*	Min children in a non-leaf node: m = Math.ceil(M/2) - 1
+	*	
 	*	Max Keys in a leaf node: M
 	*	Min Keys in a leaf node: m = Math.ceil(M/2) - 1
+	*	
 	*	All leaves appear at the same level
  */
 
