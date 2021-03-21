@@ -195,6 +195,7 @@ class RTreeIterative {
 		if (this.root === undefined) {
 			// insert root
 			this.root = this.constructNode(rd);
+			this.length++;
 			return this.root;
 		}
 
@@ -218,6 +219,8 @@ class RTreeIterative {
 				if (isDuplicate(top.keys, top.size, rd)) {
 					return;
 				}
+
+				this.length++;
 
 				if (top.size < this.M) {
 					// no node splitting required
@@ -355,6 +358,7 @@ class RTreeIterative {
 					if (idx >= 0) {
 						removeRect(top, idx);
 						deleted = true;
+						this.length--;
 					}
 					st.pop();
 				}
@@ -507,6 +511,18 @@ class RTreeIterative {
 
 		return result.getData();
 	}
+
+	reset() {
+		this.root = undefined;
+		this.length = 0;
+	}
+
+	emptyTree() {
+		this.root = undefined;
+		this.length = 0;
+	}
+
+	printTree() {}
 }
 
 export default RTreeIterative;
