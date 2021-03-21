@@ -379,6 +379,7 @@ class RTreeIterative {
 						this.length--;
 
 						if (top === this.root && top.size === 0) {
+							this.root = undefined;
 							this.height--;
 						}
 					}
