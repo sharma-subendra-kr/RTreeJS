@@ -143,7 +143,7 @@ export const printTree = (root: any, length: any, height: any) => {
 			index * 70 + 10
 		}, 10)"><circle r="5" fill="${
 			colours[key]
-		}"/><text>height: ${index}</text></g>`;
+		}"/><text dx="10" dy="5">height: ${index}</text></g>`;
 	});
 
 	return `<svg width="${WIDTH + 20 + 50}" height="${
