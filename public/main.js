@@ -15,6 +15,7 @@ window.onload = function () {
 		// { rect: { x1: 33, x2: 36, y1: 1, y2: 3 } },
 	];
 
+	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
 		M: 3,
 		// m: 2,
@@ -53,7 +54,6 @@ window.onload = function () {
 
 	window.printTree = function () {
 		const html = window.rt.printTree();
-		console.log("html", html);
 		$contentBody.innerHTML = html;
 	};
 };

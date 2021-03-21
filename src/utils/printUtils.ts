@@ -77,19 +77,59 @@ export const getPrintTreeData = (root: any, length: any, height: any) => {
 	return result.getData();
 };
 
+const coloursMap = [
+	"green",
+	"purple",
+	"blue",
+	"orange",
+	"aqua",
+	"blueviolet",
+	"brown",
+	"cadetblue",
+	"yellow",
+	"violet",
+	"thistle",
+	"teal",
+	"steelblue",
+	"silver",
+	"sienna",
+	"sandybrown",
+	"salmon",
+	"saddlebrown",
+	"olive",
+];
+
 export const printTree = (root: any, length: any, height: any) => {
 	const data = getPrintTreeData(root, length, height);
+	console.log("data", data);
 	if (!data.length) {
-		return "<svg></svg>";
+		return "No Data";
 	}
 
+	const colours: any = {};
+	const len = data.length;
+	for (let i = 0; i < len - 1; i++) {
+		if (i < coloursMap.length) {
+			colours[i] = coloursMap[i];
+		} else {
+			colours[i] = "black";
+		}
+	}
+	colours[len - 1] = "red";
+
+	const WIDTH = 600;
+
+	const w = data[0].node.rect.x2 - 0;
+
 	const arr = data.map((item: any) => {
-		return `<g transform="translate(${item.node.rect.x1 * 20}, ${
-			item.node.rect.y1 * 20
-		})">
-		<rect width="${item.node.rect.x2 * 20 - item.node.rect.x1 * 20}" height="${
-			item.node.rect.y2 * 20 - item.node.rect.y1 * 20
-		}" stroke="blue" fill-opacity="0"/>
+		const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 2 * item.HEIGHT;
+		const scaledX2 = (item.node.rect.x2 * WIDTH) / w - 2 * item.HEIGHT;
+		const scaledY1 = (item.node.rect.y1 * WIDTH) / w + 2 * item.HEIGHT;
+		const scaledY2 = (item.node.rect.y2 * WIDTH) / w - 2 * item.HEIGHT;
+		return `<g transform="translate(${scaledX1}, ${scaledY1})">
+			<rect width="${scaledX2 - scaledX1}" height="${scaledY2 - scaledY1}" stroke="${
+			colours[item.HEIGHT]
+		}" stroke-width="1" fill-opacity="0"/>
 		</g>`;
 	});
 
@@ -97,7 +137,5 @@ export const printTree = (root: any, length: any, height: any) => {
 		return acc + current;
 	}, "");
 
-	return `<svg width="${data[0].node.rect.x2 * 20 + 20}" height="${
-		data[0].node.rect.y2 * 20 + 20
-	}">${html}</svg>`;
+	return `<svg width="${WIDTH + 20}" height="${WIDTH + 20}">${html}</svg>`;
 };
