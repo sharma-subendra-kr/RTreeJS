@@ -377,6 +377,10 @@ class RTreeIterative {
 						removeRect(top, idx);
 						deleted = true;
 						this.length--;
+
+						if (top === this.root && top.size === 0) {
+							this.height--;
+						}
 					}
 					st.pop();
 				}
@@ -406,6 +410,7 @@ class RTreeIterative {
 							top.pointers[i] = undefined;
 						}
 						top.size = iter;
+						this.height--;
 					}
 				}
 				st.pop();
