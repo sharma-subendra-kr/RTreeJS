@@ -112,16 +112,25 @@ class RTreeIterative {
 		this.options = options;
 
 		this.M = options.M || 4;
-		this.m = Math.ceil(this.M / 2) - 1;
-
-		if (this.M < 3) {
-			throw `Value of M cannot be less than 2`;
+		if (this.M % 2 === 0) {
+			this.m = this.M / 2;
+		} else {
+			this.m = Math.ceil(this.M / 2) - 1;
 		}
 
-		if (options?.m && this.M > 3) {
+		if (this.M < 2) {
+			throw "Value of M cannot be less than 2";
+		}
+
+		if (
+			options?.m &&
+			Number.isInteger(options.m) &&
+			options.m <= this.M / 2 &&
+			options.m >= 1
+		) {
 			this.m = options.m;
 		} else if (options?.m) {
-			throw "Can't hard set value of m for M equals 3";
+			throw "Can't hard set value of m for M, invalid value of m provided";
 		}
 
 		this.root = undefined;
