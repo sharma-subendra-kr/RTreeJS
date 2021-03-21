@@ -109,20 +109,7 @@ export const splitNode = (
 		}
 	}
 
-	// let temp = rdArr[0];
-	// let tempPtr = nodeArr[0];
-	// rdArr[0] = rdArr[lIndex];
-	// nodeArr[0] = nodeArr[lIndex];
-	// rdArr[lIndex] = temp;
-	// nodeArr[lIndex] = tempPtr;
 	swap(rdArr, nodeArr, 0, lIndex);
-
-	// temp = rdArr[M - 1];
-	// tempPtr = nodeArr[M - 1];
-	// rdArr[M - 1] = rdArr[rIndex];
-	// nodeArr[M - 1] = nodeArr[rIndex];
-	// rdArr[rIndex] = temp;
-	// nodeArr[rIndex] = tempPtr;
 	swap(rdArr, nodeArr, M - 1, rIndex);
 
 	let lr: Rect = rdArr[0].rect; // left Rect
@@ -162,12 +149,6 @@ export const splitNode = (
 		swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
 
 		if (swapLeft && swapRight) {
-			// const temp: RectData = rdArr[li];
-			// const tempPtr: Node = nodeArr[li];
-			// rdArr[li] = rdArr[ri];
-			// nodeArr[li] = nodeArr[ri];
-			// rdArr[ri] = temp;
-			// nodeArr[ri] = tempPtr;
 			swap(rdArr, nodeArr, li, ri);
 			lr = rTempLeftRect;
 			leftArea = rTempLeftArea;
@@ -206,24 +187,6 @@ export const splitNode = (
 		li++;
 		ri--;
 	}
-
-	// let pivot: number = li; // pivot is starting index for the new node
-	// top.size = pivot;
-	// if (li === ri && li === m) {
-	// 	lTempLeftRect = getCombinedRect(rdArr[li].rect, lr);
-	// 	lTempLeftArea = getArea(lTempLeftRect);
-	// 	lTempRightRect = getCombinedRect(rdArr[li].rect, rr);
-	// 	lTempRightArea = getArea(lTempRightRect);
-	// 	if (lTempLeftArea < lTempRightArea) {
-	// 		lr = lTempLeftRect;
-	// 		leftArea = lTempLeftArea;
-	// 		pivot++;
-	// 		top.size++;
-	// 	} else {
-	// 		rr = lTempRightRect;
-	// 		rightArea = lTempRightArea;
-	// 	}
-	// }
 
 	let pivot: number = m;
 	if (M % 2 === 1 && li === m + 1) {
