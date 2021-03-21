@@ -49,7 +49,7 @@ import {
 	doRectsOverlap,
 	areRectsIdentical,
 } from "./rectUtils/rectUtils";
-// import { printBinaryTree } from "./utils/printUtils";
+import { printTree as printSVGTree } from "./utils/printUtils";
 
 /*
 	Properties of B-Tree:
@@ -558,7 +558,9 @@ class RTreeIterative {
 		this.length = 0;
 	}
 
-	printTree() {}
+	printTree() {
+		return printSVGTree(this.root, this.length, this.height);
+	}
 }
 
 export default RTreeIterative;

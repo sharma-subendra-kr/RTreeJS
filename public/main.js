@@ -23,7 +23,7 @@ window.onload = function () {
 		// initialQueueSize: 15,
 	});
 	var $contentBody = document.getElementsByClassName("content-body")[0];
-	// $contentBody.innerHTML = rt.printHtmlTree();
+	$contentBody.innerHTML = window.rt.printTree();
 
 	window.printHtmlTree = function () {
 		$contentBody.innerHTML = it.printHtmlTree();
@@ -49,6 +49,12 @@ window.onload = function () {
 		const res = window.rt.getData();
 		console.log(res);
 		console.log(window.rt);
+	};
+
+	window.printTree = function () {
+		const html = window.rt.printTree();
+		console.log("html", html);
+		$contentBody.innerHTML = html;
 	};
 };
 
