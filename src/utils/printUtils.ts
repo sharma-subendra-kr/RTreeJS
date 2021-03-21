@@ -146,7 +146,21 @@ export const printTree = (root: any, length: any, height: any) => {
 		}"/><text dx="10" dy="5">height: ${index}</text></g>`;
 	});
 
-	return `<svg width="${WIDTH + 20 + 50}" height="${
-		WIDTH + 20
-	}"><g transform="translate(0, 0)">${legend}</g><g transform="translate(0, 50)">${html}</g></svg>`;
+	const text = data.reduce((acc: any, item: any) => {
+		return (
+			acc +
+			`<div style="display:flex;"><span style="flex: 1;">height: ${item.HEIGHT},</span><span style="flex: 1;">rect: x1: ${item.node.rect.x1},</span><span style="flex: 1;">x2: ${item.node.rect.x2},</span><span style="flex: 1;">y1: ${item.node.rect.y1},</span><span style="flex: 1;">y2: ${item.node.rect.y2}</span></div>`
+		);
+	}, "");
+
+	return `<svg width="${WIDTH + 20}" height="${
+		WIDTH + 20 + 50
+	}"><g width="${WIDTH}" height="${WIDTH}" transform="translate(0, 0)">${legend}</g>
+	<rect transform="translate(2, 48)" width="${WIDTH}" height="${WIDTH}" stroke="black" stroke-width="2" fill-opacity="0"/>
+	<g transform="translate(0, 50)">${html}</g></svg>
+	<p>height 0 is not an actual node, its just a rect surrounding all the rects in root node.</p>
+	<p>Non-leaf node have colours other then red.</p>
+	<p>Leaf node is always Red.</p>
+	<div style="display:flex; flex-direction: column; margin:16px;">${text}</div>
+	`;
 };
