@@ -111,7 +111,7 @@ export const printTree = (root: any, length: any, height: any) => {
 	const len = data.length;
 	for (let i = 0; i < len - 1; i++) {
 		if (data[i].HEIGHT < coloursMapLen) {
-			colours[data[i].HEIGHT] = coloursMap[i];
+			colours[data[i].HEIGHT] = coloursMap[data[i].HEIGHT];
 		} else {
 			colours[data[i].HEIGHT] = "black";
 		}
