@@ -33,11 +33,13 @@ window.onload = function () {
 	window.remove = function (obj, d) {
 		window.rt.remove(obj, d);
 		console.log(window.rt);
+		window.printTree();
 	};
 
 	window.insert = function (obj, d) {
 		window.rt.insert(obj, d);
 		console.log(window.rt);
+		window.printTree();
 	};
 
 	window.find = function (obj, exact, all, comp) {
