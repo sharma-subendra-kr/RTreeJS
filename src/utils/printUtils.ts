@@ -146,6 +146,10 @@ export const printTree = (root: any, length: any, height: any) => {
 		}"/><text dx="10" dy="5">height: ${index}</text></g>`;
 	});
 
+	data.sort((a: any, b: any) => {
+		return a.HEIGHT - b.HEIGHT;
+	});
+
 	const text = data.reduce((acc: any, item: any) => {
 		return (
 			acc +
