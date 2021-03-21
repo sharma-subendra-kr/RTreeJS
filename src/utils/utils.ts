@@ -66,6 +66,20 @@ export const isDuplicate = (
 	return false;
 };
 
+export const swap = (
+	rdArr: RectData[],
+	nodeArr: Node[],
+	li: number,
+	ri: number
+): void => {
+	const temp: RectData = rdArr[li];
+	const tempPtr: Node = nodeArr[li];
+	rdArr[li] = rdArr[ri];
+	nodeArr[li] = nodeArr[ri];
+	rdArr[ri] = temp;
+	nodeArr[ri] = tempPtr;
+};
+
 export const splitNode = (
 	top: Node = {
 		size: 0,
@@ -74,7 +88,8 @@ export const splitNode = (
 	},
 	rectData: RectData,
 	rectDataPtr: Node,
-	M: number
+	M: number,
+	m: number
 ): NodeSplitResult => {
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
 
@@ -94,19 +109,21 @@ export const splitNode = (
 		}
 	}
 
-	let temp = rdArr[0];
-	let tempPtr = nodeArr[0];
-	rdArr[0] = rdArr[lIndex];
-	nodeArr[0] = nodeArr[lIndex];
-	rdArr[lIndex] = temp;
-	nodeArr[lIndex] = tempPtr;
+	// let temp = rdArr[0];
+	// let tempPtr = nodeArr[0];
+	// rdArr[0] = rdArr[lIndex];
+	// nodeArr[0] = nodeArr[lIndex];
+	// rdArr[lIndex] = temp;
+	// nodeArr[lIndex] = tempPtr;
+	swap(rdArr, nodeArr, 0, lIndex);
 
-	temp = rdArr[M - 1];
-	tempPtr = nodeArr[M - 1];
-	rdArr[M - 1] = rdArr[rIndex];
-	nodeArr[M - 1] = nodeArr[rIndex];
-	rdArr[rIndex] = temp;
-	nodeArr[rIndex] = tempPtr;
+	// temp = rdArr[M - 1];
+	// tempPtr = nodeArr[M - 1];
+	// rdArr[M - 1] = rdArr[rIndex];
+	// nodeArr[M - 1] = nodeArr[rIndex];
+	// rdArr[rIndex] = temp;
+	// nodeArr[rIndex] = tempPtr;
+	swap(rdArr, nodeArr, M - 1, rIndex);
 
 	let lr: Rect = rdArr[0].rect; // left Rect
 	let rr: Rect = rdArr[M - 1].rect; // right Rect
@@ -145,12 +162,13 @@ export const splitNode = (
 		swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
 
 		if (swapLeft && swapRight) {
-			const temp: RectData = rdArr[li];
-			const tempPtr: Node = nodeArr[li];
-			rdArr[li] = rdArr[ri];
-			nodeArr[li] = nodeArr[ri];
-			rdArr[ri] = temp;
-			nodeArr[ri] = tempPtr;
+			// const temp: RectData = rdArr[li];
+			// const tempPtr: Node = nodeArr[li];
+			// rdArr[li] = rdArr[ri];
+			// nodeArr[li] = nodeArr[ri];
+			// rdArr[ri] = temp;
+			// nodeArr[ri] = tempPtr;
+			swap(rdArr, nodeArr, li, ri);
 			lr = rTempLeftRect;
 			leftArea = rTempLeftArea;
 			rr = lTempRightRect;
@@ -165,12 +183,24 @@ export const splitNode = (
 			li++;
 			ri--;
 		} else if (!swapLeft) {
-			lr = lTempLeftRect;
-			leftArea = lTempLeftArea;
+			if (lTempLeftArea > rTempLeftArea) {
+				swap(rdArr, nodeArr, li, ri);
+				lr = rTempLeftRect;
+				leftArea = rTempLeftArea;
+			} else {
+				lr = lTempLeftRect;
+				leftArea = lTempLeftArea;
+			}
 			li++;
 		} else {
-			rr = rTempRightRect;
-			rightArea = rTempRightArea;
+			if (rTempRightArea > lTempRightArea) {
+				swap(rdArr, nodeArr, li, ri);
+				rr = lTempRightRect;
+				rightArea = lTempRightArea;
+			} else {
+				rr = rTempRightRect;
+				rightArea = rTempRightArea;
+			}
 			ri--;
 		}
 	}

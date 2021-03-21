@@ -247,7 +247,8 @@ class RTreeIterative {
 					top,
 					rd,
 					undefined,
-					this.M
+					this.M,
+					this.m
 				);
 				splittedNodes = {
 					left: top,
@@ -284,7 +285,8 @@ class RTreeIterative {
 						top,
 						{ rect: crectR },
 						splittedNodes.right,
-						this.M
+						this.M,
+						this.m
 					);
 					splittedNodes = {
 						left: top,
