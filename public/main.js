@@ -15,7 +15,7 @@ window.onload = function () {
 		{ rect: { x1: 33, x2: 36, y1: 1, y2: 3 } },
 	];
 
-	window.rt = new RTreeJS.RTreesIterative({
+	window.rt = new RTreeJS.RTreeIterative({
 		// M: 3,
 		m: 2,
 		data: rawData,
@@ -41,6 +41,12 @@ window.onload = function () {
 
 	window.find = function (obj, exact, all, comp) {
 		const res = window.rt.find(obj, exact, all, comp);
+		console.log(res);
+		console.log(window.rt);
+	};
+
+	window.getData = function () {
+		const res = window.rt.getData();
 		console.log(res);
 		console.log(window.rt);
 	};

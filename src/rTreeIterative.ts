@@ -416,7 +416,9 @@ class RTreeIterative {
 		const st = new Stack();
 		const result = new Stack();
 
-		if (!this.root) {
+		if (!this.root && all) {
+			return [];
+		} else if (!this.root) {
 			return;
 		}
 
@@ -468,6 +470,39 @@ class RTreeIterative {
 				st.pop();
 			}
 			// else keep looking
+		}
+
+		return result.getData();
+	}
+
+	getData() {
+		if (!this.root) {
+			return [];
+		}
+
+		const st = new Stack();
+		const result = new Stack();
+
+		st.push({ node: this.root, ptr: -1 });
+
+		while (!st.isEmpty()) {
+			const topItem = st.peek();
+			const { node: top } = topItem;
+
+			if (top.pointers[0]) {
+				// traverse through internal nodes
+				if (topItem.ptr + 1 < top.size) {
+					st.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
+				} else {
+					st.pop();
+				}
+			} else {
+				// reached leaf node
+				for (let i = 0; i < top.size; i++) {
+					result.push(top.keys[i]);
+				}
+				st.pop();
+			}
 		}
 
 		return result.getData();
