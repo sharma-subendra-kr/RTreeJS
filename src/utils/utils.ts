@@ -378,6 +378,11 @@ export const merge = (
 		}
 	}
 
+	if (mergeIndex === -1) {
+		node.size = 0;
+		return;
+	}
+
 	node.keys[mergeIndex].rect = RECT;
 
 	const source: Node = node.pointers[ptr] || {
