@@ -408,7 +408,7 @@ class RTreeIterative {
 						const currRoot: Node = this.root;
 						this.root = currRoot!.pointers[0];
 						currRoot!.keys = [];
-						for (let i = 0; i < this.M; i++) {
+						for (let i = 0; i < this.M + 1; i++) {
 							currRoot!.pointers[i] = undefined;
 						}
 						this.height--;
