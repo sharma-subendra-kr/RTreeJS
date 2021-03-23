@@ -300,7 +300,7 @@ class RTreeIterative {
 							spRectData.rightSize
 						),
 					};
-					inserted = true;
+					// inserted = true;
 				}
 				st.pop();
 			} else {
@@ -380,7 +380,8 @@ class RTreeIterative {
 
 						if (top === this.root && top.size === 0) {
 							this.root = undefined;
-							this.height--;
+							this.height = 0;
+							this.length = 0;
 						}
 					}
 					st.pop();
@@ -401,17 +402,18 @@ class RTreeIterative {
 					merge(top, topItem.ptr, this.m);
 
 					if (top === this.root && top.size < 2) {
-						let iter = 0;
-						for (let i = 0; i < top.size; i++) {
-							for (let j = 0; j < top.pointers[i].size; j++) {
-								top.keys[iter++] = top.pointers[i].keys[j];
-							}
-						}
+						const currRoot: Node = this.root;
+						this.root = currRoot!.pointers[0];
+						currRoot!.keys = [];
 						for (let i = 0; i < this.M; i++) {
-							top.pointers[i] = undefined;
+							currRoot!.pointers[i] = undefined;
 						}
-						top.size = iter;
 						this.height--;
+						if (this.root!.size === 0) {
+							this.root = undefined;
+							this.height = 0;
+							this.length = 0;
+						}
 					}
 				}
 				st.pop();
