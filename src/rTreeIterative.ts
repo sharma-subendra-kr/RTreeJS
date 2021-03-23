@@ -479,7 +479,11 @@ class RTreeIterative {
 				// traverse through internal nodes
 				const start = topItem.ptr + 1;
 				for (let i = start; i < top.size; i++) {
-					if (doRectsOverlap(top.keys[i].rect, rect)) {
+					if (
+						exact && !all
+							? isRectInside(top.keys[i].rect, rect)
+							: doRectsOverlap(top.keys[i].rect, rect)
+					) {
 						topItem.ptr = i;
 						st.push({ node: top.pointers[i], ptr: -1 });
 						break;
