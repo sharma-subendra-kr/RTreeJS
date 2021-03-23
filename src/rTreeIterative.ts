@@ -410,6 +410,7 @@ class RTreeIterative {
 						}
 						this.height--;
 						if (this.root!.size === 0) {
+							// I think this is a special condition when M is 3 and m is 1
 							this.root = undefined;
 							this.height = 0;
 							this.length = 0;
