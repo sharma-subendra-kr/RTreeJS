@@ -118,7 +118,7 @@ class RTreeIterative {
 		if (this.M % 2 === 0) {
 			this.m = this.M / 2;
 		} else {
-			this.m = Math.ceil(this.M / 2) - 1;
+			this.m = Math.ceil(this.M / 2);
 		}
 
 		if (this.M < 2) {
@@ -167,8 +167,8 @@ class RTreeIterative {
 	): Node {
 		const node: Node = {
 			size: 0,
-			pointers: new Array(this.M),
-			keys: new Array(this.M),
+			pointers: new Array(this.M + 1),
+			keys: new Array(this.M + 1),
 		};
 		if (rd) {
 			node.keys[0] = rd;

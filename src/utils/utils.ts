@@ -98,6 +98,8 @@ export const splitNode = (
 	let min = Number.MAX_SAFE_INTEGER;
 	let max = 0;
 
+	rdArr[M] = rectData;
+	nodeArr[M] = rectDataPtr;
 	for (const [i, rd] of rdArr.entries()) {
 		if (rd.rect.x2 < min) {
 			min = rd.rect.x2;
@@ -110,13 +112,13 @@ export const splitNode = (
 	}
 
 	swap(rdArr, nodeArr, 0, lIndex);
-	swap(rdArr, nodeArr, M - 1, rIndex);
+	swap(rdArr, nodeArr, M, rIndex);
 
 	let lr: Rect = rdArr[0].rect; // left Rect
-	let rr: Rect = rdArr[M - 1].rect; // right Rect
+	let rr: Rect = rdArr[M].rect; // right Rect
 
 	let li = 1;
-	let ri = M - 2;
+	let ri = M - 1;
 	let swapLeft: boolean;
 	let swapRight: boolean;
 	let ilr: Rect; // ith left Rect
@@ -188,34 +190,18 @@ export const splitNode = (
 		ri--;
 	}
 
-	let pivot: number = m;
-	if (M % 2 === 1 && li === m + 1) {
-		pivot = li;
-	}
+	const pivot: number = m;
 	top.size = pivot;
 
-	const rRdArr: RectData[] = new Array(M); // right RectData Array
-	const rNodeArr: Node[] = new Array(M); // right Node Array
+	const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
+	const rNodeArr: Node[] = new Array(M + 1); // right Node Array
 	let iter = pivot;
 	let count = 0;
-	while (iter < M) {
+	while (iter < M + 1) {
 		rRdArr[count] = rdArr[iter];
 		rNodeArr[count] = nodeArr[iter];
 		count++;
 		iter++;
-	}
-
-	const la: number = getArea(getCombinedRect(rectData.rect, lr)) - leftArea;
-	const ra: number = getArea(getCombinedRect(rectData.rect, rr)) - rightArea;
-
-	if (la < ra) {
-		rdArr[top.size] = rectData;
-		nodeArr[top.size] = rectDataPtr;
-		top.size++;
-	} else {
-		rRdArr[count] = rectData;
-		rNodeArr[count] = rectDataPtr;
-		count++;
 	}
 
 	return {
