@@ -125,10 +125,13 @@ class RTreeIterative {
 			throw "Value of M cannot be less than 2";
 		}
 
+		// m >= 1 check is still retained instead of m >= 2 cuz
+		// code to handle this exists in "remove" function and I dont want to change this because of OCD
+		// Also I'm not removing support for M = 2 because  of OCD
 		if (
 			options?.m &&
 			Number.isInteger(options.m) &&
-			options.m <= this.M / 2 &&
+			options.m <= Math.ceil(this.M / 2) &&
 			options.m >= 1
 		) {
 			this.m = options.m;
