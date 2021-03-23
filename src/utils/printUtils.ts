@@ -102,9 +102,6 @@ const coloursMap = [
 export const printTree = (root: any, length: any, height: any) => {
 	const data = getPrintTreeData(root, length, height);
 	console.log("data", data);
-	if (!data.length) {
-		return "No Data";
-	}
 
 	const coloursMapLen = coloursMap.length;
 	const colours: any = {};
@@ -120,7 +117,7 @@ export const printTree = (root: any, length: any, height: any) => {
 
 	const WIDTH = 600;
 
-	const w = data[0].node.rect.x2 - 0;
+	const w = data[0]?.node.rect.x2 - 0;
 
 	const arr = data.map((item: any) => {
 		const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
