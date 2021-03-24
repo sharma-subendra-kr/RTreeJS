@@ -35,7 +35,6 @@ import {
 } from "./interfaces/interfaces";
 import {
 	getPos,
-	splitNode,
 	isDuplicate,
 	getPosToRemove,
 	removeRect,
@@ -43,6 +42,7 @@ import {
 	performBorrow,
 	merge,
 } from "./utils/utils";
+import { splitNode } from "./utils/splitNode";
 import {
 	getCombinedRectFromRects,
 	isRectInside,
