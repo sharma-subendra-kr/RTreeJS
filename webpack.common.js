@@ -40,14 +40,13 @@ const webpackBannerPlugin = new Webpack.BannerPlugin({
 	banner: fs.readFileSync("./license_header", "utf8"),
 	raw: true,
 });
-
 const CleanTerminalPlugin = require("clean-terminal-webpack-plugin");
 const cleanTerminalPlugin = new CleanTerminalPlugin();
 
 module.exports = {
 	entry: __dirname + "/src/index.ts",
 	optimization: {
-		minimize: process.env.MINIMIZE === "true" ? true : false,
+		minimize: process.env.MINIMIZE === "true",
 	},
 	output: {
 		publicPath: "assets",
