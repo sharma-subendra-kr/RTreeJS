@@ -156,7 +156,7 @@ export const splitNodeQuadratic = (
 	return getRightNode(top, rdArr, nodeArr, M, m);
 };
 
-export const splitNode = (
+export const splitNodeLinear = (
 	top: Node = {
 		size: 0,
 		keys: [],

@@ -42,7 +42,7 @@ import {
 	performBorrow,
 	merge,
 } from "./utils/utils";
-import { splitNode } from "./utils/splitNode";
+import { splitNodeQuadratic, splitNodeLinear } from "./utils/splitNode";
 import {
 	getCombinedRectFromRects,
 	isRectInside,
@@ -106,6 +106,14 @@ class RTreeIterative {
 	root: Node;
 	length: number;
 	height: number;
+	splitNode: (
+		top: Node,
+		rectData: RectData,
+		rectDataPtr: Node,
+		M: number,
+		m: number
+	) => any;
+
 	initialStackSize: number;
 	initialQueueSize: number;
 	queue: any;
@@ -137,6 +145,11 @@ class RTreeIterative {
 			this.m = options.m;
 		} else if (options?.m) {
 			throw "Can't hard set value of m for M, invalid value of m provided";
+		}
+
+		this.splitNode = splitNodeQuadratic;
+		if (options?.splitNode === "linear") {
+			this.splitNode = splitNodeLinear;
 		}
 
 		this.root = undefined;
@@ -249,7 +262,7 @@ class RTreeIterative {
 					continue;
 				}
 				// node splitting required
-				const spRectData: NodeSplitResult = splitNode(
+				const spRectData: NodeSplitResult = this.splitNode(
 					top,
 					rd,
 					undefined,
@@ -287,7 +300,7 @@ class RTreeIterative {
 					top.size++;
 					splittedNodes = undefined;
 				} else {
-					const spRectData: NodeSplitResult = splitNode(
+					const spRectData: NodeSplitResult = this.splitNode(
 						top,
 						{ rect: crectR },
 						splittedNodes.right,
