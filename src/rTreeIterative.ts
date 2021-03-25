@@ -35,7 +35,6 @@ import {
 } from "./interfaces/interfaces";
 import {
 	getPos,
-	splitNode,
 	isDuplicate,
 	getPosToRemove,
 	removeRect,
@@ -43,6 +42,7 @@ import {
 	performBorrow,
 	merge,
 } from "./utils/utils";
+import { splitNodeQuadratic, splitNodeLinear } from "./utils/splitNode";
 import {
 	getCombinedRectFromRects,
 	isRectInside,
@@ -106,6 +106,14 @@ class RTreeIterative {
 	root: Node;
 	length: number;
 	height: number;
+	splitNode: (
+		top: Node,
+		rectData: RectData,
+		rectDataPtr: Node,
+		M: number,
+		m: number
+	) => any;
+
 	initialStackSize: number;
 	initialQueueSize: number;
 	queue: any;
@@ -118,22 +126,30 @@ class RTreeIterative {
 		if (this.M % 2 === 0) {
 			this.m = this.M / 2;
 		} else {
-			this.m = Math.ceil(this.M / 2) - 1;
+			this.m = Math.ceil(this.M / 2);
 		}
 
 		if (this.M < 2) {
 			throw "Value of M cannot be less than 2";
 		}
 
+		// m >= 1 check is still retained instead of m >= 2 cuz
+		// code to handle this exists in "remove" function and I dont want to change this because of OCD
+		// Also I'm not removing support for M = 2 because  of OCD
 		if (
 			options?.m &&
 			Number.isInteger(options.m) &&
-			options.m <= this.M / 2 &&
+			options.m <= Math.ceil(this.M / 2) &&
 			options.m >= 1
 		) {
 			this.m = options.m;
 		} else if (options?.m) {
 			throw "Can't hard set value of m for M, invalid value of m provided";
+		}
+
+		this.splitNode = splitNodeQuadratic;
+		if (options?.splitNode === "linear") {
+			this.splitNode = splitNodeLinear;
 		}
 
 		this.root = undefined;
@@ -167,8 +183,8 @@ class RTreeIterative {
 	): Node {
 		const node: Node = {
 			size: 0,
-			pointers: new Array(this.M),
-			keys: new Array(this.M),
+			pointers: new Array(this.M + 1),
+			keys: new Array(this.M + 1),
 		};
 		if (rd) {
 			node.keys[0] = rd;
@@ -246,7 +262,7 @@ class RTreeIterative {
 					continue;
 				}
 				// node splitting required
-				const spRectData: NodeSplitResult = splitNode(
+				const spRectData: NodeSplitResult = this.splitNode(
 					top,
 					rd,
 					undefined,
@@ -284,7 +300,7 @@ class RTreeIterative {
 					top.size++;
 					splittedNodes = undefined;
 				} else {
-					const spRectData: NodeSplitResult = splitNode(
+					const spRectData: NodeSplitResult = this.splitNode(
 						top,
 						{ rect: crectR },
 						splittedNodes.right,
@@ -405,7 +421,7 @@ class RTreeIterative {
 						const currRoot: Node = this.root;
 						this.root = currRoot!.pointers[0];
 						currRoot!.keys = [];
-						for (let i = 0; i < this.M; i++) {
+						for (let i = 0; i < this.M + 1; i++) {
 							currRoot!.pointers[i] = undefined;
 						}
 						this.height--;
@@ -476,7 +492,11 @@ class RTreeIterative {
 				// traverse through internal nodes
 				const start = topItem.ptr + 1;
 				for (let i = start; i < top.size; i++) {
-					if (doRectsOverlap(top.keys[i].rect, rect)) {
+					if (
+						exact && !all
+							? isRectInside(top.keys[i].rect, rect)
+							: doRectsOverlap(top.keys[i].rect, rect)
+					) {
 						topItem.ptr = i;
 						st.push({ node: top.pointers[i], ptr: -1 });
 						break;

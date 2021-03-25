@@ -2,12 +2,12 @@ window.onload = function () {
 	console.log("onload");
 
 	var rawData = [
-		{ rect: { x1: 2, x2: 5, y1: 1, y2: 3 } },
-		{ rect: { x1: 5, x2: 8, y1: 1, y2: 3 } },
-		{ rect: { x1: 8, x2: 11, y1: 1, y2: 3 } },
-		{ rect: { x1: 11, x2: 15, y1: 1, y2: 3 } },
-		{ rect: { x1: 15, x2: 18, y1: 1, y2: 3 } },
-		{ rect: { x1: 18, x2: 21, y1: 1, y2: 3 } },
+		// { rect: { x1: 2, x2: 5, y1: 1, y2: 3 } },
+		// { rect: { x1: 5, x2: 8, y1: 1, y2: 3 } },
+		// { rect: { x1: 8, x2: 11, y1: 1, y2: 3 } },
+		// { rect: { x1: 11, x2: 15, y1: 1, y2: 3 } },
+		// { rect: { x1: 15, x2: 18, y1: 1, y2: 3 } },
+		// { rect: { x1: 18, x2: 21, y1: 1, y2: 3 } },
 		//
 		// { rect: { x1: 21, x2: 24, y1: 1, y2: 3 } },
 		// { rect: { x1: 24, x2: 27, y1: 1, y2: 3 } },
@@ -33,9 +33,10 @@ window.onload = function () {
 
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
-		M: 3,
+		M: 5,
 		// m: 2,
 		data: rawData,
+		splitNode: "linear",
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
 	});
