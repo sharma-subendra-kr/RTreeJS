@@ -236,6 +236,15 @@ const doRectsOverlap = (rectA, rectB) => {
     }
     return true;
 };
+const doRectsOverlapOrTouch = (rectA, rectB) => {
+    if (rectA.x1 > rectB.x2 ||
+        rectB.x1 > rectA.x2 ||
+        rectA.y1 > rectB.y2 ||
+        rectB.y1 > rectA.y2) {
+        return false;
+    }
+    return true;
+};
 
 // CONCATENATED MODULE: ./src/utils/utils.ts
 /*
@@ -1109,10 +1118,14 @@ class rTreeIterative_RTreeIterative {
      * @param  {()      =>   any}         comp  comperator function taken into account when exact is false
      * @return {any}             array of matching rectangles
      */
-    find(rect, exact = false, all = false, comp) {
-        return this._find(rect, exact, all, comp);
+    find(rect, exact = false, all = false, comp, allowTouching = true) {
+        let doesOverlap = doRectsOverlap;
+        if (allowTouching) {
+            doesOverlap = doRectsOverlapOrTouch;
+        }
+        return this._find(rect, exact, all, comp, doesOverlap);
     }
-    _find(rect, exact = false, all = false, comp) {
+    _find(rect, exact = false, all = false, comp, doesOverlap) {
         const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
         const result = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
         if (!this.root && all) {
@@ -1131,7 +1144,7 @@ class rTreeIterative_RTreeIterative {
                 for (let i = start; i < top.size; i++) {
                     if (exact && !all
                         ? isRectInside(top.keys[i].rect, rect)
-                        : doRectsOverlap(top.keys[i].rect, rect)) {
+                        : doesOverlap(top.keys[i].rect, rect)) {
                         topItem.ptr = i;
                         st.push({ node: top.pointers[i], ptr: -1 });
                         break;
@@ -1152,14 +1165,14 @@ class rTreeIterative_RTreeIterative {
                     }
                     else if (!all) {
                         // find overlapping rectangle
-                        if (doRectsOverlap(top.keys[i].rect, rect) &&
+                        if (doesOverlap(top.keys[i].rect, rect) &&
                             (comp ? comp(top.keys[i], rect) : true)) {
                             return top.keys[i];
                         }
                     }
                     else {
                         // all
-                        if (doRectsOverlap(top.keys[i].rect, rect) &&
+                        if (doesOverlap(top.keys[i].rect, rect) &&
                             (comp ? comp(top.keys[i], rect) : true)) {
                             result.push(top.keys[i]);
                         }
