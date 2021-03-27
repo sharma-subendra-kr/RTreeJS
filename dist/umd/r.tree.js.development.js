@@ -717,7 +717,6 @@ const coloursMap = [
     "olive",
 ];
 const printTree = (root, length, height) => {
-    var _a;
     const data = getPrintTreeData(root, length, height);
     console.log("data", data);
     const coloursMapLen = coloursMap.length;
@@ -732,13 +731,14 @@ const printTree = (root, length, height) => {
         }
     }
     colours[height] = "red";
-    const WIDTH = 600;
-    const w = ((_a = data[0]) === null || _a === void 0 ? void 0 : _a.node.rect.x2) - 0;
+    const WIDTH = 1000;
+    const w = Math.max(...data.map((o) => o.node.rect.x2));
+    const h = Math.max(...data.map((o) => o.node.rect.y2));
     const arr = data.map((item) => {
         const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
         const scaledX2 = (item.node.rect.x2 * WIDTH) / w - 4 * item.HEIGHT;
-        const scaledY1 = (item.node.rect.y1 * WIDTH) / w + 4 * item.HEIGHT;
-        const scaledY2 = (item.node.rect.y2 * WIDTH) / w - 4 * item.HEIGHT;
+        const scaledY1 = (item.node.rect.y1 * WIDTH) / h + 4 * item.HEIGHT;
+        const scaledY2 = (item.node.rect.y2 * WIDTH) / h - 4 * item.HEIGHT;
         return `<g transform="translate(${scaledX1}, ${scaledY1})">
 			<rect width="${scaledX2 - scaledX1}" height="${scaledY2 - scaledY1}" stroke="${colours[item.HEIGHT]}" stroke-width="2" fill-opacity="0"/>
 		</g>`;
