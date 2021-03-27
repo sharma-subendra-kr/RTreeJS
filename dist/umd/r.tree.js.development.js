@@ -1216,10 +1216,12 @@ class rTreeIterative_RTreeIterative {
     reset() {
         this.root = undefined;
         this.length = 0;
+        this.height = 0;
     }
     emptyTree() {
         this.root = undefined;
         this.length = 0;
+        this.height = 0;
     }
     printTree() {
         return printTree(this.root, this.length, this.height);
