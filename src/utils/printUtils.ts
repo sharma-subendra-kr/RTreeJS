@@ -115,7 +115,7 @@ export const printTree = (root: any, length: any, height: any) => {
 	}
 	colours[height] = "red";
 
-	const WIDTH = 600;
+	const WIDTH = 1000;
 
 	const w = Math.max(...data.map((o: any) => o.node.rect.x2));
 	const h = Math.max(...data.map((o: any) => o.node.rect.y2));
