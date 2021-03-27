@@ -117,8 +117,9 @@ class RTreeIterative {
 
 	initialStackSize: number;
 	initialQueueSize: number;
-	queue: any;
-	stack: any;
+	insertStack: any;
+	ptrStack: any;
+	resultStack: any;
 
 	constructor(options: Record<string, any>) {
 		this.options = options;
@@ -158,12 +159,13 @@ class RTreeIterative {
 		this.height = 0;
 
 		this.initialStackSize =
-			options?.data?.length * 2 || options?.initialStackSize || 500;
+			options?.data?.length * 2 || options?.initialStackSize || 100;
 		this.initialQueueSize =
-			options?.data?.length * 2 || options?.initialQueueSize || 500;
+			options?.data?.length * 2 || options?.initialQueueSize || 100;
 
-		this.queue = new Queue({ initialSize: this.initialQueueSize });
-		this.stack = new Stack({ initialSize: this.initialStackSize });
+		this.insertStack = new Stack({ initialSize: this.initialStackSize });
+		this.ptrStack = new Stack({ initialSize: this.initialStackSize });
+		this.resultStack = new Stack({ initialSize: this.initialStackSize });
 
 		if (Array.isArray(options?.data)) {
 			this.constructTree(options.data);
@@ -222,7 +224,7 @@ class RTreeIterative {
 		let inserted: boolean = false;
 		let splittedNodes: SplittedNodes;
 
-		const st = new Stack();
+		this.insertStack.empty();
 		if (this.root === undefined) {
 			// insert root
 			this.root = this.constructNode(rd);
@@ -231,10 +233,10 @@ class RTreeIterative {
 			return this.root;
 		}
 
-		st.push({ node: this.root, pos: -1 });
+		this.insertStack.push({ node: this.root, pos: -1 });
 
-		while (!st.isEmpty()) {
-			const topItem = st.peek();
+		while (!this.insertStack.isEmpty()) {
+			const topItem = this.insertStack.peek();
 			const top = topItem.node;
 
 			if (!inserted) {
@@ -242,7 +244,7 @@ class RTreeIterative {
 					// traverse through the internal node whose area increases the least
 					const POS = getPos(top.keys, rd.rect, top.size);
 					topItem.pos = POS;
-					st.push({ node: top.pointers[POS], pos: POS });
+					this.insertStack.push({ node: top.pointers[POS], pos: POS });
 					continue;
 				}
 
@@ -259,7 +261,7 @@ class RTreeIterative {
 					top.keys[top.size] = rd;
 					top.size++;
 					inserted = true;
-					st.pop();
+					this.insertStack.pop();
 					continue;
 				}
 				// node splitting required
@@ -281,7 +283,7 @@ class RTreeIterative {
 				};
 
 				inserted = true;
-				st.pop();
+				this.insertStack.pop();
 			} else if (splittedNodes) {
 				const crectL = getCombinedRectFromRects(
 					splittedNodes?.left?.keys || [],
@@ -319,7 +321,7 @@ class RTreeIterative {
 					};
 					// inserted = true;
 				}
-				st.pop();
+				this.insertStack.pop();
 			} else {
 				// condense
 				top.keys[topItem.pos] = {
@@ -328,7 +330,7 @@ class RTreeIterative {
 						top.pointers[topItem.pos].size
 					),
 				};
-				st.pop();
+				this.insertStack.pop();
 			}
 		}
 
@@ -361,16 +363,16 @@ class RTreeIterative {
 
 	_remove(rect: Rect): Node {
 		let deleted: boolean = false;
-		const st = new Stack();
+		this.ptrStack.empty();
 
 		if (!this.root) {
 			return;
 		}
 
-		st.push({ node: this.root, ptr: -1 });
+		this.ptrStack.push({ node: this.root, ptr: -1 });
 
-		while (!st.isEmpty()) {
-			const topItem = st.peek();
+		while (!this.ptrStack.isEmpty()) {
+			const topItem = this.ptrStack.peek();
 			const { node: top } = topItem;
 
 			if (!deleted) {
@@ -380,12 +382,12 @@ class RTreeIterative {
 					for (let i = start; i < top.size; i++) {
 						if (isRectInside(top.keys[i].rect, rect)) {
 							topItem.ptr = i;
-							st.push({ node: top.pointers[i], ptr: -1 });
+							this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
 							break;
 						}
 					}
 					if (topItem.ptr === start - 1) {
-						st.pop();
+						this.ptrStack.pop();
 					}
 				} else {
 					// reached leaf node
@@ -401,7 +403,7 @@ class RTreeIterative {
 							this.length = 0;
 						}
 					}
-					st.pop();
+					this.ptrStack.pop();
 				}
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
@@ -434,7 +436,7 @@ class RTreeIterative {
 						}
 					}
 				}
-				st.pop();
+				this.ptrStack.pop();
 			} else {
 				// condense upper rects
 				const crect = getCombinedRectFromRects(
@@ -442,7 +444,7 @@ class RTreeIterative {
 					top.pointers[topItem.ptr].size
 				);
 				top.keys[topItem.ptr] = { rect: crect };
-				st.pop();
+				this.ptrStack.pop();
 			}
 		}
 	}
@@ -481,8 +483,8 @@ class RTreeIterative {
 		comp: (rd: RectData, rect: Rect) => any,
 		doesOverlap: (rectA: Rect, rectB: Rect) => any
 	): any {
-		const st = new Stack();
-		const result = new Stack();
+		this.ptrStack.empty();
+		this.resultStack.empty();
 
 		if (!this.root && all) {
 			return [];
@@ -490,10 +492,10 @@ class RTreeIterative {
 			return;
 		}
 
-		st.push({ node: this.root, ptr: -1 });
+		this.ptrStack.push({ node: this.root, ptr: -1 });
 
-		while (!st.isEmpty()) {
-			const topItem = st.peek();
+		while (!this.ptrStack.isEmpty()) {
+			const topItem = this.ptrStack.peek();
 			const { node: top } = topItem;
 
 			if (top.pointers[0]) {
@@ -506,12 +508,12 @@ class RTreeIterative {
 							: doesOverlap(top.keys[i].rect, rect)
 					) {
 						topItem.ptr = i;
-						st.push({ node: top.pointers[i], ptr: -1 });
+						this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
 						break;
 					}
 				}
 				if (topItem.ptr === start - 1) {
-					st.pop();
+					this.ptrStack.pop();
 				}
 			} else {
 				// reached leaf node
@@ -535,16 +537,16 @@ class RTreeIterative {
 							doesOverlap(top.keys[i].rect, rect) &&
 							(comp ? comp(top.keys[i], rect) : true)
 						) {
-							result.push(top.keys[i]);
+							this.resultStack.push(top.keys[i]);
 						}
 					}
 				}
-				st.pop();
+				this.ptrStack.pop();
 			}
 			// else keep looking
 		}
 
-		return result.getData();
+		return this.resultStack.getData();
 	}
 
 	getData() {
@@ -552,32 +554,32 @@ class RTreeIterative {
 			return [];
 		}
 
-		const st = new Stack();
-		const result = new Stack();
+		this.ptrStack.empty();
+		this.resultStack.empty();
 
-		st.push({ node: this.root, ptr: -1 });
+		this.ptrStack.push({ node: this.root, ptr: -1 });
 
-		while (!st.isEmpty()) {
-			const topItem = st.peek();
+		while (!this.ptrStack.isEmpty()) {
+			const topItem = this.ptrStack.peek();
 			const { node: top } = topItem;
 
 			if (top.pointers[0]) {
 				// traverse through internal nodes
 				if (topItem.ptr + 1 < top.size) {
-					st.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
+					this.ptrStack.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
 				} else {
-					st.pop();
+					this.ptrStack.pop();
 				}
 			} else {
 				// reached leaf node
 				for (let i = 0; i < top.size; i++) {
-					result.push(top.keys[i]);
+					this.resultStack.push(top.keys[i]);
 				}
-				st.pop();
+				this.ptrStack.pop();
 			}
 		}
 
-		return result.getData();
+		return this.resultStack.getData();
 	}
 
 	reset() {
@@ -590,6 +592,24 @@ class RTreeIterative {
 		this.root = undefined;
 		this.length = 0;
 		this.height = 0;
+
+		const len = Math.max(
+			this.insertStack.stack.length,
+			this.ptrStack.length,
+			this.resultStack.length
+		);
+
+		for (let i = 0; i < len; i++) {
+			if (this.insertStack.stack[i]) {
+				this.insertStack.stack[i].node = undefined;
+			}
+			if (this.ptrStack.stack[i]) {
+				this.ptrStack.stack[i].node = undefined;
+			}
+			if (this.resultStack.stack[i]) {
+				this.resultStack.stack[i] = undefined;
+			}
+		}
 	}
 
 	printTree() {
