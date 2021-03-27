@@ -24,14 +24,14 @@ Written by Subendra Kumar Sharma.
 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("Stack"), require("Queue"));
+		module.exports = factory(require("Stack"));
 	else if(typeof define === 'function' && define.amd)
-		define(["Stack", "Queue"], factory);
+		define(["Stack"], factory);
 	else if(typeof exports === 'object')
-		exports["RTreeJS"] = factory(require("Stack"), require("Queue"));
+		exports["RTreeJS"] = factory(require("Stack"));
 	else
-		root["RTreeJS"] = factory(root["Stack"], root["Queue"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE__0__, __WEBPACK_EXTERNAL_MODULE__1__) {
+		root["RTreeJS"] = factory(root["Stack"]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE__0__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -115,7 +115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -126,18 +126,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -149,9 +143,6 @@ __webpack_require__.d(__webpack_exports__, "RTreeIterative", function() { return
 
 // EXTERNAL MODULE: external {"commonjs":"Stack","commonjs2":"Stack","amd":"Stack","root":"Stack"}
 var external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_ = __webpack_require__(0);
-
-// EXTERNAL MODULE: external {"commonjs":"Queue","commonjs2":"Queue","amd":"Queue","root":"Queue"}
-var external_commonjs_Queue_commonjs2_Queue_amd_Queue_root_Queue_ = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./src/rectUtils/rectUtils.ts
 /*
@@ -807,7 +798,6 @@ Written by Subendra Kumar Sharma.
 
 
 
-
 /*
     Properties of B-Tree:
     * Balanced m way tree
@@ -888,11 +878,12 @@ class rTreeIterative_RTreeIterative {
         this.length = 0;
         this.height = 0;
         this.initialStackSize =
-            ((_a = options === null || options === void 0 ? void 0 : options.data) === null || _a === void 0 ? void 0 : _a.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialStackSize) || 500;
+            ((_a = options === null || options === void 0 ? void 0 : options.data) === null || _a === void 0 ? void 0 : _a.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialStackSize) || 100;
         this.initialQueueSize =
-            ((_b = options === null || options === void 0 ? void 0 : options.data) === null || _b === void 0 ? void 0 : _b.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialQueueSize) || 500;
-        this.queue = new external_commonjs_Queue_commonjs2_Queue_amd_Queue_root_Queue_["ArrayQueue"]({ initialSize: this.initialQueueSize });
-        this.stack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
+            ((_b = options === null || options === void 0 ? void 0 : options.data) === null || _b === void 0 ? void 0 : _b.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialQueueSize) || 100;
+        this.insertStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
+        this.ptrStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
+        this.resultStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
         if (Array.isArray(options === null || options === void 0 ? void 0 : options.data)) {
             this.constructTree(options.data);
         }
@@ -939,7 +930,7 @@ class rTreeIterative_RTreeIterative {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         let inserted = false;
         let splittedNodes;
-        const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
+        this.insertStack.empty();
         if (this.root === undefined) {
             // insert root
             this.root = this.constructNode(rd);
@@ -947,16 +938,16 @@ class rTreeIterative_RTreeIterative {
             this.height++;
             return this.root;
         }
-        st.push({ node: this.root, pos: -1 });
-        while (!st.isEmpty()) {
-            const topItem = st.peek();
+        this.insertStack.push({ node: this.root, pos: -1 });
+        while (!this.insertStack.isEmpty()) {
+            const topItem = this.insertStack.peek();
             const top = topItem.node;
             if (!inserted) {
                 if (top === null || top === void 0 ? void 0 : top.pointers[0]) {
                     // traverse through the internal node whose area increases the least
                     const POS = getPos(top.keys, rd.rect, top.size);
                     topItem.pos = POS;
-                    st.push({ node: top.pointers[POS], pos: POS });
+                    this.insertStack.push({ node: top.pointers[POS], pos: POS });
                     continue;
                 }
                 // reached leaf node, now insert
@@ -969,7 +960,7 @@ class rTreeIterative_RTreeIterative {
                     top.keys[top.size] = rd;
                     top.size++;
                     inserted = true;
-                    st.pop();
+                    this.insertStack.pop();
                     continue;
                 }
                 // node splitting required
@@ -979,7 +970,7 @@ class rTreeIterative_RTreeIterative {
                     right: this.constructNode(undefined, spRectData.rightRd, spRectData.rptrs, spRectData.rightSize),
                 };
                 inserted = true;
-                st.pop();
+                this.insertStack.pop();
             }
             else if (splittedNodes) {
                 const crectL = getCombinedRectFromRects(((_a = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left) === null || _a === void 0 ? void 0 : _a.keys) || [], ((_b = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left) === null || _b === void 0 ? void 0 : _b.size) || 0);
@@ -1000,14 +991,14 @@ class rTreeIterative_RTreeIterative {
                     };
                     // inserted = true;
                 }
-                st.pop();
+                this.insertStack.pop();
             }
             else {
                 // condense
                 top.keys[topItem.pos] = {
                     rect: getCombinedRectFromRects(top.pointers[topItem.pos].keys, top.pointers[topItem.pos].size),
                 };
-                st.pop();
+                this.insertStack.pop();
             }
         }
         if (splittedNodes) {
@@ -1029,13 +1020,13 @@ class rTreeIterative_RTreeIterative {
     }
     _remove(rect) {
         let deleted = false;
-        const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
+        this.ptrStack.empty();
         if (!this.root) {
             return;
         }
-        st.push({ node: this.root, ptr: -1 });
-        while (!st.isEmpty()) {
-            const topItem = st.peek();
+        this.ptrStack.push({ node: this.root, ptr: -1 });
+        while (!this.ptrStack.isEmpty()) {
+            const topItem = this.ptrStack.peek();
             const { node: top } = topItem;
             if (!deleted) {
                 if (top.pointers[0]) {
@@ -1044,12 +1035,12 @@ class rTreeIterative_RTreeIterative {
                     for (let i = start; i < top.size; i++) {
                         if (isRectInside(top.keys[i].rect, rect)) {
                             topItem.ptr = i;
-                            st.push({ node: top.pointers[i], ptr: -1 });
+                            this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
                             break;
                         }
                     }
                     if (topItem.ptr === start - 1) {
-                        st.pop();
+                        this.ptrStack.pop();
                     }
                 }
                 else {
@@ -1065,7 +1056,7 @@ class rTreeIterative_RTreeIterative {
                             this.length = 0;
                         }
                     }
-                    st.pop();
+                    this.ptrStack.pop();
                 }
                 // else keep looking
             }
@@ -1096,13 +1087,13 @@ class rTreeIterative_RTreeIterative {
                         }
                     }
                 }
-                st.pop();
+                this.ptrStack.pop();
             }
             else {
                 // condense upper rects
                 const crect = getCombinedRectFromRects(top.pointers[topItem.ptr].keys, top.pointers[topItem.ptr].size);
                 top.keys[topItem.ptr] = { rect: crect };
-                st.pop();
+                this.ptrStack.pop();
             }
         }
     }
@@ -1126,17 +1117,17 @@ class rTreeIterative_RTreeIterative {
         return this._find(rect, exact, all, comp, doesOverlap);
     }
     _find(rect, exact = false, all = false, comp, doesOverlap) {
-        const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
-        const result = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
+        this.ptrStack.empty();
+        this.resultStack.empty();
         if (!this.root && all) {
             return [];
         }
         else if (!this.root) {
             return;
         }
-        st.push({ node: this.root, ptr: -1 });
-        while (!st.isEmpty()) {
-            const topItem = st.peek();
+        this.ptrStack.push({ node: this.root, ptr: -1 });
+        while (!this.ptrStack.isEmpty()) {
+            const topItem = this.ptrStack.peek();
             const { node: top } = topItem;
             if (top.pointers[0]) {
                 // traverse through internal nodes
@@ -1146,12 +1137,12 @@ class rTreeIterative_RTreeIterative {
                         ? isRectInside(top.keys[i].rect, rect)
                         : doesOverlap(top.keys[i].rect, rect)) {
                         topItem.ptr = i;
-                        st.push({ node: top.pointers[i], ptr: -1 });
+                        this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
                         break;
                     }
                 }
                 if (topItem.ptr === start - 1) {
-                    st.pop();
+                    this.ptrStack.pop();
                 }
             }
             else {
@@ -1174,44 +1165,44 @@ class rTreeIterative_RTreeIterative {
                         // all
                         if (doesOverlap(top.keys[i].rect, rect) &&
                             (comp ? comp(top.keys[i], rect) : true)) {
-                            result.push(top.keys[i]);
+                            this.resultStack.push(top.keys[i]);
                         }
                     }
                 }
-                st.pop();
+                this.ptrStack.pop();
             }
             // else keep looking
         }
-        return result.getData();
+        return this.resultStack.getData();
     }
     getData() {
         if (!this.root) {
             return [];
         }
-        const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
-        const result = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
-        st.push({ node: this.root, ptr: -1 });
-        while (!st.isEmpty()) {
-            const topItem = st.peek();
+        this.ptrStack.empty();
+        this.resultStack.empty();
+        this.ptrStack.push({ node: this.root, ptr: -1 });
+        while (!this.ptrStack.isEmpty()) {
+            const topItem = this.ptrStack.peek();
             const { node: top } = topItem;
             if (top.pointers[0]) {
                 // traverse through internal nodes
                 if (topItem.ptr + 1 < top.size) {
-                    st.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
+                    this.ptrStack.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
                 }
                 else {
-                    st.pop();
+                    this.ptrStack.pop();
                 }
             }
             else {
                 // reached leaf node
                 for (let i = 0; i < top.size; i++) {
-                    result.push(top.keys[i]);
+                    this.resultStack.push(top.keys[i]);
                 }
-                st.pop();
+                this.ptrStack.pop();
             }
         }
-        return result.getData();
+        return this.resultStack.getData();
     }
     reset() {
         this.root = undefined;
@@ -1222,6 +1213,18 @@ class rTreeIterative_RTreeIterative {
         this.root = undefined;
         this.length = 0;
         this.height = 0;
+        const len = Math.max(this.insertStack.stack.length, this.ptrStack.length, this.resultStack.length);
+        for (let i = 0; i < len; i++) {
+            if (this.insertStack.stack[i]) {
+                this.insertStack.stack[i].node = undefined;
+            }
+            if (this.ptrStack.stack[i]) {
+                this.ptrStack.stack[i].node = undefined;
+            }
+            if (this.resultStack.stack[i]) {
+                this.resultStack.stack[i] = undefined;
+            }
+        }
     }
     printTree() {
         return printTree(this.root, this.length, this.height);
@@ -1230,7 +1233,7 @@ class rTreeIterative_RTreeIterative {
 /* harmony default export */ var rTreeIterative = (rTreeIterative_RTreeIterative);
 
 // EXTERNAL MODULE: ./src/index.css
-var src = __webpack_require__(2);
+var src = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./src/index.ts
 /** @license RTreeJS
