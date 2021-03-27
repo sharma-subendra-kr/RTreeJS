@@ -583,11 +583,13 @@ class RTreeIterative {
 	reset() {
 		this.root = undefined;
 		this.length = 0;
+		this.height = 0;
 	}
 
 	emptyTree() {
 		this.root = undefined;
 		this.length = 0;
+		this.height = 0;
 	}
 
 	printTree() {
