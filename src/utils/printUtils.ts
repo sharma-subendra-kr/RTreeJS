@@ -122,9 +122,14 @@ export const printTree = (root: any, length: any, height: any) => {
 
 	const arr = data.map((item: any) => {
 		const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
-		const scaledX2 = (item.node.rect.x2 * WIDTH) / w - 4 * item.HEIGHT;
+		let scaledX2 = (item.node.rect.x2 * WIDTH) / w - 4 * item.HEIGHT;
+		scaledX2 =
+			scaledX2 > 4 * item.HEIGHT ? scaledX2 - 4 * item.HEIGHT : scaledX2;
 		const scaledY1 = (item.node.rect.y1 * WIDTH) / h + 4 * item.HEIGHT;
-		const scaledY2 = (item.node.rect.y2 * WIDTH) / h - 4 * item.HEIGHT;
+		let scaledY2 = (item.node.rect.y2 * WIDTH) / h - 4 * item.HEIGHT;
+		scaledY2 =
+			scaledY2 > 4 * item.HEIGHT ? scaledY2 - 4 * item.HEIGHT : scaledY2;
+
 		return `<g transform="translate(${scaledX1}, ${scaledY1})">
 			<rect width="${scaledX2 - scaledX1}" height="${scaledY2 - scaledY1}" stroke="${
 			colours[item.HEIGHT]
