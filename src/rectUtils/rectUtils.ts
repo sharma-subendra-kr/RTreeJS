@@ -102,3 +102,15 @@ export const doRectsOverlap = (rectA: Rect, rectB: Rect): boolean => {
 	}
 	return true;
 };
+
+export const doRectsOverlapOrTouch = (rectA: Rect, rectB: Rect): boolean => {
+	if (
+		rectA.x1 > rectB.x2 ||
+		rectB.x1 > rectA.x2 ||
+		rectA.y1 > rectB.y2 ||
+		rectB.y1 > rectA.y2
+	) {
+		return false;
+	}
+	return true;
+};

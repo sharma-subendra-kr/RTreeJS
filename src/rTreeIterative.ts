@@ -47,6 +47,7 @@ import {
 	getCombinedRectFromRects,
 	isRectInside,
 	doRectsOverlap,
+	doRectsOverlapOrTouch,
 	areRectsIdentical,
 } from "./rectUtils/rectUtils";
 import { printTree as printSVGTree } from "./utils/printUtils";
@@ -462,16 +463,23 @@ class RTreeIterative {
 		rect: Rect,
 		exact: boolean = false,
 		all: boolean = false,
-		comp: (rd: RectData, rect: Rect) => any
+		comp: (rd: RectData, rect: Rect) => any,
+		allowTouching: boolean = true
 	): any {
-		return this._find(rect, exact, all, comp);
+		let doesOverlap = doRectsOverlap;
+		if (allowTouching) {
+			doesOverlap = doRectsOverlapOrTouch;
+		}
+
+		return this._find(rect, exact, all, comp, doesOverlap);
 	}
 
 	_find(
 		rect: Rect,
 		exact: boolean = false,
 		all: boolean = false,
-		comp: (rd: RectData, rect: Rect) => any
+		comp: (rd: RectData, rect: Rect) => any,
+		doesOverlap: (rectA: Rect, rectB: Rect) => any
 	): any {
 		const st = new Stack();
 		const result = new Stack();
@@ -495,7 +503,7 @@ class RTreeIterative {
 					if (
 						exact && !all
 							? isRectInside(top.keys[i].rect, rect)
-							: doRectsOverlap(top.keys[i].rect, rect)
+							: doesOverlap(top.keys[i].rect, rect)
 					) {
 						topItem.ptr = i;
 						st.push({ node: top.pointers[i], ptr: -1 });
@@ -516,7 +524,7 @@ class RTreeIterative {
 					} else if (!all) {
 						// find overlapping rectangle
 						if (
-							doRectsOverlap(top.keys[i].rect, rect) &&
+							doesOverlap(top.keys[i].rect, rect) &&
 							(comp ? comp(top.keys[i], rect) : true)
 						) {
 							return top.keys[i];
@@ -524,7 +532,7 @@ class RTreeIterative {
 					} else {
 						// all
 						if (
-							doRectsOverlap(top.keys[i].rect, rect) &&
+							doesOverlap(top.keys[i].rect, rect) &&
 							(comp ? comp(top.keys[i], rect) : true)
 						) {
 							result.push(top.keys[i]);
