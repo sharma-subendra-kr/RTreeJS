@@ -743,8 +743,10 @@ const printTree = (root, length, height) => {
         let scaledY2 = (item.node.rect.y2 * WIDTH) / h;
         scaledY2 =
             scaledY2 > 4 * item.HEIGHT ? scaledY2 - 4 * item.HEIGHT : scaledY2;
+        const l = scaledX2 - scaledX1 > 0 ? scaledX2 - scaledX1 : 1;
+        const b = scaledY2 - scaledY1 > 0 ? scaledY2 - scaledY1 : 1;
         return `<g transform="translate(${scaledX1}, ${scaledY1})">
-			<rect width="${scaledX2 - scaledX1}" height="${scaledY2 - scaledY1}" stroke="${colours[item.HEIGHT]}" stroke-width="2" fill-opacity="0"/>
+			<rect width="${l}" height="${b}" stroke="${colours[item.HEIGHT]}" stroke-width="2" fill-opacity="0"/>
 		</g>`;
     });
     const html = arr.reduce((acc, current) => {
