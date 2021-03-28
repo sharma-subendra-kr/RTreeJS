@@ -29,13 +29,7 @@ import {
 	NodeSplitResult,
 	Node,
 } from "../interfaces/interfaces";
-import {
-	getAreaDiff,
-	getCombinedRect,
-	getArea,
-	areRectsIdentical,
-	getCombinedRectFromRects,
-} from "../rectUtils/rectUtils";
+import { getDiagonalLen, getCombinedRect } from "../rectUtils/rectUtils";
 
 export const swap = (
 	rdArr: RectData[],
@@ -96,7 +90,36 @@ export const getRightNode = (
 	M: number,
 	m: number
 ): NodeSplitResult => {
-	const pivot: number = m;
+	let pivot: number = m;
+
+	if (M % 2 === 0) {
+		let clRect: Rect = rdArr[0].rect;
+		let clDLen = getDiagonalLen(clRect);
+		let crRect: Rect = rdArr[m + 1].rect;
+		let crDLen = getDiagonalLen(crRect);
+
+		for (let i = 1; i < m; i++) {
+			clRect = getCombinedRect(clRect, rdArr[i].rect);
+			clDLen = getDiagonalLen(clRect);
+		}
+
+		for (let i = m + 2; i <= M; i++) {
+			crRect = getCombinedRect(crRect, rdArr[i].rect);
+			crDLen = getDiagonalLen(crRect);
+		}
+
+		const lIntegration: number = getDiagonalLen(
+			getCombinedRect(clRect, rdArr[m].rect)
+		);
+		const rIntegration: number = getDiagonalLen(
+			getCombinedRect(crRect, rdArr[m].rect)
+		);
+
+		if (lIntegration - clDLen < rIntegration - crDLen) {
+			pivot++;
+		}
+	}
+
 	top.size = pivot;
 
 	const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
@@ -133,20 +156,20 @@ export const splitNodeQuadratic = (
 	adjustHighLow(top, rectData, rectDataPtr, M);
 
 	const lr: Rect = rdArr[0].rect;
-	let MIN_AREA: number = Number.MAX_SAFE_INTEGER;
+	let MIN_LEN: number = Number.MAX_SAFE_INTEGER;
 	let index: number;
 	let count: number = 1;
 	let tlr: Rect;
-	let tla: number;
+	let tlDLen: number;
 	while (count < M + 1) {
-		MIN_AREA = Number.MAX_SAFE_INTEGER;
+		MIN_LEN = Number.MAX_SAFE_INTEGER;
 		index = count;
 		for (let i = count; i <= M; i++) {
 			tlr = getCombinedRect(lr, rdArr[i].rect);
-			tla = getArea(tlr);
-			if (tla < MIN_AREA) {
+			tlDLen = getDiagonalLen(tlr);
+			if (tlDLen < MIN_LEN) {
 				index = i;
-				MIN_AREA = tla;
+				MIN_LEN = tlDLen;
 			}
 		}
 		swap(rdArr, nodeArr, count, index);
@@ -180,71 +203,72 @@ export const splitNodeLinear = (
 	let swapRight: boolean;
 	let ilr: Rect; // ith left Rect
 	let irr: Rect; // ith right Rect
-	let leftArea: number = getArea(lr);
-	let rightArea: number = getArea(rr);
+	let leftDLen: number = getDiagonalLen(lr);
+	let rightDLen: number = getDiagonalLen(rr);
 	let lTempLeftRect: Rect;
 	let lTempRightRect: Rect;
 	let rTempLeftRect: Rect;
 	let rTempRightRect: Rect;
-	let lTempLeftArea: number;
-	let lTempRightArea: number;
-	let rTempLeftArea: number;
-	let rTempRightArea: number;
+	let lTempLeftDLen: number;
+	let lTempRightDLen: number;
+	let rTempLeftDLen: number;
+	let rTempRightDLen: number;
 
 	while (li <= ri) {
 		ilr = rdArr[li].rect;
 		irr = rdArr[ri].rect;
 
 		lTempLeftRect = getCombinedRect(ilr, lr);
-		lTempLeftArea = getArea(lTempLeftRect);
+		lTempLeftDLen = getDiagonalLen(lTempLeftRect);
 		lTempRightRect = getCombinedRect(ilr, rr);
-		lTempRightArea = getArea(lTempRightRect);
-		swapLeft = lTempLeftArea - leftArea > lTempRightArea - rightArea;
+		lTempRightDLen = getDiagonalLen(lTempRightRect);
+		swapLeft = lTempLeftDLen - leftDLen > lTempRightDLen - rightDLen;
 
 		rTempLeftRect = getCombinedRect(irr, lr);
-		rTempLeftArea = getArea(rTempLeftRect);
+		rTempLeftDLen = getDiagonalLen(rTempLeftRect);
 		rTempRightRect = getCombinedRect(irr, rr);
-		rTempRightArea = getArea(rTempRightRect);
-		swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
+		rTempRightDLen = getDiagonalLen(rTempRightRect);
+		swapRight = rTempRightDLen - rightDLen > rTempLeftDLen - leftDLen;
 
 		if (swapLeft && swapRight) {
 			swap(rdArr, nodeArr, li, ri);
 			lr = rTempLeftRect;
-			leftArea = rTempLeftArea;
+			leftDLen = rTempLeftDLen;
 			rr = lTempRightRect;
-			rightArea = lTempRightArea;
+			rightDLen = lTempRightDLen;
 			li++;
 			ri--;
 		} else if (!swapLeft && !swapRight) {
 			lr = lTempLeftRect;
-			leftArea = lTempLeftArea;
+			leftDLen = lTempLeftDLen;
 			rr = rTempRightRect;
-			rightArea = rTempRightArea;
+			rightDLen = rTempRightDLen;
 			li++;
 			ri--;
 		} else if (!swapLeft) {
-			if (lTempLeftArea > rTempLeftArea) {
+			if (lTempLeftDLen > rTempLeftDLen) {
 				swap(rdArr, nodeArr, li, ri);
 				lr = rTempLeftRect;
-				leftArea = rTempLeftArea;
+				leftDLen = rTempLeftDLen;
 			} else {
 				lr = lTempLeftRect;
-				leftArea = lTempLeftArea;
+				leftDLen = lTempLeftDLen;
 			}
 			li++;
-		} else {
-			if (rTempRightArea > lTempRightArea) {
+		} else if (!swapRight) {
+			if (rTempRightDLen > lTempRightDLen) {
 				swap(rdArr, nodeArr, li, ri);
 				rr = lTempRightRect;
-				rightArea = lTempRightArea;
+				rightDLen = lTempRightDLen;
 			} else {
 				rr = rTempRightRect;
-				rightArea = rTempRightArea;
+				rightDLen = rTempRightDLen;
 			}
 			ri--;
+		} else {
+			li++;
+			ri--;
 		}
-		li++;
-		ri--;
 	}
 
 	return getRightNode(top, rdArr, nodeArr, M, m);

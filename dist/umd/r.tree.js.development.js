@@ -170,6 +170,19 @@ Written by Subendra Kumar Sharma.
 
 */
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
+const getDiagonalLen = (rect) => {
+    return Math.sqrt(rect.x2 - rect.x1 + (rect.y2 - rect.y1));
+};
+const getDiagonalLenDiff = (rectA, rectB) => {
+    const aD = Math.sqrt(rectA.x2 - rectA.x1 + (rectA.y2 - rectA.y1));
+    const bD = Math.sqrt(rectB.x2 - rectB.x1 + (rectB.y2 - rectB.y1));
+    if (aD > bD) {
+        return aD - bD;
+    }
+    else {
+        return bD - aD;
+    }
+};
 const getArea = (rect) => {
     return (rect.x2 - rect.x1) * (rect.y2 - rect.y1);
 };
@@ -268,7 +281,7 @@ const getPos = (rdArr, rect, size) => {
     let index = 0;
     for (let i = 0; i < size; i++) {
         const rd = rdArr[i];
-        const diff = getAreaDiff(getCombinedRect(rd.rect, rect), rd.rect);
+        const diff = getDiagonalLenDiff(getCombinedRect(rd.rect, rect), rd.rect);
         if (diff < INCREASE) {
             INCREASE = diff;
             index = i;
@@ -308,39 +321,28 @@ const tryBorrow = (node = {
     keys: [],
     pointers: [],
 }, ptr, m) => {
-    var _a, _b, _c;
-    let MAX_AREA = 0;
-    let maxAreaIndex = -1;
-    let area;
+    let MIN_LEN = Number.MAX_SAFE_INTEGER;
+    let ptrIndex = -1;
+    let keyIndex = -1;
+    const ptrNodeRect = node.keys[ptr].rect;
     for (let i = 0; i < node.size; i++) {
-        if (i !== ptr && (((_a = node.pointers[i]) === null || _a === void 0 ? void 0 : _a.size) || -1) > m) {
-            area = getArea(node.keys[i].rect);
-            if (area > MAX_AREA) {
-                MAX_AREA = area;
-                maxAreaIndex = i;
+        if (i === ptr || node.pointers[i].size === m) {
+            continue;
+        }
+        const ptrkeys = node.pointers[i].keys;
+        const ptrSize = node.pointers[i].size;
+        for (let j = 0; j < ptrSize; j++) {
+            const rect = ptrkeys[j].rect;
+            const combinedDLen = getDiagonalLen(getCombinedRect(ptrNodeRect, rect));
+            if (combinedDLen < MIN_LEN) {
+                MIN_LEN = combinedDLen;
+                ptrIndex = i;
+                keyIndex = j;
             }
         }
     }
-    let idx = -1;
-    if (maxAreaIndex >= 0) {
-        let MIN_AREA = Number.MAX_SAFE_INTEGER * Number.MAX_SAFE_INTEGER;
-        const ptrArea = getArea(node.keys[ptr].rect);
-        let tempArea;
-        for (let i = 0; i < (((_b = node.pointers[maxAreaIndex]) === null || _b === void 0 ? void 0 : _b.size) || -1); i++) {
-            tempArea = getArea(getCombinedRect(((_c = node.pointers[maxAreaIndex]) === null || _c === void 0 ? void 0 : _c.keys[i].rect) || {
-                x1: Number.MAX_SAFE_INTEGER,
-                x2: Number.MAX_SAFE_INTEGER,
-                y1: Number.MAX_SAFE_INTEGER,
-                y2: Number.MAX_SAFE_INTEGER,
-            }, node.keys[ptr].rect));
-            if (Math.abs(tempArea - ptrArea) < MIN_AREA) {
-                idx = i;
-                MIN_AREA = tempArea;
-            }
-        }
-    }
-    if (idx >= 0) {
-        return { ptr: maxAreaIndex, ptrPtr: idx };
+    if (ptrIndex !== -1) {
+        return { ptr: ptrIndex, ptrPtr: keyIndex };
     }
 };
 const performBorrow = (node = {
@@ -382,16 +384,16 @@ const merge = (node = {
     pointers: [],
 }, ptr, m) => {
     let mergeIndex = -1;
-    let MIN_AREA = Number.MAX_SAFE_INTEGER;
+    let MIN_LEN = Number.MAX_SAFE_INTEGER;
     let RECT = { x1: -1, x2: -1, y1: -1, y2: -1 };
     for (let i = 0; i < node.size; i++) {
         if (i === ptr) {
             continue;
         }
         const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
-        const area = getArea(r);
-        if (area < MIN_AREA) {
-            MIN_AREA = area;
+        const dLen = getDiagonalLen(r);
+        if (dLen < MIN_LEN) {
+            MIN_LEN = dLen;
             RECT = r;
             mergeIndex = i;
         }
@@ -490,7 +492,26 @@ const getRightNode = (top = {
     keys: [],
     pointers: [],
 }, rdArr, nodeArr, M, m) => {
-    const pivot = m;
+    let pivot = m;
+    if (M % 2 === 0) {
+        let clRect = rdArr[0].rect;
+        let clDLen = getDiagonalLen(clRect);
+        let crRect = rdArr[m + 1].rect;
+        let crDLen = getDiagonalLen(crRect);
+        for (let i = 1; i < m; i++) {
+            clRect = getCombinedRect(clRect, rdArr[i].rect);
+            clDLen = getDiagonalLen(clRect);
+        }
+        for (let i = m + 2; i <= M; i++) {
+            crRect = getCombinedRect(crRect, rdArr[i].rect);
+            crDLen = getDiagonalLen(crRect);
+        }
+        const lIntegration = getDiagonalLen(getCombinedRect(clRect, rdArr[m].rect));
+        const rIntegration = getDiagonalLen(getCombinedRect(crRect, rdArr[m].rect));
+        if (lIntegration - clDLen < rIntegration - crDLen) {
+            pivot++;
+        }
+    }
     top.size = pivot;
     const rRdArr = new Array(M + 1); // right RectData Array
     const rNodeArr = new Array(M + 1); // right Node Array
@@ -516,20 +537,20 @@ const splitNodeQuadratic = (top = {
     const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
     adjustHighLow(top, rectData, rectDataPtr, M);
     const lr = rdArr[0].rect;
-    let MIN_AREA = Number.MAX_SAFE_INTEGER;
+    let MIN_LEN = Number.MAX_SAFE_INTEGER;
     let index;
     let count = 1;
     let tlr;
-    let tla;
+    let tlDLen;
     while (count < M + 1) {
-        MIN_AREA = Number.MAX_SAFE_INTEGER;
+        MIN_LEN = Number.MAX_SAFE_INTEGER;
         index = count;
         for (let i = count; i <= M; i++) {
             tlr = getCombinedRect(lr, rdArr[i].rect);
-            tla = getArea(tlr);
-            if (tla < MIN_AREA) {
+            tlDLen = getDiagonalLen(tlr);
+            if (tlDLen < MIN_LEN) {
                 index = i;
-                MIN_AREA = tla;
+                MIN_LEN = tlDLen;
             }
         }
         swap(rdArr, nodeArr, count, index);
@@ -552,72 +573,74 @@ const splitNodeLinear = (top = {
     let swapRight;
     let ilr; // ith left Rect
     let irr; // ith right Rect
-    let leftArea = getArea(lr);
-    let rightArea = getArea(rr);
+    let leftDLen = getDiagonalLen(lr);
+    let rightDLen = getDiagonalLen(rr);
     let lTempLeftRect;
     let lTempRightRect;
     let rTempLeftRect;
     let rTempRightRect;
-    let lTempLeftArea;
-    let lTempRightArea;
-    let rTempLeftArea;
-    let rTempRightArea;
+    let lTempLeftDLen;
+    let lTempRightDLen;
+    let rTempLeftDLen;
+    let rTempRightDLen;
     while (li <= ri) {
         ilr = rdArr[li].rect;
         irr = rdArr[ri].rect;
         lTempLeftRect = getCombinedRect(ilr, lr);
-        lTempLeftArea = getArea(lTempLeftRect);
+        lTempLeftDLen = getDiagonalLen(lTempLeftRect);
         lTempRightRect = getCombinedRect(ilr, rr);
-        lTempRightArea = getArea(lTempRightRect);
-        swapLeft = lTempLeftArea - leftArea > lTempRightArea - rightArea;
+        lTempRightDLen = getDiagonalLen(lTempRightRect);
+        swapLeft = lTempLeftDLen - leftDLen > lTempRightDLen - rightDLen;
         rTempLeftRect = getCombinedRect(irr, lr);
-        rTempLeftArea = getArea(rTempLeftRect);
+        rTempLeftDLen = getDiagonalLen(rTempLeftRect);
         rTempRightRect = getCombinedRect(irr, rr);
-        rTempRightArea = getArea(rTempRightRect);
-        swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
+        rTempRightDLen = getDiagonalLen(rTempRightRect);
+        swapRight = rTempRightDLen - rightDLen > rTempLeftDLen - leftDLen;
         if (swapLeft && swapRight) {
             swap(rdArr, nodeArr, li, ri);
             lr = rTempLeftRect;
-            leftArea = rTempLeftArea;
+            leftDLen = rTempLeftDLen;
             rr = lTempRightRect;
-            rightArea = lTempRightArea;
+            rightDLen = lTempRightDLen;
             li++;
             ri--;
         }
         else if (!swapLeft && !swapRight) {
             lr = lTempLeftRect;
-            leftArea = lTempLeftArea;
+            leftDLen = lTempLeftDLen;
             rr = rTempRightRect;
-            rightArea = rTempRightArea;
+            rightDLen = rTempRightDLen;
             li++;
             ri--;
         }
         else if (!swapLeft) {
-            if (lTempLeftArea > rTempLeftArea) {
+            if (lTempLeftDLen > rTempLeftDLen) {
                 swap(rdArr, nodeArr, li, ri);
                 lr = rTempLeftRect;
-                leftArea = rTempLeftArea;
+                leftDLen = rTempLeftDLen;
             }
             else {
                 lr = lTempLeftRect;
-                leftArea = lTempLeftArea;
+                leftDLen = lTempLeftDLen;
             }
             li++;
         }
-        else {
-            if (rTempRightArea > lTempRightArea) {
+        else if (!swapRight) {
+            if (rTempRightDLen > lTempRightDLen) {
                 swap(rdArr, nodeArr, li, ri);
                 rr = lTempRightRect;
-                rightArea = lTempRightArea;
+                rightDLen = lTempRightDLen;
             }
             else {
                 rr = rTempRightRect;
-                rightArea = rTempRightArea;
+                rightDLen = rTempRightDLen;
             }
             ri--;
         }
-        li++;
-        ri--;
+        else {
+            li++;
+            ri--;
+        }
     }
     return getRightNode(top, rdArr, nodeArr, M, m);
 };
@@ -950,7 +973,7 @@ class rTreeIterative_RTreeIterative {
             const top = topItem.node;
             if (!inserted) {
                 if (top === null || top === void 0 ? void 0 : top.pointers[0]) {
-                    // traverse through the internal node whose area increases the least
+                    // traverse through the internal node whose length increases the least
                     const POS = getPos(top.keys, rd.rect, top.size);
                     topItem.pos = POS;
                     this.insertStack.push({ node: top.pointers[POS], pos: POS });

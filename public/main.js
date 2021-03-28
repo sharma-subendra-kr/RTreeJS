@@ -24,7 +24,6 @@ window.onload = function () {
 		{ rect: { x1: 19, x2: 23, y1: 5, y2: 9 } },
 		{ rect: { x1: 21, x2: 25, y1: 3, y2: 6 } }, //	1
 		{ rect: { x1: 15, x2: 19, y1: 7, y2: 10 } }, //	2
-		{ rect: { x1: 15, x2: 19, y1: 7, y2: 10 } },
 		{ rect: { x1: 18, x2: 20, y1: 9, y2: 12 } },
 		{ rect: { x1: 14, x2: 19, y1: 11, y2: 15 } },
 		{ rect: { x1: 16, x2: 19, y1: 14, y2: 17 } },
@@ -33,7 +32,7 @@ window.onload = function () {
 
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
-		M: 5,
+		M: 4,
 		// m: 2,
 		data: rawData,
 		splitNode: "linear",

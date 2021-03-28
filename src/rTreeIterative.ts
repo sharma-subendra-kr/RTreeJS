@@ -241,7 +241,7 @@ class RTreeIterative {
 
 			if (!inserted) {
 				if (top?.pointers[0]) {
-					// traverse through the internal node whose area increases the least
+					// traverse through the internal node whose length increases the least
 					const POS = getPos(top.keys, rd.rect, top.size);
 					topItem.pos = POS;
 					this.insertStack.push({ node: top.pointers[POS], pos: POS });
