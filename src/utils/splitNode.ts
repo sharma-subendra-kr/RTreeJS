@@ -90,7 +90,36 @@ export const getRightNode = (
 	M: number,
 	m: number
 ): NodeSplitResult => {
-	const pivot: number = m;
+	let pivot: number = m;
+
+	if (M % 2 === 0) {
+		let clRect: Rect = rdArr[0].rect;
+		let clDLen = getDiagonalLen(clRect);
+		let crRect: Rect = rdArr[m + 1].rect;
+		let crDLen = getDiagonalLen(crRect);
+
+		for (let i = 1; i < m; i++) {
+			clRect = getCombinedRect(clRect, rdArr[i].rect);
+			clDLen = getDiagonalLen(clRect);
+		}
+
+		for (let i = m + 2; i <= M; i++) {
+			crRect = getCombinedRect(crRect, rdArr[i].rect);
+			crDLen = getDiagonalLen(crRect);
+		}
+
+		const lIntegration: number = getDiagonalLen(
+			getCombinedRect(clRect, rdArr[m].rect)
+		);
+		const rIntegration: number = getDiagonalLen(
+			getCombinedRect(crRect, rdArr[m].rect)
+		);
+
+		if (lIntegration - clDLen < rIntegration - crDLen) {
+			pivot++;
+		}
+	}
+
 	top.size = pivot;
 
 	const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
@@ -226,7 +255,7 @@ export const splitNodeLinear = (
 				leftDLen = lTempLeftDLen;
 			}
 			li++;
-		} else {
+		} else if (!swapRight) {
 			if (rTempRightDLen > lTempRightDLen) {
 				swap(rdArr, nodeArr, li, ri);
 				rr = lTempRightRect;
@@ -236,9 +265,10 @@ export const splitNodeLinear = (
 				rightDLen = rTempRightDLen;
 			}
 			ri--;
+		} else {
+			li++;
+			ri--;
 		}
-		li++;
-		ri--;
 	}
 
 	return getRightNode(top, rdArr, nodeArr, M, m);
