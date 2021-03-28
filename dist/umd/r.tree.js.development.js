@@ -357,7 +357,7 @@ const performBorrow = (node = {
         keys: [],
         pointers: [],
     };
-    const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
+    const lendKey = lenderNode.keys[borrow.ptrPtr];
     const lendNode = lenderNode.pointers[borrow.ptrPtr];
     for (let i = borrow.ptrPtr; i < lenderNode.size - 1; i++) {
         lenderNode.keys[i] = lenderNode.keys[i + 1];
@@ -371,7 +371,7 @@ const performBorrow = (node = {
         keys: [],
         pointers: [],
     };
-    borrowerNode.keys[borrowerSize] = { rect: lendRect };
+    borrowerNode.keys[borrowerSize] = lendKey;
     borrowerNode.pointers[borrowerSize] = lendNode;
     borrowerNode.size++;
     node.keys[ptr].rect = getCombinedRectFromRects(borrowerNode.keys, borrowerNode.size);
