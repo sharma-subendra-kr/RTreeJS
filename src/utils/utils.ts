@@ -30,9 +30,9 @@ import {
 	Node,
 } from "../interfaces/interfaces";
 import {
-	getAreaDiff,
+	getDiagonalLen,
+	getDiagonalLenDiff,
 	getCombinedRect,
-	getArea,
 	areRectsIdentical,
 	getCombinedRectFromRects,
 } from "../rectUtils/rectUtils";
@@ -43,7 +43,7 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 
 	for (let i = 0; i < size; i++) {
 		const rd = rdArr[i];
-		const diff = getAreaDiff(getCombinedRect(rd.rect, rect), rd.rect);
+		const diff = getDiagonalLenDiff(getCombinedRect(rd.rect, rect), rd.rect);
 		if (diff < INCREASE) {
 			INCREASE = diff;
 			index = i;
@@ -103,28 +103,28 @@ export const tryBorrow = (
 	ptr: number,
 	m: number
 ): any => {
-	let MAX_AREA: number = 0;
-	let maxAreaIndex: number = -1;
-	let area: number;
+	let MAX_LEN: number = 0;
+	let maxLenIndex: number = -1;
+	let len: number;
 	for (let i = 0; i < node.size; i++) {
 		if (i !== ptr && (node.pointers[i]?.size || -1) > m) {
-			area = getArea(node.keys[i].rect);
-			if (area > MAX_AREA) {
-				MAX_AREA = area;
-				maxAreaIndex = i;
+			len = getDiagonalLen(node.keys[i].rect);
+			if (len > MAX_LEN) {
+				MAX_LEN = len;
+				maxLenIndex = i;
 			}
 		}
 	}
 
 	let idx = -1;
-	if (maxAreaIndex >= 0) {
-		let MIN_AREA = Number.MAX_SAFE_INTEGER * Number.MAX_SAFE_INTEGER;
-		const ptrArea = getArea(node.keys[ptr].rect);
-		let tempArea: number;
-		for (let i = 0; i < (node.pointers[maxAreaIndex]?.size || -1); i++) {
-			tempArea = getArea(
+	if (maxLenIndex >= 0) {
+		let MIN_LEN = Number.MAX_SAFE_INTEGER * Number.MAX_SAFE_INTEGER;
+		const ptrLen = getDiagonalLen(node.keys[ptr].rect);
+		let tempLen: number;
+		for (let i = 0; i < (node.pointers[maxLenIndex]?.size || -1); i++) {
+			tempLen = getDiagonalLen(
 				getCombinedRect(
-					node.pointers[maxAreaIndex]?.keys[i].rect || {
+					node.pointers[maxLenIndex]?.keys[i].rect || {
 						x1: Number.MAX_SAFE_INTEGER,
 						x2: Number.MAX_SAFE_INTEGER,
 						y1: Number.MAX_SAFE_INTEGER,
@@ -133,15 +133,15 @@ export const tryBorrow = (
 					node.keys[ptr].rect
 				)
 			);
-			if (Math.abs(tempArea - ptrArea) < MIN_AREA) {
+			if (Math.abs(tempLen - ptrLen) < MIN_LEN) {
 				idx = i;
-				MIN_AREA = tempArea;
+				MIN_LEN = tempLen;
 			}
 		}
 	}
 
 	if (idx >= 0) {
-		return { ptr: maxAreaIndex, ptrPtr: idx };
+		return { ptr: maxLenIndex, ptrPtr: idx };
 	}
 };
 
@@ -203,7 +203,7 @@ export const merge = (
 	m: number
 ): void => {
 	let mergeIndex = -1;
-	let MIN_AREA = Number.MAX_SAFE_INTEGER;
+	let MIN_LEN = Number.MAX_SAFE_INTEGER;
 	let RECT: Rect = { x1: -1, x2: -1, y1: -1, y2: -1 };
 
 	for (let i = 0; i < node.size; i++) {
@@ -211,9 +211,9 @@ export const merge = (
 			continue;
 		}
 		const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
-		const area = getArea(r);
-		if (area < MIN_AREA) {
-			MIN_AREA = area;
+		const len = getDiagonalLen(r);
+		if (len < MIN_LEN) {
+			MIN_LEN = len;
 			RECT = r;
 			mergeIndex = i;
 		}

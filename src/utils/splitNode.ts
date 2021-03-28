@@ -29,13 +29,7 @@ import {
 	NodeSplitResult,
 	Node,
 } from "../interfaces/interfaces";
-import {
-	getAreaDiff,
-	getCombinedRect,
-	getArea,
-	areRectsIdentical,
-	getCombinedRectFromRects,
-} from "../rectUtils/rectUtils";
+import { getDiagonalLen, getCombinedRect } from "../rectUtils/rectUtils";
 
 export const swap = (
 	rdArr: RectData[],
@@ -133,20 +127,20 @@ export const splitNodeQuadratic = (
 	adjustHighLow(top, rectData, rectDataPtr, M);
 
 	const lr: Rect = rdArr[0].rect;
-	let MIN_AREA: number = Number.MAX_SAFE_INTEGER;
+	let MIN_LEN: number = Number.MAX_SAFE_INTEGER;
 	let index: number;
 	let count: number = 1;
 	let tlr: Rect;
-	let tla: number;
+	let tllen: number;
 	while (count < M + 1) {
-		MIN_AREA = Number.MAX_SAFE_INTEGER;
+		MIN_LEN = Number.MAX_SAFE_INTEGER;
 		index = count;
 		for (let i = count; i <= M; i++) {
 			tlr = getCombinedRect(lr, rdArr[i].rect);
-			tla = getArea(tlr);
-			if (tla < MIN_AREA) {
+			tllen = getDiagonalLen(tlr);
+			if (tllen < MIN_LEN) {
 				index = i;
-				MIN_AREA = tla;
+				MIN_LEN = tllen;
 			}
 		}
 		swap(rdArr, nodeArr, count, index);
@@ -180,66 +174,66 @@ export const splitNodeLinear = (
 	let swapRight: boolean;
 	let ilr: Rect; // ith left Rect
 	let irr: Rect; // ith right Rect
-	let leftArea: number = getArea(lr);
-	let rightArea: number = getArea(rr);
+	let leftLen: number = getDiagonalLen(lr);
+	let rightLen: number = getDiagonalLen(rr);
 	let lTempLeftRect: Rect;
 	let lTempRightRect: Rect;
 	let rTempLeftRect: Rect;
 	let rTempRightRect: Rect;
-	let lTempLeftArea: number;
-	let lTempRightArea: number;
-	let rTempLeftArea: number;
-	let rTempRightArea: number;
+	let lTempLeftLen: number;
+	let lTempRightLen: number;
+	let rTempLeftLen: number;
+	let rTempRightLen: number;
 
 	while (li <= ri) {
 		ilr = rdArr[li].rect;
 		irr = rdArr[ri].rect;
 
 		lTempLeftRect = getCombinedRect(ilr, lr);
-		lTempLeftArea = getArea(lTempLeftRect);
+		lTempLeftLen = getDiagonalLen(lTempLeftRect);
 		lTempRightRect = getCombinedRect(ilr, rr);
-		lTempRightArea = getArea(lTempRightRect);
-		swapLeft = lTempLeftArea - leftArea > lTempRightArea - rightArea;
+		lTempRightLen = getDiagonalLen(lTempRightRect);
+		swapLeft = lTempLeftLen - leftLen > lTempRightLen - rightLen;
 
 		rTempLeftRect = getCombinedRect(irr, lr);
-		rTempLeftArea = getArea(rTempLeftRect);
+		rTempLeftLen = getDiagonalLen(rTempLeftRect);
 		rTempRightRect = getCombinedRect(irr, rr);
-		rTempRightArea = getArea(rTempRightRect);
-		swapRight = rTempRightArea - rightArea > rTempLeftArea - leftArea;
+		rTempRightLen = getDiagonalLen(rTempRightRect);
+		swapRight = rTempRightLen - rightLen > rTempLeftLen - leftLen;
 
 		if (swapLeft && swapRight) {
 			swap(rdArr, nodeArr, li, ri);
 			lr = rTempLeftRect;
-			leftArea = rTempLeftArea;
+			leftLen = rTempLeftLen;
 			rr = lTempRightRect;
-			rightArea = lTempRightArea;
+			rightLen = lTempRightLen;
 			li++;
 			ri--;
 		} else if (!swapLeft && !swapRight) {
 			lr = lTempLeftRect;
-			leftArea = lTempLeftArea;
+			leftLen = lTempLeftLen;
 			rr = rTempRightRect;
-			rightArea = rTempRightArea;
+			rightLen = rTempRightLen;
 			li++;
 			ri--;
 		} else if (!swapLeft) {
-			if (lTempLeftArea > rTempLeftArea) {
+			if (lTempLeftLen > rTempLeftLen) {
 				swap(rdArr, nodeArr, li, ri);
 				lr = rTempLeftRect;
-				leftArea = rTempLeftArea;
+				leftLen = rTempLeftLen;
 			} else {
 				lr = lTempLeftRect;
-				leftArea = lTempLeftArea;
+				leftLen = lTempLeftLen;
 			}
 			li++;
 		} else {
-			if (rTempRightArea > lTempRightArea) {
+			if (rTempRightLen > lTempRightLen) {
 				swap(rdArr, nodeArr, li, ri);
 				rr = lTempRightRect;
-				rightArea = lTempRightArea;
+				rightLen = lTempRightLen;
 			} else {
 				rr = rTempRightRect;
-				rightArea = rTempRightArea;
+				rightLen = rTempRightLen;
 			}
 			ri--;
 		}
