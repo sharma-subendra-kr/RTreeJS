@@ -63,14 +63,15 @@ export const getCombinedRect = (rectA: Rect, rectB: Rect): Rect => {
 
 export const getCombinedRectFromRects = (
 	rdArr: RectData[],
-	size: number
+	size: number,
+	start: number = 0
 ): Rect => {
 	let x1 = SQRT_MAX_SAFE_INTEGER;
 	let x2 = 0;
 	let y1 = SQRT_MAX_SAFE_INTEGER;
 	let y2 = 0;
 
-	for (let i = 0; i < size; i++) {
+	for (let i = start; i < size; i++) {
 		const rd = rdArr[i];
 		x1 = rd.rect.x1 < x1 ? rd.rect.x1 : x1;
 		x2 = rd.rect.x2 > x2 ? rd.rect.x2 : x2;

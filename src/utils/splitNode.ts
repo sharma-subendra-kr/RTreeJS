@@ -29,7 +29,11 @@ import {
 	NodeSplitResult,
 	Node,
 } from "../interfaces/interfaces";
-import { getDiagonalLen, getCombinedRect } from "../rectUtils/rectUtils";
+import {
+	getDiagonalLen,
+	getCombinedRect,
+	getCombinedRectFromRects,
+} from "../rectUtils/rectUtils";
 
 export const swap = (
 	rdArr: RectData[],
@@ -79,6 +83,64 @@ export const adjustHighLow = (
 	swap(rdArr, nodeArr, M, rIndex);
 };
 
+export const adjustHighLowOnY = (
+	rdArr: RectData[],
+	nodeArr: Node[],
+	rectData: RectData,
+	rectDataPtr: Node,
+	M: number
+): any => {
+	let lIndex = 0;
+	let rIndex = 0;
+	let min = Number.MAX_SAFE_INTEGER;
+	let max = 0;
+
+	rdArr[M] = rectData;
+	nodeArr[M] = rectDataPtr;
+	for (const [i, rd] of rdArr.entries()) {
+		if (rd.rect.y2 < min) {
+			min = rd.rect.y2;
+			lIndex = i;
+		}
+		if (rd.rect.y1 > max) {
+			max = rd.rect.y1;
+			rIndex = i;
+		}
+	}
+
+	swap(rdArr, nodeArr, 0, lIndex);
+	swap(rdArr, nodeArr, M, rIndex);
+
+	return {
+		rdArrY: rdArr,
+		nodeArrY: nodeArr,
+	};
+};
+
+export const getRightSlice = (
+	rdArr: RectData[],
+	nodeArr: Node[],
+	pivot: number,
+	M: number
+): NodeSplitResult => {
+	const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
+	const rNodeArr: Node[] = new Array(M + 1); // right Node Array
+	let iter = pivot;
+	let count = 0;
+	while (iter < M + 1) {
+		rRdArr[count] = rdArr[iter];
+		rNodeArr[count] = nodeArr[iter];
+		count++;
+		iter++;
+	}
+
+	return {
+		rightRd: rRdArr,
+		rptrs: rNodeArr,
+		rightSize: count,
+	};
+};
+
 export const getRightNode = (
 	top: Node = {
 		size: 0,
@@ -122,22 +184,24 @@ export const getRightNode = (
 
 	top.size = pivot;
 
-	const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
-	const rNodeArr: Node[] = new Array(M + 1); // right Node Array
-	let iter = pivot;
-	let count = 0;
-	while (iter < M + 1) {
-		rRdArr[count] = rdArr[iter];
-		rNodeArr[count] = nodeArr[iter];
-		count++;
-		iter++;
-	}
+	// const rRdArr: RectData[] = new Array(M + 1); // right RectData Array
+	// const rNodeArr: Node[] = new Array(M + 1); // right Node Array
+	// let iter = pivot;
+	// let count = 0;
+	// while (iter < M + 1) {
+	// 	rRdArr[count] = rdArr[iter];
+	// 	rNodeArr[count] = nodeArr[iter];
+	// 	count++;
+	// 	iter++;
+	// }
 
-	return {
-		rightRd: rRdArr,
-		rptrs: rNodeArr,
-		rightSize: count,
-	};
+	// return {
+	// 	rightRd: rRdArr,
+	// 	rptrs: rNodeArr,
+	// 	rightSize: count,
+	// };
+
+	return getRightSlice(rdArr, nodeArr, pivot, M);
 };
 
 export const splitNodeQuadratic = (
@@ -152,18 +216,33 @@ export const splitNodeQuadratic = (
 	m: number
 ): NodeSplitResult => {
 	const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
-
+	const copyRdArr = [...rdArr];
+	const copyNodeArr = [...nodeArr];
 	adjustHighLow(top, rectData, rectDataPtr, M);
+	const { rdArrY, nodeArrY } = adjustHighLowOnY(
+		copyRdArr,
+		copyNodeArr,
+		rectData,
+		rectDataPtr,
+		M
+	);
 
 	const lr: Rect = rdArr[0].rect;
 	let MIN_LEN: number = Number.MAX_SAFE_INTEGER;
 	let index: number;
+
+	const lrY: Rect = rdArrY[0].rect;
+	let MIN_LEN_Y: number = Number.MAX_SAFE_INTEGER;
+	let indexY: number;
+
 	let count: number = 1;
 	let tlr: Rect;
 	let tlDLen: number;
 	while (count < M + 1) {
 		MIN_LEN = Number.MAX_SAFE_INTEGER;
+		MIN_LEN_Y = Number.MAX_SAFE_INTEGER;
 		index = count;
+		indexY = count;
 		for (let i = count; i <= M; i++) {
 			tlr = getCombinedRect(lr, rdArr[i].rect);
 			tlDLen = getDiagonalLen(tlr);
@@ -171,12 +250,90 @@ export const splitNodeQuadratic = (
 				index = i;
 				MIN_LEN = tlDLen;
 			}
+
+			tlr = getCombinedRect(lrY, rdArrY[i].rect);
+			tlDLen = getDiagonalLen(tlr);
+			if (tlDLen < MIN_LEN_Y) {
+				indexY = i;
+				MIN_LEN_Y = tlDLen;
+			}
 		}
 		swap(rdArr, nodeArr, count, index);
+		swap(rdArrY, nodeArrY, count, indexY);
 		count++;
 	}
 
-	return getRightNode(top, rdArr, nodeArr, M, m);
+	let pivot: number = m;
+	let pivotY: number = m;
+	if (M % 2 === 0) {
+		let clRect: Rect = rdArr[0].rect;
+		let clDLen = getDiagonalLen(clRect);
+		let crRect: Rect = rdArr[m + 1].rect;
+		let crDLen = getDiagonalLen(crRect);
+
+		let clRectY: Rect = rdArr[0].rect;
+		let clDLenY = getDiagonalLen(clRect);
+		let crRectY: Rect = rdArr[m + 1].rect;
+		let crDLenY = getDiagonalLen(crRect);
+
+		for (let i = 1; i < m; i++) {
+			clRect = getCombinedRect(clRect, rdArr[i].rect);
+			clDLen = getDiagonalLen(clRect);
+
+			clRectY = getCombinedRect(clRectY, rdArrY[i].rect);
+			clDLenY = getDiagonalLen(clRectY);
+		}
+
+		for (let i = m + 2; i <= M; i++) {
+			crRect = getCombinedRect(crRect, rdArr[i].rect);
+			crDLen = getDiagonalLen(crRect);
+
+			crRectY = getCombinedRect(crRectY, rdArrY[i].rect);
+			crDLenY = getDiagonalLen(crRectY);
+		}
+
+		const lIntegration: number = getDiagonalLen(
+			getCombinedRect(clRect, rdArr[m].rect)
+		);
+		const rIntegration: number = getDiagonalLen(
+			getCombinedRect(crRect, rdArr[m].rect)
+		);
+
+		const lIntegrationY: number = getDiagonalLen(
+			getCombinedRect(clRectY, rdArrY[m].rect)
+		);
+		const rIntegrationY: number = getDiagonalLen(
+			getCombinedRect(crRectY, rdArrY[m].rect)
+		);
+
+		if (lIntegration - clDLen < rIntegration - crDLen) {
+			pivot++;
+		}
+
+		if (lIntegrationY - clDLenY < rIntegrationY - crDLenY) {
+			pivotY++;
+		}
+	}
+
+	const lcDLen = getDiagonalLen(getCombinedRectFromRects(rdArr, pivot - 1));
+	const rcDLen = getDiagonalLen(getCombinedRectFromRects(rdArr, M + 1, pivot));
+
+	const lcDLenY = getDiagonalLen(getCombinedRectFromRects(rdArrY, pivotY - 1));
+	const rcDLenY = getDiagonalLen(
+		getCombinedRectFromRects(rdArrY, M + 1, pivotY)
+	);
+
+	if (lcDLen + rcDLen < lcDLenY + rcDLenY) {
+		top.size = pivot;
+		return getRightSlice(rdArr, nodeArr, pivot, M);
+	} else {
+		top.size = pivotY;
+		top.keys = rdArrY;
+		top.pointers = nodeArrY;
+		return getRightSlice(rdArrY, nodeArrY, pivotY, M);
+	}
+
+	// return getRightNode(top, rdArr, nodeArr, M, m);
 };
 
 export const splitNodeLinear = (
