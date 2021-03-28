@@ -131,16 +131,16 @@ export const splitNodeQuadratic = (
 	let index: number;
 	let count: number = 1;
 	let tlr: Rect;
-	let tllen: number;
+	let tlDLen: number;
 	while (count < M + 1) {
 		MIN_LEN = Number.MAX_SAFE_INTEGER;
 		index = count;
 		for (let i = count; i <= M; i++) {
 			tlr = getCombinedRect(lr, rdArr[i].rect);
-			tllen = getDiagonalLen(tlr);
-			if (tllen < MIN_LEN) {
+			tlDLen = getDiagonalLen(tlr);
+			if (tlDLen < MIN_LEN) {
 				index = i;
-				MIN_LEN = tllen;
+				MIN_LEN = tlDLen;
 			}
 		}
 		swap(rdArr, nodeArr, count, index);
@@ -174,66 +174,66 @@ export const splitNodeLinear = (
 	let swapRight: boolean;
 	let ilr: Rect; // ith left Rect
 	let irr: Rect; // ith right Rect
-	let leftLen: number = getDiagonalLen(lr);
-	let rightLen: number = getDiagonalLen(rr);
+	let leftDLen: number = getDiagonalLen(lr);
+	let rightDLen: number = getDiagonalLen(rr);
 	let lTempLeftRect: Rect;
 	let lTempRightRect: Rect;
 	let rTempLeftRect: Rect;
 	let rTempRightRect: Rect;
-	let lTempLeftLen: number;
-	let lTempRightLen: number;
-	let rTempLeftLen: number;
-	let rTempRightLen: number;
+	let lTempLeftDLen: number;
+	let lTempRightDLen: number;
+	let rTempLeftDLen: number;
+	let rTempRightDLen: number;
 
 	while (li <= ri) {
 		ilr = rdArr[li].rect;
 		irr = rdArr[ri].rect;
 
 		lTempLeftRect = getCombinedRect(ilr, lr);
-		lTempLeftLen = getDiagonalLen(lTempLeftRect);
+		lTempLeftDLen = getDiagonalLen(lTempLeftRect);
 		lTempRightRect = getCombinedRect(ilr, rr);
-		lTempRightLen = getDiagonalLen(lTempRightRect);
-		swapLeft = lTempLeftLen - leftLen > lTempRightLen - rightLen;
+		lTempRightDLen = getDiagonalLen(lTempRightRect);
+		swapLeft = lTempLeftDLen - leftDLen > lTempRightDLen - rightDLen;
 
 		rTempLeftRect = getCombinedRect(irr, lr);
-		rTempLeftLen = getDiagonalLen(rTempLeftRect);
+		rTempLeftDLen = getDiagonalLen(rTempLeftRect);
 		rTempRightRect = getCombinedRect(irr, rr);
-		rTempRightLen = getDiagonalLen(rTempRightRect);
-		swapRight = rTempRightLen - rightLen > rTempLeftLen - leftLen;
+		rTempRightDLen = getDiagonalLen(rTempRightRect);
+		swapRight = rTempRightDLen - rightDLen > rTempLeftDLen - leftDLen;
 
 		if (swapLeft && swapRight) {
 			swap(rdArr, nodeArr, li, ri);
 			lr = rTempLeftRect;
-			leftLen = rTempLeftLen;
+			leftDLen = rTempLeftDLen;
 			rr = lTempRightRect;
-			rightLen = lTempRightLen;
+			rightDLen = lTempRightDLen;
 			li++;
 			ri--;
 		} else if (!swapLeft && !swapRight) {
 			lr = lTempLeftRect;
-			leftLen = lTempLeftLen;
+			leftDLen = lTempLeftDLen;
 			rr = rTempRightRect;
-			rightLen = rTempRightLen;
+			rightDLen = rTempRightDLen;
 			li++;
 			ri--;
 		} else if (!swapLeft) {
-			if (lTempLeftLen > rTempLeftLen) {
+			if (lTempLeftDLen > rTempLeftDLen) {
 				swap(rdArr, nodeArr, li, ri);
 				lr = rTempLeftRect;
-				leftLen = rTempLeftLen;
+				leftDLen = rTempLeftDLen;
 			} else {
 				lr = lTempLeftRect;
-				leftLen = lTempLeftLen;
+				leftDLen = lTempLeftDLen;
 			}
 			li++;
 		} else {
-			if (rTempRightLen > lTempRightLen) {
+			if (rTempRightDLen > lTempRightDLen) {
 				swap(rdArr, nodeArr, li, ri);
 				rr = lTempRightRect;
-				rightLen = lTempRightLen;
+				rightDLen = lTempRightDLen;
 			} else {
 				rr = rTempRightRect;
-				rightLen = rTempRightLen;
+				rightDLen = rTempRightDLen;
 			}
 			ri--;
 		}
