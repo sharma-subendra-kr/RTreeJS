@@ -163,7 +163,7 @@ export const performBorrow = (
 		keys: [],
 		pointers: [],
 	};
-	const lendRect = lenderNode.keys[borrow.ptrPtr].rect;
+	const lendKey = lenderNode.keys[borrow.ptrPtr];
 	const lendNode: Node = lenderNode.pointers[borrow.ptrPtr];
 
 	for (let i = borrow.ptrPtr; i < lenderNode.size - 1; i++) {
@@ -183,7 +183,7 @@ export const performBorrow = (
 		keys: [],
 		pointers: [],
 	};
-	borrowerNode.keys[borrowerSize] = { rect: lendRect };
+	borrowerNode.keys[borrowerSize] = lendKey;
 	borrowerNode.pointers[borrowerSize] = lendNode;
 	borrowerNode.size++;
 
