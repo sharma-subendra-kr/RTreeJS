@@ -103,45 +103,30 @@ export const tryBorrow = (
 	ptr: number,
 	m: number
 ): any => {
-	let MAX_LEN: number = 0;
-	let maxDLenIndex: number = -1;
-	let dLen: number;
+	let MIN_LEN: number = Number.MAX_SAFE_INTEGER;
+	let ptrIndex: number = -1;
+	let keyIndex: number = -1;
+	const ptrNodeRect = node.keys[ptr].rect;
+
 	for (let i = 0; i < node.size; i++) {
-		if (i !== ptr && (node.pointers[i]?.size || -1) > m) {
-			dLen = getDiagonalLen(node.keys[i].rect);
-			if (dLen > MAX_LEN) {
-				MAX_LEN = dLen;
-				maxDLenIndex = i;
+		if (i === ptr || node.pointers[i]!.size === m) {
+			continue;
+		}
+		const ptrkeys = node.pointers[i]!.keys;
+		const ptrSize = node.pointers[i]!.size;
+		for (let j = 0; j < ptrSize; j++) {
+			const rect = ptrkeys[j].rect;
+			const combinedDLen = getDiagonalLen(getCombinedRect(ptrNodeRect, rect));
+			if (combinedDLen < MIN_LEN) {
+				MIN_LEN = combinedDLen;
+				ptrIndex = i;
+				keyIndex = j;
 			}
 		}
 	}
 
-	let idx = -1;
-	if (maxDLenIndex >= 0) {
-		let MIN_LEN = Number.MAX_SAFE_INTEGER * Number.MAX_SAFE_INTEGER;
-		const ptrDLen = getDiagonalLen(node.keys[ptr].rect);
-		let tempDLen: number;
-		for (let i = 0; i < (node.pointers[maxDLenIndex]?.size || -1); i++) {
-			tempDLen = getDiagonalLen(
-				getCombinedRect(
-					node.pointers[maxDLenIndex]?.keys[i].rect || {
-						x1: Number.MAX_SAFE_INTEGER,
-						x2: Number.MAX_SAFE_INTEGER,
-						y1: Number.MAX_SAFE_INTEGER,
-						y2: Number.MAX_SAFE_INTEGER,
-					},
-					node.keys[ptr].rect
-				)
-			);
-			if (Math.abs(tempDLen - ptrDLen) < MIN_LEN) {
-				idx = i;
-				MIN_LEN = tempDLen;
-			}
-		}
-	}
-
-	if (idx >= 0) {
-		return { ptr: maxDLenIndex, ptrPtr: idx };
+	if (ptrIndex !== -1) {
+		return { ptr: ptrIndex, ptrPtr: keyIndex };
 	}
 };
 
