@@ -22,14 +22,31 @@ window.onload = function () {
 		{ rect: { x1: 18, x2: 24, y1: 18, y2: 21 } },
 		{ rect: { x1: 16, x2: 21, y1: 14, y2: 19 } },
 		{ rect: { x1: 19, x2: 23, y1: 5, y2: 9 } },
-		// { rect: { x1: 21, x2: 25, y1: 3, y2: 6 } }, //	1
-		// { rect: { x1: 15, x2: 19, y1: 7, y2: 10 } }, //	2
-		// { rect: { x1: 18, x2: 20, y1: 9, y2: 12 } },
-		// { rect: { x1: 14, x2: 19, y1: 11, y2: 15 } },
-		// { rect: { x1: 16, x2: 19, y1: 14, y2: 17 } },
-		// { rect: { x1: 17, x2: 21, y1: 16, y2: 18 } },
+		{ rect: { x1: 21, x2: 25, y1: 3, y2: 6 } }, //	1
+		{ rect: { x1: 15, x2: 19, y1: 7, y2: 10 } }, //	2
+		{ rect: { x1: 18, x2: 20, y1: 9, y2: 12 } },
+		{ rect: { x1: 14, x2: 19, y1: 11, y2: 15 } },
+		{ rect: { x1: 16, x2: 19, y1: 14, y2: 17 } },
+		{ rect: { x1: 17, x2: 21, y1: 16, y2: 18 } },
 	];
 
+	// var rawData = new Array(20).fill(0).map((o) => {
+	// 	return {
+	// 		// rect: {
+	// 		// 	x1: Math.trunc(Math.random() * 10),
+	// 		// 	x2: Math.trunc(Math.random() * 10),
+	// 		// 	y1: Math.trunc(Math.random() * 10),
+	// 		// 	y2: Math.trunc(Math.random() * 10),
+	// 		// },
+	// 		rect: {
+	// 			x1: Math.random() * 10,
+	// 			x2: Math.random() * 10,
+	// 			y1: Math.random() * 10,
+	// 			y2: Math.random() * 10,
+	// 		},
+	// 	};
+	// });
+	// console.log(rawData);
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
 		M: 4,
