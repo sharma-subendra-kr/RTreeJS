@@ -549,7 +549,7 @@ class RTreeIterative {
 		return this.resultStack.getData();
 	}
 
-	getData() {
+	getData(allNodes: boolean = false) {
 		if (!this.root) {
 			return [];
 		}
@@ -567,6 +567,9 @@ class RTreeIterative {
 				// traverse through internal nodes
 				if (topItem.ptr + 1 < top.size) {
 					this.ptrStack.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
+					if (allNodes) {
+						this.resultStack.push(top.keys[topItem.ptr]);
+					}
 				} else {
 					this.ptrStack.pop();
 				}
