@@ -171,11 +171,11 @@ Written by Subendra Kumar Sharma.
 */
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
 const getDiagonalLen = (rect) => {
-    return Math.sqrt(rect.x2 - rect.x1 + (rect.y2 - rect.y1));
+    return Math.sqrt(Math.pow(rect.x2 - rect.x1, 2) + Math.pow(rect.y2 - rect.y1, 2));
 };
 const getDiagonalLenDiff = (rectA, rectB) => {
-    const aD = Math.sqrt(rectA.x2 - rectA.x1 + (rectA.y2 - rectA.y1));
-    const bD = Math.sqrt(rectB.x2 - rectB.x1 + (rectB.y2 - rectB.y1));
+    const aD = Math.sqrt(Math.pow(rectA.x2 - rectA.x1, 2) + Math.pow(rectA.y2 - rectA.y1, 2));
+    const bD = Math.sqrt(Math.pow(rectB.x2 - rectB.x1, 2) + Math.pow(rectB.y2 - rectB.y1, 2));
     if (aD > bD) {
         return aD - bD;
     }
