@@ -545,8 +545,9 @@ class RTreeIterative {
 			}
 			// else keep looking
 		}
-
-		return this.resultStack.getData();
+		if (all) {
+			return this.resultStack.getData();
+		}
 	}
 
 	getData(allNodes: boolean = false) {
