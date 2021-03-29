@@ -28,21 +28,19 @@ import { Rect, RectData } from "../interfaces/interfaces";
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
 
 export const getDiagonalLen = (rect: Rect): number => {
-	return Math.sqrt(
+	return (
 		(rect.x2 - rect.x1) * (rect.x2 - rect.x1) +
-			(rect.y2 - rect.y1) * (rect.y2 - rect.y1)
+		(rect.y2 - rect.y1) * (rect.y2 - rect.y1)
 	);
 };
 
 export const getDiagonalLenDiff = (rectA: Rect, rectB: Rect): number => {
-	const aD = Math.sqrt(
+	const aD =
 		(rectA.x2 - rectA.x1) * (rectA.x2 - rectA.x1) +
-			(rectA.y2 - rectA.y1) * (rectA.y2 - rectA.y1)
-	);
-	const bD = Math.sqrt(
+		(rectA.y2 - rectA.y1) * (rectA.y2 - rectA.y1);
+	const bD =
 		(rectB.x2 - rectB.x1) * (rectB.x2 - rectB.x1) +
-			(rectB.y2 - rectB.y1) * (rectB.y2 - rectB.y1)
-	);
+		(rectB.y2 - rectB.y1) * (rectB.y2 - rectB.y1);
 	if (aD > bD) {
 		return aD - bD;
 	} else {
