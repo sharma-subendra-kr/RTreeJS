@@ -1202,9 +1202,11 @@ class rTreeIterative_RTreeIterative {
             }
             // else keep looking
         }
-        return this.resultStack.getData();
+        if (all) {
+            return this.resultStack.getData();
+        }
     }
-    getData() {
+    getData(allNodes = false) {
         if (!this.root) {
             return [];
         }
@@ -1218,6 +1220,9 @@ class rTreeIterative_RTreeIterative {
                 // traverse through internal nodes
                 if (topItem.ptr + 1 < top.size) {
                     this.ptrStack.push({ node: top.pointers[++topItem.ptr], ptr: -1 });
+                    if (allNodes) {
+                        this.resultStack.push(top.keys[topItem.ptr]);
+                    }
                 }
                 else {
                     this.ptrStack.pop();
