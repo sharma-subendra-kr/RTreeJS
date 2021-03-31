@@ -73,9 +73,9 @@ export const getCombinedRectFromRects = (
 	size: number,
 	start: number = 0
 ): Rect => {
-	let x1 = SQRT_MAX_SAFE_INTEGER;
+	let x1 = Number.MAX_SAFE_INTEGER;
 	let x2 = 0;
-	let y1 = SQRT_MAX_SAFE_INTEGER;
+	let y1 = Number.MAX_SAFE_INTEGER;
 	let y2 = 0;
 
 	for (let i = start; i < size; i++) {
