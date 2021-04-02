@@ -28,12 +28,19 @@ import { Rect, RectData } from "../interfaces/interfaces";
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
 
 export const getDiagonalLen = (rect: Rect): number => {
-	return Math.sqrt(rect.x2 - rect.x1 + (rect.y2 - rect.y1));
+	return (
+		(rect.x2 - rect.x1) * (rect.x2 - rect.x1) +
+		(rect.y2 - rect.y1) * (rect.y2 - rect.y1)
+	);
 };
 
 export const getDiagonalLenDiff = (rectA: Rect, rectB: Rect): number => {
-	const aD = Math.sqrt(rectA.x2 - rectA.x1 + (rectA.y2 - rectA.y1));
-	const bD = Math.sqrt(rectB.x2 - rectB.x1 + (rectB.y2 - rectB.y1));
+	const aD =
+		(rectA.x2 - rectA.x1) * (rectA.x2 - rectA.x1) +
+		(rectA.y2 - rectA.y1) * (rectA.y2 - rectA.y1);
+	const bD =
+		(rectB.x2 - rectB.x1) * (rectB.x2 - rectB.x1) +
+		(rectB.y2 - rectB.y1) * (rectB.y2 - rectB.y1);
 	if (aD > bD) {
 		return aD - bD;
 	} else {
@@ -65,9 +72,9 @@ export const getCombinedRectFromRects = (
 	rdArr: RectData[],
 	size: number
 ): Rect => {
-	let x1 = SQRT_MAX_SAFE_INTEGER;
+	let x1 = Number.MAX_SAFE_INTEGER;
 	let x2 = 0;
-	let y1 = SQRT_MAX_SAFE_INTEGER;
+	let y1 = Number.MAX_SAFE_INTEGER;
 	let y2 = 0;
 
 	for (let i = 0; i < size; i++) {
