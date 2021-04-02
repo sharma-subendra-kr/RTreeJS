@@ -117,8 +117,14 @@ export const printTree = (root: any, length: any, height: any) => {
 
 	const WIDTH = 1000;
 
-	const w = Math.max(...data.map((o: any) => o.node.rect.x2));
-	const h = Math.max(...data.map((o: any) => o.node.rect.y2));
+	let w = 0;
+	data.forEach((o: any) => {
+		w = o.node.rect.x2 > w ? o.node.rect.x2 : w;
+	});
+	let h = 0;
+	data.forEach((o: any) => {
+		h = o.node.rect.y2 > h ? o.node.rect.y2 : h;
+	});
 
 	const arr = data.map((item: any) => {
 		const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
