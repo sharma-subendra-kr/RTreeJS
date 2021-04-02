@@ -171,11 +171,17 @@ Written by Subendra Kumar Sharma.
 */
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
 const getDiagonalLen = (rect) => {
-    return rect.x2 - rect.x1 + (rect.y2 - rect.y1);
+    // return rect.x2 - rect.x1 + (rect.y2 - rect.y1);
+    return ((rect.x2 - rect.x1) * (rect.x2 - rect.x1) +
+        (rect.y2 - rect.y1) * (rect.y2 - rect.y1));
 };
 const getDiagonalLenDiff = (rectA, rectB) => {
-    const aD = rectA.x2 - rectA.x1 + (rectA.y2 - rectA.y1);
-    const bD = rectB.x2 - rectB.x1 + (rectB.y2 - rectB.y1);
+    // const aD = rectA.x2 - rectA.x1 + (rectA.y2 - rectA.y1);
+    // const bD = rectB.x2 - rectB.x1 + (rectB.y2 - rectB.y1);
+    const aD = (rectA.x2 - rectA.x1) * (rectA.x2 - rectA.x1) +
+        (rectA.y2 - rectA.y1) * (rectA.y2 - rectA.y1);
+    const bD = (rectB.x2 - rectB.x1) * (rectB.x2 - rectB.x1) +
+        (rectB.y2 - rectB.y1) * (rectB.y2 - rectB.y1);
     if (aD > bD) {
         return aD - bD;
     }
@@ -200,9 +206,9 @@ const getCombinedRect = (rectA, rectB) => {
     };
 };
 const getCombinedRectFromRects = (rdArr, size, start = 0) => {
-    let x1 = SQRT_MAX_SAFE_INTEGER;
+    let x1 = Number.MAX_SAFE_INTEGER;
     let x2 = 0;
-    let y1 = SQRT_MAX_SAFE_INTEGER;
+    let y1 = Number.MAX_SAFE_INTEGER;
     let y2 = 0;
     for (let i = start; i < size; i++) {
         const rd = rdArr[i];
@@ -860,8 +866,14 @@ const printTree = (root, length, height) => {
     }
     colours[height] = "red";
     const WIDTH = 1000;
-    const w = Math.max(...data.map((o) => o.node.rect.x2));
-    const h = Math.max(...data.map((o) => o.node.rect.y2));
+    let w = 0;
+    data.forEach((o) => {
+        w = o.node.rect.x2 > w ? o.node.rect.x2 : w;
+    });
+    let h = 0;
+    data.forEach((o) => {
+        h = o.node.rect.y2 > h ? o.node.rect.y2 : h;
+    });
     const arr = data.map((item) => {
         const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
         let scaledX2 = (item.node.rect.x2 * WIDTH) / w;
