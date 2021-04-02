@@ -30,15 +30,18 @@ window.onload = function () {
 		{ rect: { x1: 17, x2: 21, y1: 16, y2: 18 } },
 	];
 
+	const p = performance.now();
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
 		M: 4,
 		// m: 2,
 		data: rawData,
-		splitNode: "linear",
+		// splitNode: "linear",
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
 	});
+	console.log(performance.now() - p);
+
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
 
