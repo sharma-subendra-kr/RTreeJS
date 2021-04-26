@@ -45,7 +45,7 @@ window.onload = function () {
 	const p = performance.now();
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
-		M: 4,
+		M: 16,
 		// m: 2,
 		data: rawData,
 		// splitNode: "linear",
@@ -69,6 +69,16 @@ window.onload = function () {
 	// );
 	// console.log("search time : ", performance.now() - pf);
 	// console.log(f.length);
+
+	// const pr = performance.now();
+	// let count = 0;
+	// while (count < 1000) {
+	// 	const rect = rawData[Math.trunc(Math.random() * 1000000)];
+	// 	const r = window.rt.remove(rect);
+	// 	count++;
+	// }
+	// console.log("remove time : ", performance.now() - pr);
+	// console.log("rt.length : ", rt.length);
 
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
