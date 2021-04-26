@@ -54,7 +54,7 @@ window.onload = function () {
 	});
 	console.log("load time : ", performance.now() - p);
 
-	// const pf = performance.now();
+	// const pfa = performance.now();
 	// const x1 = Math.trunc(Math.random() * 10000);
 	// const y1 = Math.trunc(Math.random() * 10000);
 	// const f = window.rt.find(
@@ -67,8 +67,22 @@ window.onload = function () {
 	// 	false,
 	// 	true
 	// );
-	// console.log("search time : ", performance.now() - pf);
+	// console.log("find all time : ", performance.now() - pfa);
 	// console.log(f.length);
+
+	// const pfe = performance.now();
+	// for (let i = 0; i < 1000; i++) {
+	// 	const rect = rawData[Math.trunc(Math.random() * 1000000)];
+	// 	const r = window.rt.find(rect, true);
+	// }
+	// console.log("find exact time : ", performance.now() - pfe);
+
+	// const pfo = performance.now();
+	// for (let i = 0; i < 1000; i++) {
+	// 	const rect = rawData[Math.trunc(Math.random() * 1000000)];
+	// 	const r = window.rt.find(rect);
+	// }
+	// console.log("find overlap time : ", performance.now() - pfo);
 
 	// const pr = performance.now();
 	// let count = 0;
