@@ -45,7 +45,7 @@ window.onload = function () {
 	const p = performance.now();
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
-		M: 16,
+		M: 4,
 		// m: 2,
 		data: rawData,
 		// splitNode: "linear",
