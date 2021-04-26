@@ -30,16 +30,14 @@ window.onload = function () {
 		{ x1: 17, x2: 21, y1: 16, y2: 18 },
 	];
 
-	// var rawData = new Array(20).fill(0).map((o) => {
+	// var rawData = new Array(1000000).fill(0).map((o) => {
+	// 	const x1 = Math.trunc(Math.random() * 10000);
+	// 	const y1 = Math.trunc(Math.random() * 10000);
 	// 	return {
-	// 		// 	x1: Math.trunc(Math.random() * 10),
-	// 		// 	x2: Math.trunc(Math.random() * 10),
-	// 		// 	y1: Math.trunc(Math.random() * 10),
-	// 		// 	y2: Math.trunc(Math.random() * 10),
-	// 			x1: Math.random() * 10,
-	// 			x2: Math.random() * 10,
-	// 			y1: Math.random() * 10,
-	// 			y2: Math.random() * 10,
+	// 		x1,
+	// 		x2: x1 + Math.trunc(Math.random() * 500),
+	// 		y1,
+	// 		y2: y1 + Math.trunc(Math.random() * 500),
 	// 	};
 	// });
 	// console.log(rawData);
@@ -54,7 +52,7 @@ window.onload = function () {
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
 	});
-	console.log(performance.now() - p);
+	console.log("load time : ", performance.now() - p);
 
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
