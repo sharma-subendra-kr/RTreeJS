@@ -54,6 +54,22 @@ window.onload = function () {
 	});
 	console.log("load time : ", performance.now() - p);
 
+	// const pf = performance.now();
+	// const x1 = Math.trunc(Math.random() * 10000);
+	// const y1 = Math.trunc(Math.random() * 10000);
+	// const f = window.rt.find(
+	// 	{
+	// 		x1,
+	// 		y1,
+	// 		x2: x1 + Math.trunc(Math.random() * 500),
+	// 		y2: y1 + Math.trunc(Math.random() * 500),
+	// 	},
+	// 	false,
+	// 	true
+	// );
+	// console.log("search time : ", performance.now() - pf);
+	// console.log(f.length);
+
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
 
