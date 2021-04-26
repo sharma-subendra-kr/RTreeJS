@@ -540,6 +540,7 @@ class RTreeIterative {
 			}
 			// else keep looking
 		}
+    
 		if (all) {
 			return this.resultStack.getData();
 		}

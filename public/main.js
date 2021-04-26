@@ -32,21 +32,19 @@ window.onload = function () {
 
 	// var rawData = new Array(20).fill(0).map((o) => {
 	// 	return {
-	// 		// rect: {
 	// 		// 	x1: Math.trunc(Math.random() * 10),
 	// 		// 	x2: Math.trunc(Math.random() * 10),
 	// 		// 	y1: Math.trunc(Math.random() * 10),
 	// 		// 	y2: Math.trunc(Math.random() * 10),
-	// 		// },
-	// 		rect: {
 	// 			x1: Math.random() * 10,
 	// 			x2: Math.random() * 10,
 	// 			y1: Math.random() * 10,
 	// 			y2: Math.random() * 10,
-	// 		},
 	// 	};
 	// });
 	// console.log(rawData);
+
+	const p = performance.now();
 	// eslint-disable-next-line no-undef
 	window.rt = new RTreeJS.RTreeIterative({
 		M: 4,
@@ -56,6 +54,8 @@ window.onload = function () {
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
 	});
+	console.log(performance.now() - p);
+
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
 
