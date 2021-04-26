@@ -23,12 +23,7 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import {
-	Rect,
-	RectData,
-	NodeSplitResult,
-	Node,
-} from "../interfaces/interfaces";
+import { Rect, NodeSplitResult, Node } from "../interfaces/interfaces";
 import {
 	getDiagonalLen,
 	getDiagonalLenDiff,
@@ -37,13 +32,13 @@ import {
 	getCombinedRectFromRects,
 } from "../rectUtils/rectUtils";
 
-export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
+export const getPos = (rectArr: Rect[], rect: Rect, size: number): number => {
 	let INCREASE: number = Number.MAX_SAFE_INTEGER;
 	let index: number = 0;
 
 	for (let i = 0; i < size; i++) {
-		const rd = rdArr[i];
-		const diff = getDiagonalLenDiff(getCombinedRect(rd.rect, rect), rd.rect);
+		const r = rectArr[i];
+		const diff = getDiagonalLenDiff(getCombinedRect(r, rect), r);
 		if (diff < INCREASE) {
 			INCREASE = diff;
 			index = i;
@@ -54,12 +49,12 @@ export const getPos = (rdArr: RectData[], rect: Rect, size: number): number => {
 };
 
 export const isDuplicate = (
-	rdArr: RectData[],
+	rectArr: Rect[],
 	size: number,
-	rd: RectData
+	rect: Rect
 ): boolean => {
 	for (let i = 0; i < size; i++) {
-		if (areRectsIdentical(rdArr[i].rect, rd.rect)) {
+		if (areRectsIdentical(rectArr[i], rect)) {
 			return true;
 		}
 	}
@@ -67,12 +62,12 @@ export const isDuplicate = (
 };
 
 export const getPosToRemove = (
-	rdArr: RectData[],
+	rectArr: Rect[],
 	size: number,
 	rect: Rect
 ): number => {
 	for (let i = 0; i < size; i++) {
-		if (areRectsIdentical(rdArr[i].rect, rect)) {
+		if (areRectsIdentical(rectArr[i], rect)) {
 			return i;
 		}
 	}
@@ -106,7 +101,7 @@ export const tryBorrow = (
 	let MIN_LEN: number = Number.MAX_SAFE_INTEGER;
 	let ptrIndex: number = -1;
 	let keyIndex: number = -1;
-	const ptrNodeRect = node.keys[ptr].rect;
+	const ptrNodeRect = node.keys[ptr];
 
 	for (let i = 0; i < node.size; i++) {
 		if (i === ptr || node.pointers[i]!.size === m) {
@@ -115,7 +110,7 @@ export const tryBorrow = (
 		const ptrkeys = node.pointers[i]!.keys;
 		const ptrSize = node.pointers[i]!.size;
 		for (let j = 0; j < ptrSize; j++) {
-			const rect = ptrkeys[j].rect;
+			const rect = ptrkeys[j];
 			const combinedDLen = getDiagonalLen(getCombinedRect(ptrNodeRect, rect));
 			if (combinedDLen < MIN_LEN) {
 				MIN_LEN = combinedDLen;
@@ -157,7 +152,7 @@ export const performBorrow = (
 	}
 	lenderNode.size--;
 
-	node.keys[borrow.ptr].rect = getCombinedRectFromRects(
+	node.keys[borrow.ptr] = getCombinedRectFromRects(
 		lenderNode.keys,
 		lenderNode.size
 	);
@@ -172,7 +167,7 @@ export const performBorrow = (
 	borrowerNode.pointers[borrowerSize] = lendNode;
 	borrowerNode.size++;
 
-	node.keys[ptr].rect = getCombinedRectFromRects(
+	node.keys[ptr] = getCombinedRectFromRects(
 		borrowerNode.keys,
 		borrowerNode.size
 	);
@@ -195,7 +190,7 @@ export const merge = (
 		if (i === ptr) {
 			continue;
 		}
-		const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
+		const r = getCombinedRect(node.keys[i], node.keys[ptr]);
 		const dLen = getDiagonalLen(r);
 		if (dLen < MIN_LEN) {
 			MIN_LEN = dLen;
@@ -209,7 +204,7 @@ export const merge = (
 		return;
 	}
 
-	node.keys[mergeIndex].rect = RECT;
+	node.keys[mergeIndex] = RECT;
 
 	const source: Node = node.pointers[ptr] || {
 		size: 0,

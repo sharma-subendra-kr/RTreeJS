@@ -28,7 +28,6 @@ import { ArrayQueue as Queue } from "Queue";
 
 import {
 	Rect,
-	RectData,
 	Node,
 	NodeSplitResult,
 	SplittedNodes,
@@ -109,8 +108,8 @@ class RTreeIterative {
 	height: number;
 	splitNode: (
 		top: Node,
-		rectData: RectData,
-		rectDataPtr: Node,
+		rect: Rect,
+		rectPtr: Node,
 		M: number,
 		m: number
 	) => any;
@@ -179,8 +178,8 @@ class RTreeIterative {
 	}
 
 	constructNode(
-		rd?: RectData,
-		rdArr?: RectData[],
+		rect?: Rect,
+		rectArr?: Rect[],
 		ptrArr?: Node[],
 		size?: number
 	): Node {
@@ -189,12 +188,12 @@ class RTreeIterative {
 			pointers: new Array(this.M + 1),
 			keys: new Array(this.M + 1),
 		};
-		if (rd) {
-			node.keys[0] = rd;
+		if (rect) {
+			node.keys[0] = rect;
 			node.pointers[0] = undefined;
 			node.size = 1;
-		} else if (rdArr && ptrArr) {
-			node.keys = rdArr;
+		} else if (rectArr && ptrArr) {
+			node.keys = rectArr;
 			node.pointers = ptrArr;
 			node.size = size || 0;
 		}
@@ -202,7 +201,7 @@ class RTreeIterative {
 		return node;
 	}
 
-	constructTree(data: RectData[]): void {
+	constructTree(data: Rect[]): void {
 		const length = data.length;
 		for (let i = 0; i < length; i++) {
 			this.insert(data[i]);
@@ -216,18 +215,18 @@ class RTreeIterative {
 	 *
 	 * @param {rd} rd  with rectangle and data
 	 */
-	insert(rd: RectData): any {
-		return this._insert(rd);
+	insert(rect: Rect): any {
+		return this._insert(rect);
 	}
 
-	_insert(rd: RectData): any {
+	_insert(rect: Rect): any {
 		let inserted: boolean = false;
 		let splittedNodes: SplittedNodes;
 
 		this.insertStack.empty();
 		if (this.root === undefined) {
 			// insert root
-			this.root = this.constructNode(rd);
+			this.root = this.constructNode(rect);
 			this.length++;
 			this.height++;
 			return this.root;
@@ -242,7 +241,7 @@ class RTreeIterative {
 			if (!inserted) {
 				if (top?.pointers[0]) {
 					// traverse through the internal node whose length increases the least
-					const POS = getPos(top.keys, rd.rect, top.size);
+					const POS = getPos(top.keys, rect, top.size);
 					topItem.pos = POS;
 					this.insertStack.push({ node: top.pointers[POS], pos: POS });
 					continue;
@@ -250,7 +249,7 @@ class RTreeIterative {
 
 				// reached leaf node, now insert
 
-				if (isDuplicate(top.keys, top.size, rd)) {
+				if (isDuplicate(top.keys, top.size, rect)) {
 					return;
 				}
 
@@ -258,7 +257,7 @@ class RTreeIterative {
 
 				if (top.size < this.M) {
 					// no node splitting required
-					top.keys[top.size] = rd;
+					top.keys[top.size] = rect;
 					top.size++;
 					inserted = true;
 					this.insertStack.pop();
@@ -267,7 +266,7 @@ class RTreeIterative {
 				// node splitting required
 				const spRectData: NodeSplitResult = this.splitNode(
 					top,
-					rd,
+					rect,
 					undefined,
 					this.M,
 					this.m
@@ -276,7 +275,7 @@ class RTreeIterative {
 					left: top,
 					right: this.constructNode(
 						undefined,
-						spRectData.rightRd,
+						spRectData.rightRect,
 						spRectData.rptrs,
 						spRectData.rightSize
 					),
@@ -289,7 +288,7 @@ class RTreeIterative {
 					splittedNodes?.left?.keys || [],
 					splittedNodes?.left?.size || 0
 				);
-				top.keys[topItem.pos] = { rect: crectL };
+				top.keys[topItem.pos] = crectL;
 				top.pointers[topItem.pos] = splittedNodes?.left;
 
 				const crectR: Rect = getCombinedRectFromRects(
@@ -298,14 +297,14 @@ class RTreeIterative {
 				);
 
 				if (top.size < this.M) {
-					top.keys[top.size] = { rect: crectR };
+					top.keys[top.size] = crectR;
 					top.pointers[top.size] = splittedNodes?.right;
 					top.size++;
 					splittedNodes = undefined;
 				} else {
 					const spRectData: NodeSplitResult = this.splitNode(
 						top,
-						{ rect: crectR },
+						crectR,
 						splittedNodes.right,
 						this.M,
 						this.m
@@ -314,7 +313,7 @@ class RTreeIterative {
 						left: top,
 						right: this.constructNode(
 							undefined,
-							spRectData.rightRd,
+							spRectData.rightRect,
 							spRectData.rptrs,
 							spRectData.rightSize
 						),
@@ -324,12 +323,10 @@ class RTreeIterative {
 				this.insertStack.pop();
 			} else {
 				// condense
-				top.keys[topItem.pos] = {
-					rect: getCombinedRectFromRects(
-						top.pointers[topItem.pos].keys,
-						top.pointers[topItem.pos].size
-					),
-				};
+				top.keys[topItem.pos] = getCombinedRectFromRects(
+					top.pointers[topItem.pos].keys,
+					top.pointers[topItem.pos].size
+				);
 				this.insertStack.pop();
 			}
 		}
@@ -348,7 +345,7 @@ class RTreeIterative {
 			const node: Node = this.constructNode();
 			if (node) {
 				node.size = 2;
-				node.keys = [{ rect: crectLeft }, { rect: crectRight }];
+				node.keys = [crectLeft, crectRight];
 				node.pointers = [splittedNodes?.left, splittedNodes?.right];
 
 				this.root = node;
@@ -380,7 +377,7 @@ class RTreeIterative {
 					// traverse through internal nodes
 					const start = topItem.ptr + 1;
 					for (let i = start; i < top.size; i++) {
-						if (isRectInside(top.keys[i].rect, rect)) {
+						if (isRectInside(top.keys[i], rect)) {
 							topItem.ptr = i;
 							this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
 							break;
@@ -408,12 +405,10 @@ class RTreeIterative {
 				// else keep looking
 			} else if (top.pointers[topItem.ptr].size < this.m) {
 				// borrow or merge
-				top.keys[topItem.ptr] = {
-					rect: getCombinedRectFromRects(
-						top.pointers[topItem.ptr].keys,
-						top.pointers[topItem.ptr].size
-					),
-				};
+				top.keys[topItem.ptr] = getCombinedRectFromRects(
+					top.pointers[topItem.ptr].keys,
+					top.pointers[topItem.ptr].size
+				);
 				const borrow: any = tryBorrow(top, topItem.ptr, this.m);
 				if (borrow) {
 					performBorrow(top, topItem.ptr, borrow);
@@ -443,7 +438,7 @@ class RTreeIterative {
 					top.pointers[topItem.ptr].keys,
 					top.pointers[topItem.ptr].size
 				);
-				top.keys[topItem.ptr] = { rect: crect };
+				top.keys[topItem.ptr] = crect;
 				this.ptrStack.pop();
 			}
 		}
@@ -465,7 +460,7 @@ class RTreeIterative {
 		rect: Rect,
 		exact: boolean = false,
 		all: boolean = false,
-		comp: (rd: RectData, rect: Rect) => any,
+		comp: (suspect: Rect, rect: Rect) => any,
 		allowTouching: boolean = true
 	): any {
 		let doesOverlap = doRectsOverlap;
@@ -480,7 +475,7 @@ class RTreeIterative {
 		rect: Rect,
 		exact: boolean = false,
 		all: boolean = false,
-		comp: (rd: RectData, rect: Rect) => any,
+		comp: (suspect: Rect, rect: Rect) => any,
 		doesOverlap: (rectA: Rect, rectB: Rect) => any
 	): any {
 		this.ptrStack.empty();
@@ -504,8 +499,8 @@ class RTreeIterative {
 				for (let i = start; i < top.size; i++) {
 					if (
 						exact && !all
-							? isRectInside(top.keys[i].rect, rect)
-							: doesOverlap(top.keys[i].rect, rect)
+							? isRectInside(top.keys[i], rect)
+							: doesOverlap(top.keys[i], rect)
 					) {
 						topItem.ptr = i;
 						this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
@@ -520,13 +515,13 @@ class RTreeIterative {
 				for (let i = 0; i < top.size; i++) {
 					if (exact && !all) {
 						// find exact rectangle
-						if (areRectsIdentical(top.keys[i].rect, rect)) {
+						if (areRectsIdentical(top.keys[i], rect)) {
 							return top.keys[i];
 						}
 					} else if (!all) {
 						// find overlapping rectangle
 						if (
-							doesOverlap(top.keys[i].rect, rect) &&
+							doesOverlap(top.keys[i], rect) &&
 							(comp ? comp(top.keys[i], rect) : true)
 						) {
 							return top.keys[i];
@@ -534,7 +529,7 @@ class RTreeIterative {
 					} else {
 						// all
 						if (
-							doesOverlap(top.keys[i].rect, rect) &&
+							doesOverlap(top.keys[i], rect) &&
 							(comp ? comp(top.keys[i], rect) : true)
 						) {
 							this.resultStack.push(top.keys[i]);
@@ -545,7 +540,7 @@ class RTreeIterative {
 			}
 			// else keep looking
 		}
-
+    
 		if (all) {
 			return this.resultStack.getData();
 		}

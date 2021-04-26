@@ -23,7 +23,7 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import { Rect, RectData } from "../interfaces/interfaces";
+import { Rect } from "../interfaces/interfaces";
 
 const SQRT_MAX_SAFE_INTEGER = Math.sqrt(Number.MAX_SAFE_INTEGER) - 1000000;
 
@@ -69,20 +69,21 @@ export const getCombinedRect = (rectA: Rect, rectB: Rect): Rect => {
 };
 
 export const getCombinedRectFromRects = (
-	rdArr: RectData[],
-	size: number
+	rectArr: Rect[],
+	size: number,
+	start: number = 0
 ): Rect => {
 	let x1 = Number.MAX_SAFE_INTEGER;
 	let x2 = 0;
 	let y1 = Number.MAX_SAFE_INTEGER;
 	let y2 = 0;
 
-	for (let i = 0; i < size; i++) {
-		const rd = rdArr[i];
-		x1 = rd.rect.x1 < x1 ? rd.rect.x1 : x1;
-		x2 = rd.rect.x2 > x2 ? rd.rect.x2 : x2;
-		y1 = rd.rect.y1 < y1 ? rd.rect.y1 : y1;
-		y2 = rd.rect.y2 > y2 ? rd.rect.y2 : y2;
+	for (let i = start; i < size; i++) {
+		const rect = rectArr[i];
+		x1 = rect.x1 < x1 ? rect.x1 : x1;
+		x2 = rect.x2 > x2 ? rect.x2 : x2;
+		y1 = rect.y1 < y1 ? rect.y1 : y1;
+		y2 = rect.y2 > y2 ? rect.y2 : y2;
 	}
 
 	return { x1, x2, y1, y2 };
