@@ -32,21 +32,21 @@ export interface Rect {
 	y2: number;
 }
 
-export interface RectData {
-	rect: Rect;
-	data?: Nullable<any>;
-}
+// export interface RectData {
+// 	rect: Rect;
+// 	data?: Nullable<any>;
+// }
 
 export interface NODE {
 	size: number;
 	pointers: Node[];
-	keys: RectData[];
+	keys: Rect[];
 }
 
 export type Node = NODE | undefined;
 
 export interface NodeSplitResult {
-	rightRd: RectData[];
+	rightRect: Rect[];
 	rptrs: Node[];
 	rightSize: number;
 }

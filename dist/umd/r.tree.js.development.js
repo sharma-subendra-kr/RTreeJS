@@ -205,17 +205,17 @@ const getCombinedRect = (rectA, rectB) => {
         y2: rectA.y2 > rectB.y2 ? rectA.y2 : rectB.y2,
     };
 };
-const getCombinedRectFromRects = (rdArr, size, start = 0) => {
+const getCombinedRectFromRects = (rectArr, size, start = 0) => {
     let x1 = Number.MAX_SAFE_INTEGER;
     let x2 = 0;
     let y1 = Number.MAX_SAFE_INTEGER;
     let y2 = 0;
     for (let i = start; i < size; i++) {
-        const rd = rdArr[i];
-        x1 = rd.rect.x1 < x1 ? rd.rect.x1 : x1;
-        x2 = rd.rect.x2 > x2 ? rd.rect.x2 : x2;
-        y1 = rd.rect.y1 < y1 ? rd.rect.y1 : y1;
-        y2 = rd.rect.y2 > y2 ? rd.rect.y2 : y2;
+        const rect = rectArr[i];
+        x1 = rect.x1 < x1 ? rect.x1 : x1;
+        x2 = rect.x2 > x2 ? rect.x2 : x2;
+        y1 = rect.y1 < y1 ? rect.y1 : y1;
+        y2 = rect.y2 > y2 ? rect.y2 : y2;
     }
     return { x1, x2, y1, y2 };
 };
@@ -282,12 +282,12 @@ Written by Subendra Kumar Sharma.
 
 */
 
-const getPos = (rdArr, rect, size) => {
+const getPos = (rectArr, rect, size) => {
     let INCREASE = Number.MAX_SAFE_INTEGER;
     let index = 0;
     for (let i = 0; i < size; i++) {
-        const rd = rdArr[i];
-        const diff = getDiagonalLenDiff(getCombinedRect(rd.rect, rect), rd.rect);
+        const r = rectArr[i];
+        const diff = getDiagonalLenDiff(getCombinedRect(r, rect), r);
         if (diff < INCREASE) {
             INCREASE = diff;
             index = i;
@@ -295,17 +295,17 @@ const getPos = (rdArr, rect, size) => {
     }
     return index;
 };
-const isDuplicate = (rdArr, size, rd) => {
+const isDuplicate = (rectArr, size, rect) => {
     for (let i = 0; i < size; i++) {
-        if (areRectsIdentical(rdArr[i].rect, rd.rect)) {
+        if (areRectsIdentical(rectArr[i], rect)) {
             return true;
         }
     }
     return false;
 };
-const getPosToRemove = (rdArr, size, rect) => {
+const getPosToRemove = (rectArr, size, rect) => {
     for (let i = 0; i < size; i++) {
-        if (areRectsIdentical(rdArr[i].rect, rect)) {
+        if (areRectsIdentical(rectArr[i], rect)) {
             return i;
         }
     }
@@ -330,7 +330,7 @@ const tryBorrow = (node = {
     let MIN_LEN = Number.MAX_SAFE_INTEGER;
     let ptrIndex = -1;
     let keyIndex = -1;
-    const ptrNodeRect = node.keys[ptr].rect;
+    const ptrNodeRect = node.keys[ptr];
     for (let i = 0; i < node.size; i++) {
         if (i === ptr || node.pointers[i].size === m) {
             continue;
@@ -338,7 +338,7 @@ const tryBorrow = (node = {
         const ptrkeys = node.pointers[i].keys;
         const ptrSize = node.pointers[i].size;
         for (let j = 0; j < ptrSize; j++) {
-            const rect = ptrkeys[j].rect;
+            const rect = ptrkeys[j];
             const combinedDLen = getDiagonalLen(getCombinedRect(ptrNodeRect, rect));
             if (combinedDLen < MIN_LEN) {
                 MIN_LEN = combinedDLen;
@@ -372,7 +372,7 @@ const performBorrow = (node = {
         lenderNode.pointers[i] = lenderNode.pointers[i + 1];
     }
     lenderNode.size--;
-    node.keys[borrow.ptr].rect = getCombinedRectFromRects(lenderNode.keys, lenderNode.size);
+    node.keys[borrow.ptr] = getCombinedRectFromRects(lenderNode.keys, lenderNode.size);
     const borrowerSize = ((_a = node.pointers[ptr]) === null || _a === void 0 ? void 0 : _a.size) || 0;
     const borrowerNode = node.pointers[ptr] || {
         size: 0,
@@ -382,7 +382,7 @@ const performBorrow = (node = {
     borrowerNode.keys[borrowerSize] = lendKey;
     borrowerNode.pointers[borrowerSize] = lendNode;
     borrowerNode.size++;
-    node.keys[ptr].rect = getCombinedRectFromRects(borrowerNode.keys, borrowerNode.size);
+    node.keys[ptr] = getCombinedRectFromRects(borrowerNode.keys, borrowerNode.size);
 };
 const merge = (node = {
     size: 0,
@@ -396,7 +396,7 @@ const merge = (node = {
         if (i === ptr) {
             continue;
         }
-        const r = getCombinedRect(node.keys[i].rect, node.keys[ptr].rect);
+        const r = getCombinedRect(node.keys[i], node.keys[ptr]);
         const dLen = getDiagonalLen(r);
         if (dLen < MIN_LEN) {
             MIN_LEN = dLen;
@@ -408,7 +408,7 @@ const merge = (node = {
         node.size = 0;
         return;
     }
-    node.keys[mergeIndex].rect = RECT;
+    node.keys[mergeIndex] = RECT;
     const source = node.pointers[ptr] || {
         size: 0,
         keys: [],
@@ -460,76 +460,76 @@ Written by Subendra Kumar Sharma.
 
 */
 
-const swap = (rdArr, nodeArr, li, ri) => {
-    const temp = rdArr[li];
+const swap = (rectArr, nodeArr, li, ri) => {
+    const temp = rectArr[li];
     const tempPtr = nodeArr[li];
-    rdArr[li] = rdArr[ri];
+    rectArr[li] = rectArr[ri];
     nodeArr[li] = nodeArr[ri];
-    rdArr[ri] = temp;
+    rectArr[ri] = temp;
     nodeArr[ri] = tempPtr;
 };
 const adjustHighLow = (top = {
     size: 0,
     keys: [],
     pointers: [],
-}, rectData, rectDataPtr, M) => {
-    const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
+}, rect, rectPtr, M) => {
+    const { keys: rectArr = [], pointers: nodeArr = [] } = top || {};
     let lIndex = 0;
     let rIndex = 0;
     let min = Number.MAX_SAFE_INTEGER;
     let max = 0;
-    rdArr[M] = rectData;
-    nodeArr[M] = rectDataPtr;
-    for (const [i, rd] of rdArr.entries()) {
-        if (rd.rect.x2 < min) {
-            min = rd.rect.x2;
+    rectArr[M] = rect;
+    nodeArr[M] = rectPtr;
+    for (const [i, rect] of rectArr.entries()) {
+        if (rect.x2 < min) {
+            min = rect.x2;
             lIndex = i;
         }
-        if (rd.rect.x1 > max) {
-            max = rd.rect.x1;
+        if (rect.x1 > max) {
+            max = rect.x1;
             rIndex = i;
         }
     }
-    swap(rdArr, nodeArr, 0, lIndex);
-    swap(rdArr, nodeArr, M, rIndex);
+    swap(rectArr, nodeArr, 0, lIndex);
+    swap(rectArr, nodeArr, M, rIndex);
 };
-const adjustHighLowOnY = (rdArr, nodeArr, rectData, rectDataPtr, M) => {
+const adjustHighLowOnY = (rectArr, nodeArr, rect, rectPtr, M) => {
     let lIndex = 0;
     let rIndex = 0;
     let min = Number.MAX_SAFE_INTEGER;
     let max = 0;
-    rdArr[M] = rectData;
-    nodeArr[M] = rectDataPtr;
-    for (const [i, rd] of rdArr.entries()) {
-        if (rd.rect.y2 < min) {
-            min = rd.rect.y2;
+    rectArr[M] = rect;
+    nodeArr[M] = rectPtr;
+    for (const [i, rect] of rectArr.entries()) {
+        if (rect.y2 < min) {
+            min = rect.y2;
             lIndex = i;
         }
-        if (rd.rect.y1 > max) {
-            max = rd.rect.y1;
+        if (rect.y1 > max) {
+            max = rect.y1;
             rIndex = i;
         }
     }
-    swap(rdArr, nodeArr, 0, lIndex);
-    swap(rdArr, nodeArr, M, rIndex);
+    swap(rectArr, nodeArr, 0, lIndex);
+    swap(rectArr, nodeArr, M, rIndex);
     return {
-        rdArrY: rdArr,
+        rectArrY: rectArr,
         nodeArrY: nodeArr,
     };
 };
-const getRightSlice = (rdArr, nodeArr, pivot, M) => {
-    const rRdArr = new Array(M + 1); // right RectData Array
+const getRightSlice = (rectArr, nodeArr, pivot, M) => {
+    const rRectArr = new Array(M + 1); // right RectData Array
     const rNodeArr = new Array(M + 1); // right Node Array
     let iter = pivot;
     let count = 0;
     while (iter < M + 1) {
-        rRdArr[count] = rdArr[iter];
+        rRectArr[count] = rectArr[iter];
         rNodeArr[count] = nodeArr[iter];
         count++;
         iter++;
     }
     return {
-        rightRd: rRdArr,
+        rightRect: rRectArr,
         rptrs: rNodeArr,
         rightSize: count,
     };
@@ -538,23 +538,23 @@ const getRightNode = (top = {
     size: 0,
     keys: [],
     pointers: [],
-}, rdArr, nodeArr, M, m) => {
+}, rectArr, nodeArr, M, m) => {
     let pivot = m;
     if (M % 2 === 0) {
-        let clRect = rdArr[0].rect;
+        let clRect = rectArr[0];
         let clDLen = getDiagonalLen(clRect);
-        let crRect = rdArr[m + 1].rect;
+        let crRect = rectArr[m + 1];
         let crDLen = getDiagonalLen(crRect);
         for (let i = 1; i < m; i++) {
-            clRect = getCombinedRect(clRect, rdArr[i].rect);
+            clRect = getCombinedRect(clRect, rectArr[i]);
             clDLen = getDiagonalLen(clRect);
         }
         for (let i = m + 2; i <= M; i++) {
-            crRect = getCombinedRect(crRect, rdArr[i].rect);
+            crRect = getCombinedRect(crRect, rectArr[i]);
             crDLen = getDiagonalLen(crRect);
         }
-        const lIntegration = getDiagonalLen(getCombinedRect(clRect, rdArr[m].rect));
-        const rIntegration = getDiagonalLen(getCombinedRect(crRect, rdArr[m].rect));
+        const lIntegration = getDiagonalLen(getCombinedRect(clRect, rectArr[m]));
+        const rIntegration = getDiagonalLen(getCombinedRect(crRect, rectArr[m]));
         if (lIntegration - clDLen < rIntegration - crDLen) {
             pivot++;
         }
@@ -575,22 +575,22 @@ const getRightNode = (top = {
     // 	rptrs: rNodeArr,
     // 	rightSize: count,
     // };
-    return getRightSlice(rdArr, nodeArr, pivot, M);
+    return getRightSlice(rectArr, nodeArr, pivot, M);
 };
 const splitNodeQuadratic = (top = {
     size: 0,
     keys: [],
     pointers: [],
-}, rectData, rectDataPtr, M, m) => {
-    const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
-    const copyRdArr = [...rdArr];
+}, rect, rectPtr, M, m) => {
+    const { keys: rectArr = [], pointers: nodeArr = [] } = top || {};
+    const copyRectArr = [...rectArr];
     const copyNodeArr = [...nodeArr];
-    adjustHighLow(top, rectData, rectDataPtr, M);
-    const { rdArrY, nodeArrY } = adjustHighLowOnY(copyRdArr, copyNodeArr, rectData, rectDataPtr, M);
-    const lr = rdArr[0].rect;
+    adjustHighLow(top, rect, rectPtr, M);
+    const { rectArrY, nodeArrY } = adjustHighLowOnY(copyRectArr, copyNodeArr, rect, rectPtr, M);
+    const lr = rectArr[0];
     let MIN_LEN = Number.MAX_SAFE_INTEGER;
     let index;
-    const lrY = rdArrY[0].rect;
+    const lrY = rectArrY[0];
     let MIN_LEN_Y = Number.MAX_SAFE_INTEGER;
     let indexY;
     let count = 1;
@@ -602,50 +602,50 @@ const splitNodeQuadratic = (top = {
         index = count;
         indexY = count;
         for (let i = count; i <= M; i++) {
-            tlr = getCombinedRect(lr, rdArr[i].rect);
+            tlr = getCombinedRect(lr, rectArr[i]);
             tlDLen = getDiagonalLen(tlr);
             if (tlDLen < MIN_LEN) {
                 index = i;
                 MIN_LEN = tlDLen;
             }
-            tlr = getCombinedRect(lrY, rdArrY[i].rect);
+            tlr = getCombinedRect(lrY, rectArrY[i]);
             tlDLen = getDiagonalLen(tlr);
             if (tlDLen < MIN_LEN_Y) {
                 indexY = i;
                 MIN_LEN_Y = tlDLen;
             }
         }
-        swap(rdArr, nodeArr, count, index);
-        swap(rdArrY, nodeArrY, count, indexY);
+        swap(rectArr, nodeArr, count, index);
+        swap(rectArrY, nodeArrY, count, indexY);
         count++;
     }
     let pivot = m;
     let pivotY = m;
     if (M % 2 === 0) {
-        let clRect = rdArr[0].rect;
+        let clRect = rectArr[0];
         let clDLen = getDiagonalLen(clRect);
-        let crRect = rdArr[m + 1].rect;
+        let crRect = rectArr[m + 1];
         let crDLen = getDiagonalLen(crRect);
-        let clRectY = rdArr[0].rect;
+        let clRectY = rectArr[0];
         let clDLenY = getDiagonalLen(clRect);
-        let crRectY = rdArr[m + 1].rect;
+        let crRectY = rectArr[m + 1];
         let crDLenY = getDiagonalLen(crRect);
         for (let i = 1; i < m; i++) {
-            clRect = getCombinedRect(clRect, rdArr[i].rect);
+            clRect = getCombinedRect(clRect, rectArr[i]);
             clDLen = getDiagonalLen(clRect);
-            clRectY = getCombinedRect(clRectY, rdArrY[i].rect);
+            clRectY = getCombinedRect(clRectY, rectArrY[i]);
             clDLenY = getDiagonalLen(clRectY);
         }
         for (let i = m + 2; i <= M; i++) {
-            crRect = getCombinedRect(crRect, rdArr[i].rect);
+            crRect = getCombinedRect(crRect, rectArr[i]);
             crDLen = getDiagonalLen(crRect);
-            crRectY = getCombinedRect(crRectY, rdArrY[i].rect);
+            crRectY = getCombinedRect(crRectY, rectArrY[i]);
             crDLenY = getDiagonalLen(crRectY);
         }
-        const lIntegration = getDiagonalLen(getCombinedRect(clRect, rdArr[m].rect));
-        const rIntegration = getDiagonalLen(getCombinedRect(crRect, rdArr[m].rect));
-        const lIntegrationY = getDiagonalLen(getCombinedRect(clRectY, rdArrY[m].rect));
-        const rIntegrationY = getDiagonalLen(getCombinedRect(crRectY, rdArrY[m].rect));
+        const lIntegration = getDiagonalLen(getCombinedRect(clRect, rectArr[m]));
+        const rIntegration = getDiagonalLen(getCombinedRect(crRect, rectArr[m]));
+        const lIntegrationY = getDiagonalLen(getCombinedRect(clRectY, rectArrY[m]));
+        const rIntegrationY = getDiagonalLen(getCombinedRect(crRectY, rectArrY[m]));
         if (lIntegration - clDLen < rIntegration - crDLen) {
             pivot++;
         }
@@ -653,19 +653,19 @@ const splitNodeQuadratic = (top = {
             pivotY++;
         }
     }
-    const lcDLen = getDiagonalLen(getCombinedRectFromRects(rdArr, pivot - 1));
-    const rcDLen = getDiagonalLen(getCombinedRectFromRects(rdArr, M + 1, pivot));
-    const lcDLenY = getDiagonalLen(getCombinedRectFromRects(rdArrY, pivotY - 1));
-    const rcDLenY = getDiagonalLen(getCombinedRectFromRects(rdArrY, M + 1, pivotY));
+    const lcDLen = getDiagonalLen(getCombinedRectFromRects(rectArr, pivot - 1));
+    const rcDLen = getDiagonalLen(getCombinedRectFromRects(rectArr, M + 1, pivot));
+    const lcDLenY = getDiagonalLen(getCombinedRectFromRects(rectArrY, pivotY - 1));
+    const rcDLenY = getDiagonalLen(getCombinedRectFromRects(rectArrY, M + 1, pivotY));
     if (lcDLen + rcDLen < lcDLenY + rcDLenY) {
         top.size = pivot;
-        return getRightSlice(rdArr, nodeArr, pivot, M);
+        return getRightSlice(rectArr, nodeArr, pivot, M);
     }
     else {
         top.size = pivotY;
-        top.keys = rdArrY;
+        top.keys = rectArrY;
         top.pointers = nodeArrY;
-        return getRightSlice(rdArrY, nodeArrY, pivotY, M);
+        return getRightSlice(rectArrY, nodeArrY, pivotY, M);
     }
     // return getRightNode(top, rdArr, nodeArr, M, m);
 };
@@ -673,11 +673,11 @@ const splitNodeLinear = (top = {
     size: 0,
     keys: [],
     pointers: [],
-}, rectData, rectDataPtr, M, m) => {
-    const { keys: rdArr = [], pointers: nodeArr = [] } = top || {};
-    adjustHighLow(top, rectData, rectDataPtr, M);
-    let lr = rdArr[0].rect; // left Rect
-    let rr = rdArr[M].rect; // right Rect
+}, rect, rectPtr, M, m) => {
+    const { keys: rectArr = [], pointers: nodeArr = [] } = top || {};
+    adjustHighLow(top, rect, rectPtr, M);
+    let lr = rectArr[0]; // left Rect
+    let rr = rectArr[M]; // right Rect
     let li = 1;
     let ri = M - 1;
     let swapLeft;
@@ -695,8 +695,8 @@ const splitNodeLinear = (top = {
     let rTempLeftDLen;
     let rTempRightDLen;
     while (li <= ri) {
-        ilr = rdArr[li].rect;
-        irr = rdArr[ri].rect;
+        ilr = rectArr[li];
+        irr = rectArr[ri];
         lTempLeftRect = getCombinedRect(ilr, lr);
         lTempLeftDLen = getDiagonalLen(lTempLeftRect);
         lTempRightRect = getCombinedRect(ilr, rr);
@@ -708,7 +708,7 @@ const splitNodeLinear = (top = {
         rTempRightDLen = getDiagonalLen(rTempRightRect);
         swapRight = rTempRightDLen - rightDLen > rTempLeftDLen - leftDLen;
         if (swapLeft && swapRight) {
-            swap(rdArr, nodeArr, li, ri);
+            swap(rectArr, nodeArr, li, ri);
             lr = rTempLeftRect;
             leftDLen = rTempLeftDLen;
             rr = lTempRightRect;
@@ -726,7 +726,7 @@ const splitNodeLinear = (top = {
         }
         else if (!swapLeft) {
             if (lTempLeftDLen > rTempLeftDLen) {
-                swap(rdArr, nodeArr, li, ri);
+                swap(rectArr, nodeArr, li, ri);
                 lr = rTempLeftRect;
                 leftDLen = rTempLeftDLen;
             }
@@ -738,7 +738,7 @@ const splitNodeLinear = (top = {
         }
         else if (!swapRight) {
             if (rTempRightDLen > lTempRightDLen) {
-                swap(rdArr, nodeArr, li, ri);
+                swap(rectArr, nodeArr, li, ri);
                 rr = lTempRightRect;
                 rightDLen = lTempRightDLen;
             }
@@ -753,7 +753,7 @@ const splitNodeLinear = (top = {
             ri--;
         }
     }
-    return getRightNode(top, rdArr, nodeArr, M, m);
+    return getRightNode(top, rectArr, nodeArr, M, m);
 };
 
 // CONCATENATED MODULE: ./src/utils/printUtils.ts
@@ -791,9 +791,7 @@ const getPrintTreeData = (root, length, height) => {
     const result = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
     let HEIGHT = 0;
     result.push({
-        node: {
-            rect: getCombinedRectFromRects(root.keys, root.size),
-        },
+        node: getCombinedRectFromRects(root.keys, root.size),
         HEIGHT: HEIGHT,
     });
     st.push({ node: root, ptr: -1, HEIGHT: HEIGHT++ });
@@ -868,19 +866,19 @@ const printTree = (root, length, height) => {
     const WIDTH = 1000;
     let w = 0;
     data.forEach((o) => {
-        w = o.node.rect.x2 > w ? o.node.rect.x2 : w;
+        w = o.node.x2 > w ? o.node.x2 : w;
     });
     let h = 0;
     data.forEach((o) => {
-        h = o.node.rect.y2 > h ? o.node.rect.y2 : h;
+        h = o.node.y2 > h ? o.node.y2 : h;
     });
     const arr = data.map((item) => {
-        const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
-        let scaledX2 = (item.node.rect.x2 * WIDTH) / w;
+        const scaledX1 = (item.node.x1 * WIDTH) / w + 4 * item.HEIGHT;
+        let scaledX2 = (item.node.x2 * WIDTH) / w;
         scaledX2 =
             scaledX2 > 4 * item.HEIGHT ? scaledX2 - 4 * item.HEIGHT : scaledX2;
-        const scaledY1 = (item.node.rect.y1 * WIDTH) / h + 4 * item.HEIGHT;
-        let scaledY2 = (item.node.rect.y2 * WIDTH) / h;
+        const scaledY1 = (item.node.y1 * WIDTH) / h + 4 * item.HEIGHT;
+        let scaledY2 = (item.node.y2 * WIDTH) / h;
         scaledY2 =
             scaledY2 > 4 * item.HEIGHT ? scaledY2 - 4 * item.HEIGHT : scaledY2;
         const l = scaledX2 - scaledX1 > 0 ? scaledX2 - scaledX1 : 1;
@@ -900,7 +898,7 @@ const printTree = (root, length, height) => {
     });
     const text = data.reduce((acc, item) => {
         return (acc +
-            `<div style="display:flex;"><span style="flex: 1;">height: ${item.HEIGHT},</span><span style="flex: 1;">rect: x1: ${item.node.rect.x1},</span><span style="flex: 1;">x2: ${item.node.rect.x2},</span><span style="flex: 1;">y1: ${item.node.rect.y1},</span><span style="flex: 1;">y2: ${item.node.rect.y2}</span></div>`);
+            `<div style="display:flex;"><span style="flex: 1;">height: ${item.HEIGHT},</span><span style="flex: 1;">rect: x1: ${item.node.x1},</span><span style="flex: 1;">x2: ${item.node.x2},</span><span style="flex: 1;">y1: ${item.node.y1},</span><span style="flex: 1;">y2: ${item.node.y2}</span></div>`);
     }, "");
     return `<svg width="${WIDTH + 20}" height="${WIDTH + 20 + 50}"><g width="${WIDTH}" height="${WIDTH}" transform="translate(0, 0)">${legend}</g>
 	<rect transform="translate(2, 48)" width="${WIDTH}" height="${WIDTH}" stroke="black" stroke-width="2" fill-opacity="0"/>
@@ -1038,19 +1036,19 @@ class rTreeIterative_RTreeIterative {
     getRoot() {
         return this.root;
     }
-    constructNode(rd, rdArr, ptrArr, size) {
+    constructNode(rect, rectArr, ptrArr, size) {
         const node = {
             size: 0,
             pointers: new Array(this.M + 1),
             keys: new Array(this.M + 1),
         };
-        if (rd) {
-            node.keys[0] = rd;
+        if (rect) {
+            node.keys[0] = rect;
             node.pointers[0] = undefined;
             node.size = 1;
         }
-        else if (rdArr && ptrArr) {
-            node.keys = rdArr;
+        else if (rectArr && ptrArr) {
+            node.keys = rectArr;
             node.pointers = ptrArr;
             node.size = size || 0;
         }
@@ -1069,17 +1067,17 @@ class rTreeIterative_RTreeIterative {
      *
      * @param {rd} rd  with rectangle and data
      */
-    insert(rd) {
-        return this._insert(rd);
+    insert(rect) {
+        return this._insert(rect);
     }
-    _insert(rd) {
+    _insert(rect) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         let inserted = false;
         let splittedNodes;
         this.insertStack.empty();
         if (this.root === undefined) {
             // insert root
-            this.root = this.constructNode(rd);
+            this.root = this.constructNode(rect);
             this.length++;
             this.height++;
             return this.root;
@@ -1091,49 +1089,49 @@ class rTreeIterative_RTreeIterative {
             if (!inserted) {
                 if (top === null || top === void 0 ? void 0 : top.pointers[0]) {
                     // traverse through the internal node whose length increases the least
-                    const POS = getPos(top.keys, rd.rect, top.size);
+                    const POS = getPos(top.keys, rect, top.size);
                     topItem.pos = POS;
                     this.insertStack.push({ node: top.pointers[POS], pos: POS });
                     continue;
                 }
                 // reached leaf node, now insert
-                if (isDuplicate(top.keys, top.size, rd)) {
+                if (isDuplicate(top.keys, top.size, rect)) {
                     return;
                 }
                 this.length++;
                 if (top.size < this.M) {
                     // no node splitting required
-                    top.keys[top.size] = rd;
+                    top.keys[top.size] = rect;
                     top.size++;
                     inserted = true;
                     this.insertStack.pop();
                     continue;
                 }
                 // node splitting required
-                const spRectData = this.splitNode(top, rd, undefined, this.M, this.m);
+                const spRectData = this.splitNode(top, rect, undefined, this.M, this.m);
                 splittedNodes = {
                     left: top,
-                    right: this.constructNode(undefined, spRectData.rightRd, spRectData.rptrs, spRectData.rightSize),
+                    right: this.constructNode(undefined, spRectData.rightRect, spRectData.rptrs, spRectData.rightSize),
                 };
                 inserted = true;
                 this.insertStack.pop();
             }
             else if (splittedNodes) {
                 const crectL = getCombinedRectFromRects(((_a = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left) === null || _a === void 0 ? void 0 : _a.keys) || [], ((_b = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left) === null || _b === void 0 ? void 0 : _b.size) || 0);
-                top.keys[topItem.pos] = { rect: crectL };
+                top.keys[topItem.pos] = crectL;
                 top.pointers[topItem.pos] = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left;
                 const crectR = getCombinedRectFromRects(((_c = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.right) === null || _c === void 0 ? void 0 : _c.keys) || [], ((_d = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.right) === null || _d === void 0 ? void 0 : _d.size) || 0);
                 if (top.size < this.M) {
-                    top.keys[top.size] = { rect: crectR };
+                    top.keys[top.size] = crectR;
                     top.pointers[top.size] = splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.right;
                     top.size++;
                     splittedNodes = undefined;
                 }
                 else {
-                    const spRectData = this.splitNode(top, { rect: crectR }, splittedNodes.right, this.M, this.m);
+                    const spRectData = this.splitNode(top, crectR, splittedNodes.right, this.M, this.m);
                     splittedNodes = {
                         left: top,
-                        right: this.constructNode(undefined, spRectData.rightRd, spRectData.rptrs, spRectData.rightSize),
+                        right: this.constructNode(undefined, spRectData.rightRect, spRectData.rptrs, spRectData.rightSize),
                     };
                     // inserted = true;
                 }
@@ -1141,9 +1139,7 @@ class rTreeIterative_RTreeIterative {
             }
             else {
                 // condense
-                top.keys[topItem.pos] = {
-                    rect: getCombinedRectFromRects(top.pointers[topItem.pos].keys, top.pointers[topItem.pos].size),
-                };
+                top.keys[topItem.pos] = getCombinedRectFromRects(top.pointers[topItem.pos].keys, top.pointers[topItem.pos].size);
                 this.insertStack.pop();
             }
         }
@@ -1154,7 +1150,7 @@ class rTreeIterative_RTreeIterative {
             const node = this.constructNode();
             if (node) {
                 node.size = 2;
-                node.keys = [{ rect: crectLeft }, { rect: crectRight }];
+                node.keys = [crectLeft, crectRight];
                 node.pointers = [splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.left, splittedNodes === null || splittedNodes === void 0 ? void 0 : splittedNodes.right];
                 this.root = node;
             }
@@ -1179,7 +1175,7 @@ class rTreeIterative_RTreeIterative {
                     // traverse through internal nodes
                     const start = topItem.ptr + 1;
                     for (let i = start; i < top.size; i++) {
-                        if (isRectInside(top.keys[i].rect, rect)) {
+                        if (isRectInside(top.keys[i], rect)) {
                             topItem.ptr = i;
                             this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
                             break;
@@ -1208,9 +1204,7 @@ class rTreeIterative_RTreeIterative {
             }
             else if (top.pointers[topItem.ptr].size < this.m) {
                 // borrow or merge
-                top.keys[topItem.ptr] = {
-                    rect: getCombinedRectFromRects(top.pointers[topItem.ptr].keys, top.pointers[topItem.ptr].size),
-                };
+                top.keys[topItem.ptr] = getCombinedRectFromRects(top.pointers[topItem.ptr].keys, top.pointers[topItem.ptr].size);
                 const borrow = tryBorrow(top, topItem.ptr, this.m);
                 if (borrow) {
                     performBorrow(top, topItem.ptr, borrow);
@@ -1238,7 +1232,7 @@ class rTreeIterative_RTreeIterative {
             else {
                 // condense upper rects
                 const crect = getCombinedRectFromRects(top.pointers[topItem.ptr].keys, top.pointers[topItem.ptr].size);
-                top.keys[topItem.ptr] = { rect: crect };
+                top.keys[topItem.ptr] = crect;
                 this.ptrStack.pop();
             }
         }
@@ -1280,8 +1274,8 @@ class rTreeIterative_RTreeIterative {
                 const start = topItem.ptr + 1;
                 for (let i = start; i < top.size; i++) {
                     if (exact && !all
-                        ? isRectInside(top.keys[i].rect, rect)
-                        : doesOverlap(top.keys[i].rect, rect)) {
+                        ? isRectInside(top.keys[i], rect)
+                        : doesOverlap(top.keys[i], rect)) {
                         topItem.ptr = i;
                         this.ptrStack.push({ node: top.pointers[i], ptr: -1 });
                         break;
@@ -1296,20 +1290,20 @@ class rTreeIterative_RTreeIterative {
                 for (let i = 0; i < top.size; i++) {
                     if (exact && !all) {
                         // find exact rectangle
-                        if (areRectsIdentical(top.keys[i].rect, rect)) {
+                        if (areRectsIdentical(top.keys[i], rect)) {
                             return top.keys[i];
                         }
                     }
                     else if (!all) {
                         // find overlapping rectangle
-                        if (doesOverlap(top.keys[i].rect, rect) &&
+                        if (doesOverlap(top.keys[i], rect) &&
                             (comp ? comp(top.keys[i], rect) : true)) {
                             return top.keys[i];
                         }
                     }
                     else {
                         // all
-                        if (doesOverlap(top.keys[i].rect, rect) &&
+                        if (doesOverlap(top.keys[i], rect) &&
                             (comp ? comp(top.keys[i], rect) : true)) {
                             this.resultStack.push(top.keys[i]);
                         }

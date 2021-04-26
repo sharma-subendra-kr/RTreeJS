@@ -36,9 +36,7 @@ export const getPrintTreeData = (root: any, length: any, height: any) => {
 	let HEIGHT = 0;
 
 	result.push({
-		node: {
-			rect: getCombinedRectFromRects(root.keys, root.size),
-		},
+		node: getCombinedRectFromRects(root.keys, root.size),
 		HEIGHT: HEIGHT,
 	});
 
@@ -119,20 +117,20 @@ export const printTree = (root: any, length: any, height: any) => {
 
 	let w = 0;
 	data.forEach((o: any) => {
-		w = o.node.rect.x2 > w ? o.node.rect.x2 : w;
+		w = o.node.x2 > w ? o.node.x2 : w;
 	});
 	let h = 0;
 	data.forEach((o: any) => {
-		h = o.node.rect.y2 > h ? o.node.rect.y2 : h;
+		h = o.node.y2 > h ? o.node.y2 : h;
 	});
 
 	const arr = data.map((item: any) => {
-		const scaledX1 = (item.node.rect.x1 * WIDTH) / w + 4 * item.HEIGHT;
-		let scaledX2 = (item.node.rect.x2 * WIDTH) / w;
+		const scaledX1 = (item.node.x1 * WIDTH) / w + 4 * item.HEIGHT;
+		let scaledX2 = (item.node.x2 * WIDTH) / w;
 		scaledX2 =
 			scaledX2 > 4 * item.HEIGHT ? scaledX2 - 4 * item.HEIGHT : scaledX2;
-		const scaledY1 = (item.node.rect.y1 * WIDTH) / h + 4 * item.HEIGHT;
-		let scaledY2 = (item.node.rect.y2 * WIDTH) / h;
+		const scaledY1 = (item.node.y1 * WIDTH) / h + 4 * item.HEIGHT;
+		let scaledY2 = (item.node.y2 * WIDTH) / h;
 		scaledY2 =
 			scaledY2 > 4 * item.HEIGHT ? scaledY2 - 4 * item.HEIGHT : scaledY2;
 
@@ -165,7 +163,7 @@ export const printTree = (root: any, length: any, height: any) => {
 	const text = data.reduce((acc: any, item: any) => {
 		return (
 			acc +
-			`<div style="display:flex;"><span style="flex: 1;">height: ${item.HEIGHT},</span><span style="flex: 1;">rect: x1: ${item.node.rect.x1},</span><span style="flex: 1;">x2: ${item.node.rect.x2},</span><span style="flex: 1;">y1: ${item.node.rect.y1},</span><span style="flex: 1;">y2: ${item.node.rect.y2}</span></div>`
+			`<div style="display:flex;"><span style="flex: 1;">height: ${item.HEIGHT},</span><span style="flex: 1;">rect: x1: ${item.node.x1},</span><span style="flex: 1;">x2: ${item.node.x2},</span><span style="flex: 1;">y1: ${item.node.y1},</span><span style="flex: 1;">y2: ${item.node.y2}</span></div>`
 		);
 	}, "");
 
