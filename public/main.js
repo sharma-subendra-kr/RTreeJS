@@ -52,8 +52,11 @@ window.onload = function () {
 		// initialStackSize: 15,
 		// initialQueueSize: 15,
 	});
-	console.log("load time : ", performance.now() - p);
+	const lt = performance.now() - p;
+	console.log("load time : ", lt);
 
+	// ******************************************************************
+	// ******************************************************************
 	// const pfa = performance.now();
 	// const x1 = Math.trunc(Math.random() * 10000);
 	// const y1 = Math.trunc(Math.random() * 10000);
@@ -67,22 +70,25 @@ window.onload = function () {
 	// 	false,
 	// 	true
 	// );
-	// console.log("find all time : ", performance.now() - pfa);
-	// console.log(f.length);
+	// const fat = performance.now() - pfa;
+	// console.log("find all time : ", fat);
+	// console.log("find all length: ", f.length);
 
 	// const pfe = performance.now();
 	// for (let i = 0; i < 1000; i++) {
 	// 	const rect = rawData[Math.trunc(Math.random() * 1000000)];
 	// 	const r = window.rt.find(rect, true);
 	// }
-	// console.log("find exact time : ", performance.now() - pfe);
+	// const fet = performance.now() - pfe;
+	// console.log("find exact time : ", fet);
 
 	// const pfo = performance.now();
 	// for (let i = 0; i < 1000; i++) {
 	// 	const rect = rawData[Math.trunc(Math.random() * 1000000)];
 	// 	const r = window.rt.find(rect);
 	// }
-	// console.log("find overlap time : ", performance.now() - pfo);
+	// const fot = performance.now() - pfo;
+	// console.log("find overlap time : ", fot);
 
 	// const pr = performance.now();
 	// let count = 0;
@@ -91,11 +97,27 @@ window.onload = function () {
 	// 	const r = window.rt.remove(rect);
 	// 	count++;
 	// }
-	// console.log("remove time : ", performance.now() - pr);
-	// console.log("rt.length : ", rt.length);
+	// const removet = performance.now() - pr;
+	// console.log("remove time : ", removet);
+	// console.log("rt.length : ", window.rt.length);
+	// document.getElementsByTagName("body")[0].innerHTML = `
+	// 	load time : ${lt} <br>
+	// 	find all time : ${fat} <br>
+	// 	find all length: ${f.length} <br>
+	// 	find exact time : ${fet} <br>
+	// 	find overlap time : ${fot} <br>
+	// 	remove time : ${removet} <br>
+	// 	rt.length : ${window.rt.length} <br>
+	// `;
+	// ******************************************************************
+	// ******************************************************************
 
+	// ******************************************************************
+	// ******************************************************************
 	var $contentBody = document.getElementsByClassName("content-body")[0];
 	$contentBody.innerHTML = window.rt.printTree();
+	// ******************************************************************
+	// ******************************************************************
 
 	window.printHtmlTree = function () {
 		$contentBody.innerHTML = it.printHtmlTree();
