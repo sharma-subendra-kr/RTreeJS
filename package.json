@@ -1,13 +1,13 @@
 {
-  "name": "rtreejs",
+  "name": "@sharma-subendra-kr/rtreejs",
   "version": "1.0.0-beta.0",
   "description": "RTreeJS",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/webpack-dev-server --config webpack.dev.js",
-    "build": "./node_modules/.bin/webpack --config webpack.prod.js && mv ./dist/umd/index.css ./dist/",
-    "build-bench": "./node_modules/.bin/webpack --config webpack.bench.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js && mv ./dist/umd/index.css ./dist/",
+    "build-bench": "webpack --config webpack.bench.js",
     "lint:check": "prettier -c **/*.{js,css,scss,json}; eslint \"**/*.js\"",
     "lint:fix": "prettier --write **/*.{js,css,scss,json} && eslint --fix \"**/*.js\"",
     "prettier:fix": "prettier --write **/*.{js,css,scss,json}",
@@ -74,5 +74,11 @@
     "setupFilesAfterEnv": [
       "jest-extended"
     ]
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/sharma-subendra-kr/RTreeJS/issues"
+  },
+  "keywords": [
+    "RTree"
+  ]
 }
