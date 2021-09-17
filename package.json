@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/webpack-dev-server --config webpack.dev.js",
     "build": "./node_modules/.bin/webpack --config webpack.prod.js && mv ./dist/umd/index.css ./dist/",
+    "build-bench": "./node_modules/.bin/webpack --config webpack.bench.js",
     "lint:check": "prettier -c **/*.{js,css,scss,json}; eslint \"**/*.js\"",
     "lint:fix": "prettier --write **/*.{js,css,scss,json} && eslint --fix \"**/*.js\"",
     "prettier:fix": "prettier --write **/*.{js,css,scss,json}",
@@ -65,7 +66,9 @@
   },
   "dependencies": {
     "Queue": "git+https://sharma-subendra-kr@github.com/sharma-subendra-kr/Queue.git#master",
-    "Stack": "git+https://sharma-subendra-kr@github.com/sharma-subendra-kr/Stack.git#master"
+    "Stack": "git+https://sharma-subendra-kr@github.com/sharma-subendra-kr/Stack.git#master",
+    "benchmark": "^2.1.4",
+    "esm": "^3.2.25"
   },
   "jest": {
     "setupFilesAfterEnv": [
