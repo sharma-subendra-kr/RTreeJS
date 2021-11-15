@@ -2,7 +2,7 @@
   "name": "@sharma-subendra-kr/rtreejs",
   "version": "1.0.0-beta.1",
   "description": "RTreeJS",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --config webpack.dev.js",
