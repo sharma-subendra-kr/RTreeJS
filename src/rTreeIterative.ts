@@ -24,7 +24,6 @@ Written by Subendra Kumar Sharma.
 */
 
 import { ArrayStack as Stack } from "Stack";
-import { ArrayQueue as Queue } from "Queue";
 
 import {
 	Rect,
@@ -540,7 +539,7 @@ class RTreeIterative {
 			}
 			// else keep looking
 		}
-    
+
 		if (all) {
 			return this.resultStack.getData();
 		}
