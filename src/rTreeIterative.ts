@@ -23,7 +23,7 @@ Written by Subendra Kumar Sharma.
 
 */
 
-import { ArrayStack as Stack } from "Stack";
+import { ArrayStack as Stack } from "@sharma-subendra-kr/stack";
 
 import {
 	Rect,
