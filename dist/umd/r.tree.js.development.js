@@ -24,14 +24,14 @@ Written by Subendra Kumar Sharma.
 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("Stack"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(["Stack"], factory);
+		define([], factory);
 	else if(typeof exports === 'object')
-		exports["RTreeJS"] = factory(require("Stack"));
+		exports["RTreeJS"] = factory();
 	else
-		root["RTreeJS"] = factory(root["Stack"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE__0__) {
+		root["RTreeJS"] = factory();
+})(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -115,23 +115,108 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
+"use strict";
+/** @license Stack
+
+Stack, a JavaScript LIFO stack Data Structure.
+
+Copyright © 2019-2020 Subendra Kumar Sharma. All Rights reserved. (jobs.sharma.subendra.kr@gmail.com)
+
+This file is part of Stack.
+
+Stack is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Stack is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Stack.  If not, see <https://www.gnu.org/licenses/>.
+
+Written by Subendra Kumar Sharma.
+
+*/
+
+
+
+if (true) {
+	module.exports = __webpack_require__(1);
+} else {}
+
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+/** @license Stack
+
+Stack, a JavaScript LIFO stack Data Structure.
+
+Copyright © 2019-2020 Subendra Kumar Sharma. All Rights reserved. (jobs.sharma.subendra.kr@gmail.com)
+
+This file is part of Stack.
+
+Stack is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Stack is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Stack.  If not, see <https://www.gnu.org/licenses/>.
+
+Written by Subendra Kumar Sharma.
+
+*/
+!function(t,e){ true?module.exports=e():undefined}(window,(function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var i=e[n]={i:n,l:!1,exports:{}};return t[n].call(i.exports,i,i.exports,r),i.l=!0,i.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var i in t)r.d(n,i,function(e){return t[e]}.bind(null,i));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="assets",r(r.s=0)}([function(t,e,r){"use strict";r.r(e),r.d(e,"ArrayStack",(function(){return i})),r.d(e,"ListStack",(function(){return s}));var n=function(t){var e;this.options=t,this.initialSize=(null==t?void 0:t.initialSize)||100,this.length=this.initialSize,this.stack=new Array(this.length),this.ptr=-1,Array.isArray(null==t?void 0:t.data)&&this.constructStack(t.data,t.constructReverse),null===(e=this.options)||void 0===e||delete e.data};n.prototype.constructStack=function(t,e){var r=t.length;if(e)for(var n=r-1;n>=0;n--)this.push(t[n]);else for(var i=0;i<r;i++)this.push(t[i])},n.prototype.push=function(t){return null!=t&&(this.ptr===this.length-1&&this.resize(),this.stack[++this.ptr]=t,this.ptr+1)},n.prototype.pop=function(){if(this.ptr>=0){var t=this.stack[this.ptr];return this.ptr--,t}},n.prototype.resize=function(){var t=this.length,e=this.stack;this.length=2*this.length,this.stack=new Array(this.length);for(var r=0;r<t;r++)this.stack[r]=e[r]},n.prototype.isEmpty=function(){return this.ptr<0},n.prototype.peek=function(){if(this.ptr>=0)return this.stack[this.ptr]},n.prototype.getData=function(){for(var t=new Array(this.ptr+1),e=0;e<=this.ptr;e++)t[e]=this.stack[e];return t},n.prototype.setData=function(t){var e;this.empty(),this.constructStack(t,null===(e=this.options)||void 0===e?void 0:e.constructReverse)},n.prototype.getSize=function(){return this.ptr+1},n.prototype.empty=function(){this.ptr=-1},n.prototype.wipe=function(){this.length=this.initialSize,this.stack=new Array(this.length),this.ptr=-1};var i=n;function o(t){this.length=0,this.HEAD=null,Array.isArray(null==t?void 0:t.data)&&this.constructStack(t.data,t.constructReverse)}o.prototype.constructNode=function(t){return{next:null,d:t}},o.prototype.constructStack=function(t,e){var r,n=t.length;if(e)for(r=n-1;r>=0;r--)this.push(t[r]);else for(r=0;r<n;r++)this.push(t[r])},o.prototype.push=function(t){var e=this.constructNode(t);return this.HEAD?(e.next=this.HEAD,this.HEAD=e):this.HEAD=e,++this.length},o.prototype.pop=function(){if(this.HEAD){var t=this.HEAD;return this.HEAD=this.HEAD.next,t.next=null,this.length--,t.d}},o.prototype.isEmpty=function(){return!this.HEAD},o.prototype.peek=function(){var t;return null===(t=this.HEAD)||void 0===t?void 0:t.d},o.prototype.getData=function(){for(var t=this.HEAD,e=new Array(this.length),r=0;null!=t;)e[r++]=t.d,t=t.next;return e},o.prototype.getSize=function(){return this.length},o.prototype.empty=function(){this.HEAD=null,this.length=0};var s=o;
+/** @license Stack
+
+Stack, a JavaScript LIFO stack Data Structure.
+
+Copyright © 2019-2020 Subendra Kumar Sharma. All Rights reserved. (jobs.sharma.subendra.kr@gmail.com)
+
+This file is part of Stack.
+
+Stack is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Stack is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Stack.  If not, see <https://www.gnu.org/licenses/>.
+
+Written by Subendra Kumar Sharma.
+
+*/}])}));
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -141,8 +226,8 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "RTreeIterative", function() { return /* reexport */ rTreeIterative; });
 
-// EXTERNAL MODULE: external {"commonjs":"Stack","commonjs2":"Stack","amd":"Stack","root":"Stack"}
-var external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_ = __webpack_require__(0);
+// EXTERNAL MODULE: ./node_modules/@sharma-subendra-kr/stack/dist/index.js
+var dist = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/rectUtils/rectUtils.ts
 /*
@@ -784,8 +869,8 @@ const getPrintTreeData = (root, length, height) => {
     if (!root) {
         return [];
     }
-    const st = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
-    const result = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]();
+    const st = new dist["ArrayStack"]();
+    const result = new dist["ArrayStack"]();
     let HEIGHT = 0;
     result.push({
         node: getCombinedRectFromRects(root.keys, root.size),
@@ -1022,9 +1107,9 @@ class rTreeIterative_RTreeIterative {
             ((_a = options === null || options === void 0 ? void 0 : options.data) === null || _a === void 0 ? void 0 : _a.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialStackSize) || 100;
         this.initialQueueSize =
             ((_b = options === null || options === void 0 ? void 0 : options.data) === null || _b === void 0 ? void 0 : _b.length) * 2 || (options === null || options === void 0 ? void 0 : options.initialQueueSize) || 100;
-        this.insertStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
-        this.ptrStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
-        this.resultStack = new external_commonjs_Stack_commonjs2_Stack_amd_Stack_root_Stack_["ArrayStack"]({ initialSize: this.initialStackSize });
+        this.insertStack = new dist["ArrayStack"]({ initialSize: this.initialStackSize });
+        this.ptrStack = new dist["ArrayStack"]({ initialSize: this.initialStackSize });
+        this.resultStack = new dist["ArrayStack"]({ initialSize: this.initialStackSize });
         if (Array.isArray(options === null || options === void 0 ? void 0 : options.data)) {
             this.constructTree(options.data);
         }
@@ -1375,7 +1460,7 @@ class rTreeIterative_RTreeIterative {
 /* harmony default export */ var rTreeIterative = (rTreeIterative_RTreeIterative);
 
 // EXTERNAL MODULE: ./src/index.css
-var src = __webpack_require__(1);
+var src = __webpack_require__(2);
 
 // CONCATENATED MODULE: ./src/index.ts
 /** @license RTreeJS

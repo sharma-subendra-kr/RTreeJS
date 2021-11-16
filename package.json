@@ -1,6 +1,6 @@
 {
   "name": "@sharma-subendra-kr/rtreejs",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "description": "RTreeJS",
   "main": "dist/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/sharma-subendra-kr/RTreeJS.git#readme",
   "devDependencies": {
     "@babel/core": "^7.13.8",
+    "@babel/plugin-proposal-optional-chaining": "^7.16.0",
     "@babel/preset-env": "^7.13.8",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
@@ -46,10 +47,10 @@
     "json-loader": "^0.5.7",
     "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^0.6.0",
-    "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
     "prettier": "^2.2.1",
     "prettier-stylelint": "^0.4.2",
+    "sass": "^1.43.4",
     "sass-loader": "^10.1.1",
     "source-map-loader": "^2.0.1",
     "style-loader": "^0.23.1",
@@ -65,8 +66,7 @@
     "webpack-notifier": "^1.13.0"
   },
   "dependencies": {
-    "Queue": "git+https://sharma-subendra-kr@github.com/sharma-subendra-kr/Queue.git#master",
-    "Stack": "git+https://sharma-subendra-kr@github.com/sharma-subendra-kr/Stack.git#master",
+    "@sharma-subendra-kr/stack": "^1.0.1",
     "benchmark": "^2.1.4",
     "esm": "^3.2.25"
   },

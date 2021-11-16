@@ -22,5 +22,4 @@ along with RTreeJS.  If not, see <https://www.gnu.org/licenses/>.
 Written by Subendra Kumar Sharma.
 
 */
-.r-tree-print{position:relative}.r-tree-print-level{position:relative;height:70px}.r-tree-print-node{display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;-ms-flex-align:center;align-items:center;width:60px;position:absolute;border:dotted 1px orange;margin:5px;height:60px}.r-tree-print-node-id{background-color:dimgray}.r-tree-print-node-parentId{background-color:olivedrab}.r-tree-print-node-interval{background-color:cornflowerblue}.r-tree-print-node-minmax{background-color:burlywood}
-
+.r-tree-print{position:relative}.r-tree-print-level{position:relative;height:70px}.r-tree-print-node{display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;-ms-flex-align:center;align-items:center;width:60px;position:absolute;border:dotted 1px orange;margin:5px;height:60px}.r-tree-print-node-id{background-color:dimgray}.r-tree-print-node-parentId{background-color:#6b8e23}.r-tree-print-node-interval{background-color:#6495ed}.r-tree-print-node-minmax{background-color:#deb887}
