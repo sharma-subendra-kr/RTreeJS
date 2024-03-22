@@ -22,7 +22,7 @@ along with RTreeJS.  If not, see <https://www.gnu.org/licenses/>.
 Written by Subendra Kumar Sharma.
 
 
-### This is free software (Free as in freedom not the price). If you like to use this library on a non free software, you can get a proprietary license. To get a proprietary license contact _reach.subendra.kr@gmx.com_.
+### This is free software (Free as in freedom not the price). If you like to use this library on a non free software, you can get a proprietary license. To get a proprietary license contact me.
 
 
 ## The is a beta release. This version is unstable.
